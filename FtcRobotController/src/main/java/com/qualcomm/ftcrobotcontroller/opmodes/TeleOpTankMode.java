@@ -3,14 +3,19 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 
 public class TeleOpTankMode  extends OpMode {
+
+    final double Left_Spin = 1.0;
+    final double Left_Spin_Stop = 0.5;
+
     DcMotor leftMotor;
     DcMotor rightMotor;
     DcMotor Arm1;
     DcMotor Arm2;
-
+    Servo   Servo1;
     @Override
     public void init() {
         //get references to the motors from the hardware map
@@ -18,6 +23,7 @@ public class TeleOpTankMode  extends OpMode {
         rightMotor = hardwareMap.dcMotor.get("right_drive");
         Arm1 =hardwareMap.dcMotor.get("Arm1");
         Arm2 = hardwareMap.dcMotor.get("Arm2");
+        Servo1 = hardwareMap.servo.get("Servo1");
         //reverse the right motor
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
     }
@@ -31,11 +37,22 @@ public class TeleOpTankMode  extends OpMode {
         float rightY = -gamepad1.right_stick_y;
         float arm1 = gamepad2.left_stick_y;
         float arm2 = gamepad2.right_stick_y;
+
         //set the power of the motors with the gamepad values
         leftMotor.setPower(leftY);
         rightMotor.setPower(rightY);
         Arm2.setPower(arm2);
         Arm1.setPower(arm1);
+        if(gamepad1.x) {
+            Servo1.setPosition(Left_Spin);
+        }
+        else {
+            Servo1.setPosition(Left_Spin_Stop);
+        }
+
+
+
+
     }
 }
 
