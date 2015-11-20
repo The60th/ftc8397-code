@@ -55,10 +55,10 @@ public class FtcOpModeRegister implements OpModeRegister {
      * If two or more op modes are registered with the same name, the app will display an error.
      */
 
-    manager.register("NullOp", NullOp.class);
-    manager.register("K9TeleOp", K9TeleOp.class);
-    manager.register ("PushBotAuto", PushBotAuto.class);
-    manager.register ("PushBotManual", PushBotManual.class);
+   // manager.register("NullOp", NullOp.class);
+    //manager.register("K9TeleOp", K9TeleOp.class);
+    //manager.register ("PushBotAuto", PushBotAuto.class);
+    //manager.register ("PushBotManual", PushBotManual.class);
 
     /*
      * Uncomment any of the following lines if you want to register an op mode.
@@ -76,8 +76,8 @@ public class FtcOpModeRegister implements OpModeRegister {
 
     manager.register("NxtTeleOp", NxtTeleOp.class);
     //manager.register("NxtTeleOp2", NxtTeleOp2.class);
-    manager.register("LinearK9TeleOp", LinearK9TeleOp.class);
-    manager.register("LinearIrExample", LinearIrExample.class);
+   // manager.register("LinearK9TeleOp", LinearK9TeleOp.class);
+   // manager.register("LinearIrExample", LinearIrExample.class);
     manager.register("TeleOpTankMode", TeleOpTankMode.class);
     manager.register("NxtTeleOpNew", NxtTeleOpNew.class);
 
