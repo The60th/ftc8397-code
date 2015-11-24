@@ -44,10 +44,10 @@ public class TeleOpTankMode  extends OpMode {
         float arm2 = -gamepad2.right_stick_y * 100;
 
         //set the power of the motors with the gamepad values
-        leftMotor.setPower(leftY/100);
-        rightMotor.setPower(rightY/100);
-        Arm2.setPower(arm2/150);
-        Arm1.setPower(arm1/150);
+        leftMotor.setPower(leftY/200);
+        rightMotor.setPower(rightY/200);
+        Arm2.setPower(arm2/350);
+        Arm1.setPower(arm1/350);
         if(gamepad1.x) {
             Servo1.setPosition(Left_Spin);
             Servo2.setPosition(Right_Spin);
