@@ -58,13 +58,18 @@ public class TeleOpTankMode  extends OpMode {
         Arm1.setPower(arm1/350);
 
         if(gamepad1.a) {
-            if(!turboOn) {
+            //If turbomode is on, turboOn should be true, since it's on and we pressed the button
+            //we want to shut the function off. First we set turboValue to the non turbo mode
+            //division constant, then we set turboOn to false to indicate that the mode is off to
+            //the next iteration of the program
+            if(turboOn) {
                 turboValue = nonTurboPower;
-                turboOn = true;
-            }
-            else if(turboOn) {
-                turboValue = turboPower;
                 turboOn = false;
+            }
+            //This is similar to the above, except it does the inverse function
+            else {
+                turboValue = turboPower;
+                turboOn = true;
             }
         }
 
@@ -82,10 +87,3 @@ public class TeleOpTankMode  extends OpMode {
 
     }
 }
-
-
-
-
-
-
-
