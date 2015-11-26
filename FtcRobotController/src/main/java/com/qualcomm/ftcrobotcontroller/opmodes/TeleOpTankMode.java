@@ -14,6 +14,9 @@ public class TeleOpTankMode  extends OpMode {
     final double Right_Spin = 0.0;
     final double Right_Spin_Stop = 0.5;
 
+    boolean turboOn = false; //a boolean that is used in the loop function to enable/disable turbo mode
+    float turboValue = 150; //initing a variable that can be flip/flopped between the turbomode value and standard speed
+
     DcMotor leftMotor;
     DcMotor rightMotor;
     DcMotor Arm1;
@@ -42,12 +45,29 @@ public class TeleOpTankMode  extends OpMode {
         float rightY = -gamepad1.right_stick_y * 100;
         float arm1 = -gamepad2.left_stick_y * 100;
         float arm2 = -gamepad2.right_stick_y * 100;
+        //We need two different power settings for moving the robot around, they are defined here
+        //They are used as a dividing constant in the setpower argument
+        float nonTurboPower = 200;
+        float turboPower = 150;
+
 
         //set the power of the motors with the gamepad values
-        leftMotor.setPower(leftY/200);
-        rightMotor.setPower(rightY/200);
+        leftMotor.setPower(leftY/turboValue);
+        rightMotor.setPower(rightY/turboValue);
         Arm2.setPower(arm2/350);
         Arm1.setPower(arm1/350);
+
+        if(gamepad1.a) {
+            if(!turboOn) {
+                turboValue = nonTurboPower;
+                turboOn = true;
+            }
+            else if(turboOn) {
+                turboValue = turboPower;
+                turboOn = false;
+            }
+        }
+
         if(gamepad1.x) {
             Servo1.setPosition(Left_Spin);
             Servo2.setPosition(Right_Spin);
