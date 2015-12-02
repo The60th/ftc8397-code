@@ -63,8 +63,9 @@ DcMotor midRightMotor;
 
         leftMotor.setPower(leftY/200);
         midLeftMotor.setPower(leftY/200);
-        rightMotor.setPower(rightY/200);
-        midRightMotor.setPower(rightY/200);
+
+        rightMotor.setPower(leftY/200);
+        midRightMotor.setPower(leftY/200);
 
 
 
