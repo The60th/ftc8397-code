@@ -15,6 +15,8 @@ final double Left_Spin_Stop = 0.5;
 final double Right_Spin = 0.0;
 final double Right_Spin_Stop = 0.5;*/
 
+    float leftY = -gamepad1.left_stick_y * 100;
+    float rightY = -gamepad1.right_stick_y * 100;
 
 DcMotor leftMotor;
 DcMotor rightMotor;
@@ -52,16 +54,17 @@ DcMotor midRightMotor;
         //get the values from the gamepads
         //note: pushing the stick all the way up returns -1,
         // so we need to reverse the values
-        float leftY = -gamepad1.left_stick_y * 100;
-        float rightX = -gamepad1.right_stick_x * 100;
+       // float leftY = -gamepad1.left_stick_y * 100;
+        //float rightX = -gamepad1.left_stick_x * 100;
         //float arm1 = -gamepad2.left_stick_y * 100;
         //float arm2 = -gamepad2.right_stick_y * 100;
 
         //set the power of the motors with the gamepad values
+
         leftMotor.setPower(leftY/200);
-        rightMotor.setPower(rightX/200);
         midLeftMotor.setPower(leftY/200);
-        midRightMotor.setPower(rightX/200);
+        rightMotor.setPower(rightY/200);
+        midRightMotor.setPower(rightY/200);
 
 
 
