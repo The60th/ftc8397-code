@@ -19,8 +19,8 @@ DcMotor leftMotor;
 DcMotor rightMotor;
 DcMotor midLeftMotor;
 DcMotor midrightMotor;
-Servo Servo1;
-Servo Servo2;
+//Servo Servo1;
+//Servo Servo2;
     @Override
     public void init() {
         //get references to the motors from the hardware map
@@ -38,8 +38,8 @@ Servo Servo2;
         rightMotor = hardwareMap.dcMotor.get("rightMotor");
         midLeftMotor =hardwareMap.dcMotor.get("midLeftMotor");
         midrightMotor = hardwareMap.dcMotor.get("midRightMotor");
-        Servo1 = hardwareMap.servo.get("Servo1");
-        Servo2 = hardwareMap.servo.get("Servo2");
+        //Servo1 = hardwareMap.servo.get("Servo1");
+        //jServo2 = hardwareMap.servo.get("Servo2");
         //reverse the right motor
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
         midrightMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -58,18 +58,17 @@ Servo Servo2;
 
         //set the power of the motors with the gamepad values
         leftMotor.setPower(leftY/200);
-        rightMotor.setPower(leftY/200);
-        midLeftMotor.setPower(rightY / 200);
-        midrightMotor.setPower(rightY / 200);
+        rightMotor.setPower(rightY/200);
 
-        if(gamepad1.x) {
+
+        /*if(gamepad1.x) {
             Servo1.setPosition(Left_Spin);
             Servo2.setPosition(Right_Spin);
         }
         else {
             Servo1.setPosition(Left_Spin_Stop);
             Servo2.setPosition(Right_Spin_Stop);
-        }
+        }*/
 
 
 
