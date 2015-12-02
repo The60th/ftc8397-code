@@ -15,12 +15,12 @@ final double Left_Spin_Stop = 0.5;
 final double Right_Spin = 0.0;
 final double Right_Spin_Stop = 0.5;*/
 
-DcMotor rightRearMotor;
+    DcMotor rightRearMotor;
     DcMotor leftRearMotor;
     DcMotor leftMotor;
-DcMotor rightMotor;
-DcMotor midLeftMotor;
-DcMotor midRightMotor;
+    DcMotor rightMotor;
+    DcMotor midLeftMotor;
+    DcMotor midRightMotor;
 //Servo Servo1;
 //Servo Servo2;
     @Override
