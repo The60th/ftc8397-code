@@ -15,8 +15,9 @@ final double Left_Spin_Stop = 0.5;
 final double Right_Spin = 0.0;
 final double Right_Spin_Stop = 0.5;*/
 
-
-DcMotor leftMotor;
+DcMotor rightRearMotor;
+    DcMotor leftRearMotor;
+    DcMotor leftMotor;
 DcMotor rightMotor;
 DcMotor midLeftMotor;
 DcMotor midRightMotor;
@@ -39,12 +40,14 @@ DcMotor midRightMotor;
         rightMotor = hardwareMap.dcMotor.get("rightMotor");
         midLeftMotor =hardwareMap.dcMotor.get("midLeftMotor");
         midRightMotor = hardwareMap.dcMotor.get("midRightMotor");
+        leftRearMotor =hardwareMap.dcMotor.get("leftRearMotor");
+        rightRearMotor = hardwareMap.dcMotor.get("rightRearMotor");
         //Servo1 = hardwareMap.servo.get("Servo1");
         //jServo2 = hardwareMap.servo.get("Servo2");
         //reverse the right motor
-        //rightMotor.setDirection(DcMotor.Direction.REVERSE);
-        //midRightMotor.setDirection(DcMotor.Direction.REVERSE);
-
+        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        midRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
     }
 
     @Override
@@ -63,9 +66,11 @@ DcMotor midRightMotor;
 
         leftMotor.setPower(leftY/200);
         midLeftMotor.setPower(leftY/200);
+        leftRearMotor.setPower(leftY/200);
 
-        rightMotor.setPower(leftY/200);
-        midRightMotor.setPower(leftY/200);
+        rightMotor.setPower(rightY/200);
+        midRightMotor.setPower(rightY/200);
+        rightRearMotor.setPower(rightY/200);
 
 
 
