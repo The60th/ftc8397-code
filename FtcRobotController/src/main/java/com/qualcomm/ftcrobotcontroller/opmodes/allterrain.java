@@ -42,8 +42,8 @@ DcMotor midRightMotor;
         //Servo1 = hardwareMap.servo.get("Servo1");
         //jServo2 = hardwareMap.servo.get("Servo2");
         //reverse the right motor
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
-        midRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        //rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        //midRightMotor.setDirection(DcMotor.Direction.REVERSE);
 
     }
 
@@ -53,15 +53,15 @@ DcMotor midRightMotor;
         //note: pushing the stick all the way up returns -1,
         // so we need to reverse the values
         float leftY = -gamepad1.left_stick_y * 100;
-        float rightY = -gamepad1.right_stick_y * 100;
+        float rightX = -gamepad1.right_stick_x * 100;
         //float arm1 = -gamepad2.left_stick_y * 100;
         //float arm2 = -gamepad2.right_stick_y * 100;
 
         //set the power of the motors with the gamepad values
         leftMotor.setPower(leftY/200);
-        rightMotor.setPower(rightY/200);
+        rightMotor.setPower(rightX/200);
         midLeftMotor.setPower(leftY/200);
-        midRightMotor.setPower(rightY/200);
+        midRightMotor.setPower(rightX/200);
 
 
 
