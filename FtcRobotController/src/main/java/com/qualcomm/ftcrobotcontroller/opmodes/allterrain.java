@@ -9,16 +9,17 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class allterrain extends OpMode{
 
 
-final double Left_Spin = 1.0;
+/*final double Left_Spin = 1.0;
 final double Left_Spin_Stop = 0.5;
 
 final double Right_Spin = 0.0;
-final double Right_Spin_Stop = 0.5;
+final double Right_Spin_Stop = 0.5;*/
+
 
 DcMotor leftMotor;
 DcMotor rightMotor;
 DcMotor midLeftMotor;
-DcMotor midrightMotor;
+DcMotor midRightMotor;
 //Servo Servo1;
 //Servo Servo2;
     @Override
@@ -37,12 +38,12 @@ DcMotor midrightMotor;
         leftMotor = hardwareMap.dcMotor.get("leftMotor");
         rightMotor = hardwareMap.dcMotor.get("rightMotor");
         midLeftMotor =hardwareMap.dcMotor.get("midLeftMotor");
-        midrightMotor = hardwareMap.dcMotor.get("midRightMotor");
+        midRightMotor = hardwareMap.dcMotor.get("midRightMotor");
         //Servo1 = hardwareMap.servo.get("Servo1");
         //jServo2 = hardwareMap.servo.get("Servo2");
         //reverse the right motor
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
-        midrightMotor.setDirection(DcMotor.Direction.REVERSE);
+        midRightMotor.setDirection(DcMotor.Direction.REVERSE);
 
     }
 
@@ -59,6 +60,9 @@ DcMotor midrightMotor;
         //set the power of the motors with the gamepad values
         leftMotor.setPower(leftY/200);
         rightMotor.setPower(rightY/200);
+        midLeftMotor.setPower(leftY/200);
+        midRightMotor.setPower(rightY/200);
+
 
 
         /*if(gamepad1.x) {
