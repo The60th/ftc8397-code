@@ -64,13 +64,13 @@ final double Right_Spin_Stop = 0.5;*/
         double leftY = -gamepad1.left_stick_y * 100;
         double rightY = -gamepad1.right_stick_y * 100;
 
-        leftMotor.setPower(leftY/200);
-        midLeftMotor.setPower(leftY/200);
-        leftRearMotor.setPower(leftY/200);
+        leftMotor.setPower(leftY/350);
+        midLeftMotor.setPower(leftY/350);
+        leftRearMotor.setPower(leftY/350);
 
-        rightMotor.setPower(rightY/200);
-        midRightMotor.setPower(rightY/200);
-        rightRearMotor.setPower(rightY/200);
+        rightMotor.setPower(rightY/350);
+        midRightMotor.setPower(rightY/350);
+        rightRearMotor.setPower(rightY/350);
 
 
 
