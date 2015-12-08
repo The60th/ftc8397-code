@@ -80,7 +80,9 @@ public class FtcOpModeRegister implements OpModeRegister {
    // manager.register("LinearIrExample", LinearIrExample.class);
     manager.register("TeleOpTankMode", TeleOpTankMode.class);
     manager.register("NxtTeleOpNew", NxtTeleOpNew.class);
-
+    manager.register("allterrain", allterrain.class);
+    manager.register("AutoModeTesting", AutoModeTesting.class);
+    manager.register("ReUseAbleTest", ReUseAbleTest.class);
     //manager.register ("PushBotManual1", PushBotManual1.class);
     //manager.register ("PushBotAutoSensors", PushBotAutoSensors.class);
     //manager.register ("PushBotIrEvent", PushBotIrEvent.class);
