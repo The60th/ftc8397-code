@@ -75,11 +75,11 @@ public class AutoModeTesting extends LinearOpMode
 
             sleep(1000);
 
-            MyReUseTest.MotorHalt(MOTOR_STOP);
+            MyReUseTest.MotorHalt(MOTOR_GO);
 
             sleep(1000);
 
-            MyReUseTest.MotorGo(MOTOR_GO);
+            MyReUseTest.MotorGo(MOTOR_STOP);
 
 
 

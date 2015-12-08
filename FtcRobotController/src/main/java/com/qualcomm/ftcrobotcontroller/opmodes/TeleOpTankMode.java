@@ -57,21 +57,25 @@ public class TeleOpTankMode  extends OpMode {
         rightMotor.setPower(rightY/200);
         Arm2.setPower(arm2/350);
         Arm1.setPower(arm1/350);
-        if(gamepad1.x) {
+        if(gamepad1.x)
+        {
             Servo1.setPosition(Spin);
             //Servo2.setPosition(Right_Spin);
         }
-        else {
+        else
+        {
             Servo1.setPosition(Spin_Stop);
            // Servo2.setPosition(Right_Spin_Stop);
         }
 
-        if(gamepad1.y){
+        if(gamepad1.y)
+        {
             Servo2.setPosition(Up_Spin);
             Servo3.setPosition(Up_Spin2);
 
         }
-        else{
+        else
+        {
             Servo2.setPosition(Down_Spin);
             Servo3.setPosition(Down_Spin2);
 
