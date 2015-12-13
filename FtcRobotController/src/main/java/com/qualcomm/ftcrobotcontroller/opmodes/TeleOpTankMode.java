@@ -1,12 +1,18 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
 
+import android.os.Handler;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.util.concurrent.Delayed;
+
 
 public class TeleOpTankMode  extends OpMode {
+
+    ReUseAbleTest MyReUseTest;
 
     final double Left_Spin = 1.0;
     final double Left_Spin_Stop = 0.5;
@@ -30,6 +36,9 @@ public class TeleOpTankMode  extends OpMode {
     Servo   Servo2;
     Servo Servo3;
     Servo Servo4;
+
+
+
     @Override
     public void init() {
         //get references to the motors from the hardware map
@@ -44,10 +53,23 @@ public class TeleOpTankMode  extends OpMode {
 
         //reverse the right motor
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        MyReUseTest = new ReUseAbleTest(
+                hardwareMap.dcMotor.get("left"),
+                hardwareMap.dcMotor.get("right"),
+                hardwareMap.servo.get("Servo_Left"),
+                hardwareMap.servo.get("Servo_Right")
+        );
+
+
+
     }
 
+
+
     @Override
-    public void loop() {
+    public void loop()
+    {
         //get the values from the gamepads
         //note: pushing the stick all the way up returns -1,
         // so we need to reverse the values
@@ -72,37 +94,59 @@ public class TeleOpTankMode  extends OpMode {
             Servo4.setPosition(Right_Spin_Stop);  // Servo2.setPosition(Right_Spin_Stop);
         }
 
-/*        if(gamepad1.y)
+
+        Handler handler = new Handler(); //All new stuff have no idea if this works please test Asap.
+        handler.postDelayed(new Runnable()
         {
-            Servo2.setPosition(Up_Spin);
-            Servo3.setPosition(Up_Spin2);
+            @Override
+            public void run()
+            {
+                if (gamepad1.y)
+               { //new
+                    //If turbomode is on, turboOn should be true, since it's on and we pressed the button
+                    //we want to shut the function off. First we set turboValue to the non turbo mode
+                    //division constant, then we set turboOn to false to indicate that the mode is off to
+                    //the next iteration of the program
 
+                    if (Servo_On) {
+                        Servo2.setPosition(Up_Spin);
+                        Servo3.setPosition(Up_Spin2);
+                        Servo_On = false;
+                        //Delayed.class
+                    }
+                    //This is similar to the above, except it does the inverse function
+                    else {
+                        Servo2.setPosition(Down_Spin);
+                        Servo3.setPosition(Down_Spin2);
+                        Servo_On = true;
+                    }}
+                }
+
+            }, 1000);
         }
-        else
-        {
-            Servo2.setPosition(Down_Spin);
-            Servo3.setPosition(Down_Spin2);
 
-        }
-*/
 
-        if(gamepad1.y) { //new
+       /* if(gamepad1.y) { //new
             //If turbomode is on, turboOn should be true, since it's on and we pressed the button
             //we want to shut the function off. First we set turboValue to the non turbo mode
             //division constant, then we set turboOn to false to indicate that the mode is off to
             //the next iteration of the program
-            if(Servo_On) {
+
+            if(Servo_On)
+            {
                 Servo2.setPosition(Up_Spin);
                 Servo3.setPosition(Up_Spin2);
                 Servo_On = false;
+                //Delayed.class
             }
             //This is similar to the above, except it does the inverse function
-            else {
+            else
+            {
                 Servo2.setPosition(Down_Spin);
                 Servo3.setPosition(Down_Spin2);
                 Servo_On = true;
             }
-        }
+        }*/
 
 
 
@@ -111,7 +155,9 @@ public class TeleOpTankMode  extends OpMode {
 
 
     }
-}
+
+
+
 
 
 
