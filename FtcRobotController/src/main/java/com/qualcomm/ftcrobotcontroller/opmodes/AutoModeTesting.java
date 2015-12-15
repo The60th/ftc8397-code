@@ -31,6 +31,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
+import android.os.Handler;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -38,7 +40,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class AutoModeTesting extends LinearOpMode
 {
-    ReUseAbleTest MyReUseTest;
+    MotorServoClass MyMotors;
 
     final double MOTOR_GO = 1; // Higher values will cause the robot to move faster
     final double MOTOR_STOP = 0.0;
@@ -55,7 +57,7 @@ public class AutoModeTesting extends LinearOpMode
     @Override
     public void runOpMode() throws InterruptedException
     {
-        MyReUseTest = new ReUseAbleTest(
+        MyMotors = new MotorServoClass(
                                         hardwareMap.dcMotor.get("left"),
                                         hardwareMap.dcMotor.get("right"),
                                         hardwareMap.servo.get("Servo_Left"),
@@ -75,11 +77,11 @@ public class AutoModeTesting extends LinearOpMode
 
             sleep(1000);
 
-            MyReUseTest.MotorHalt(MOTOR_GO);
+            MyMotors.MotorHalt(MOTOR_GO);
 
             sleep(1000);
 
-            MyReUseTest.MotorGo(MOTOR_STOP);
+            MyMotors.MotorGo(MOTOR_STOP);
 
 
 
@@ -88,6 +90,8 @@ public class AutoModeTesting extends LinearOpMode
         }
 
     }
+
+
 
 
 }

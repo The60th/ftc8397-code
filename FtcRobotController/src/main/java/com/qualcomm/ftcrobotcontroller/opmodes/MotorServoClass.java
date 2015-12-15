@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
 @SuppressWarnings("EmptyMethod")
-public class ReUseAbleTest
+public class MotorServoClass
 {
     final double Left_Spin = 1.0;
     final double Left_Spin_Stop = 0.5;
@@ -30,7 +30,7 @@ public class ReUseAbleTest
 
 
 
-    public ReUseAbleTest(DcMotor left, DcMotor right, Servo Servo_left, Servo Servo_right)
+    public MotorServoClass(DcMotor left, DcMotor right, Servo Servo_left, Servo Servo_right)
     {
         leftMotor = left;
         midLeftMotor = left;
