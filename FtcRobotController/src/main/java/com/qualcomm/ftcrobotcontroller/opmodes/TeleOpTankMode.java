@@ -95,30 +95,33 @@ public class TeleOpTankMode  extends OpMode
 
 
         Handler handler = new Handler(); //All new stuff have no idea if this works please test Asap.
-        handler.postDelayed(() ->
+        handler.postDelayed(new Runnable()
         {
-            if (gamepad1.y)
-            {   //new
-                //If turbomode is on, turboOn should be true, since it's on and we pressed the button
-                //we want to shut the function off. First we set turboValue to the non turbo mode
-                //division constant, then we set turboOn to false to indicate that the mode is off to
-                //the next iteration of the program
+            @Override
+            public void run()
+            {
+                if (gamepad1.y)
+                { //new
+                    //If turbomode is on, turboOn should be true, since it's on and we pressed the button
+                    //we want to shut the function off. First we set turboValue to the non turbo mode
+                    //division constant, then we set turboOn to false to indicate that the mode is off to
+                    //the next iteration of the program
 
-                if (Servo_On) {
-                    Servo2.setPosition(Up_Spin);
-                    Servo3.setPosition(Up_Spin2);
-                    Servo_On = false;
-
-                }
-                //This is similar to the above, except it does the inverse function
-                else
-                {
-                    Servo2.setPosition(Down_Spin);
-                    Servo3.setPosition(Down_Spin2);
-                    Servo_On = true;
-                }
+                    if (Servo_On) {
+                        Servo2.setPosition(Up_Spin);
+                        Servo3.setPosition(Up_Spin2);
+                        Servo_On = false;
+                        //Delayed.class
+                    }
+                    //This is similar to the above, except it does the inverse function
+                    else {
+                        Servo2.setPosition(Down_Spin);
+                        Servo3.setPosition(Down_Spin2);
+                        Servo_On = true;
+                    }}
             }
-        }, 2000); //Should be delay on Y button press input of two seconds now I believe please test.
+
+        }, 1000);
 
     }
 }
