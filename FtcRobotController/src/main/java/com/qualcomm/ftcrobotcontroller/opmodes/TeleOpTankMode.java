@@ -1,6 +1,8 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import android.os.Handler;
+import android.os.Looper;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -37,6 +39,8 @@ public class TeleOpTankMode  extends OpMode
     private Servo Servo2;
     private Servo Servo3;
     private Servo Servo4;
+
+    boolean ybuttonpressed;
 
 
     @Override
@@ -93,35 +97,39 @@ public class TeleOpTankMode  extends OpMode
             Servo4.setPosition(Right_Spin_Stop);
         }
 
-
-        Handler handler = new Handler(); //All new stuff have no idea if this works please test Asap.
-        handler.postDelayed(new Runnable()
-        {
-            @Override
-            public void run()
+        //Looper.prepare();
+       // Handler handler = new Handler(); //All new stuff have no idea if this works please test Asap.
+        //handler.postDelayed(new Runnable()
+       // {
+            //@Override
+           // public void run()
             {
-                if (gamepad1.y)
-                { //new
-                    //If turbomode is on, turboOn should be true, since it's on and we pressed the button
-                    //we want to shut the function off. First we set turboValue to the non turbo mode
-                    //division constant, then we set turboOn to false to indicate that the mode is off to
-                    //the next iteration of the program
+                if (gamepad1.y) {
+                    ybuttonpressed = true;
+                }
+                else {
+                    if (ybuttonpressed) {
 
-                    if (Servo_On) {
-                        Servo2.setPosition(Up_Spin);
-                        Servo3.setPosition(Up_Spin2);
-                        Servo_On = false;
-                        //Delayed.class
+                        ybuttonpressed = false;
+
+                        if (Servo_On) {
+                            Servo2.setPosition(Up_Spin);
+                            Servo3.setPosition(Up_Spin2);
+                            Servo_On = false;
+                            //Delayed.class
+                        }
+
+                        else {
+                            Servo2.setPosition(Down_Spin);
+                            Servo3.setPosition(Down_Spin2);
+                            Servo_On = true;
+                        }
+
                     }
-                    //This is similar to the above, except it does the inverse function
-                    else {
-                        Servo2.setPosition(Down_Spin);
-                        Servo3.setPosition(Down_Spin2);
-                        Servo_On = true;
-                    }}
+                }
             }
 
-        }, 1000);
+        //}, 1000);
 
     }
 }
