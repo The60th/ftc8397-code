@@ -35,7 +35,7 @@ public class allterrain extends OpMode{
         //set the power of the motors with the gamepad values
         double leftY = -gamepad1.left_stick_y * 100;
         double rightY = -gamepad1.right_stick_y * 100;
-        double UpPower = 1;
+        //double UpPower = -.50;
         leftMotor.setPower(leftY/275);
         //midLeftMotor.setPower(leftY/275);
         leftRearMotor.setPower(leftY/275);
@@ -43,11 +43,18 @@ public class allterrain extends OpMode{
         rightMotor.setPower(rightY/275);
        // midRightMotor.setPower(rightY/275);
         rightRearMotor.setPower(rightY/275);
-        if (gamepad1.a)
-        {
-            UpLeftMotor.setPower(UpPower);
-            UpRightMotor.setPower(UpPower);
+
+        if (gamepad1.left_bumper){
+            UpLeftMotor.setPower(-1);
+            UpRightMotor.setPower(-1);
+
         }
+        else{
+            UpLeftMotor.setPower(0);
+            UpRightMotor.setPower(0);
+
+        }
+
 
     }
 
