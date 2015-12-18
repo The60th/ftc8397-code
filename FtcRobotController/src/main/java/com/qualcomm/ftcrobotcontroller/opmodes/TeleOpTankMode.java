@@ -71,10 +71,10 @@ public class TeleOpTankMode  extends OpMode
 
 
         //Moved here to be a local double rather then whole class wide just makes stuff work better I believe.
-         final double Left_Spin = 0.5;
-         final double Left_Spin_Stop = 1;
-         final double Right_Spin = 0.5;
-         final double Right_Spin_Stop = 0;
+         final double Right_Spin = 1.0;
+         final double Right_Spin_Stop = 0.5;
+         final double Left_Spin = 0.0;
+         final double Left_Spin_Stop = 0.5;
 
         float leftY = -gamepad1.left_stick_y * 100;
         float rightY = -gamepad1.right_stick_y * 100; //
