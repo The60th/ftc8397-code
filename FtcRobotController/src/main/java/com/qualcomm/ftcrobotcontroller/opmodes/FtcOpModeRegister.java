@@ -83,6 +83,7 @@ public class FtcOpModeRegister implements OpModeRegister {
     manager.register("allterrain", allterrain.class);
     manager.register("AutoModeTesting", AutoModeTesting.class);
     manager.register("ReUseAbleTest", MotorServoClass.class);
+    manager.register("autobluep1ramp1noD",autobluep1ramp1noD.class);
     //manager.register ("PushBotManual1", PushBotManual1.class);
     //manager.register ("PushBotAutoSensors", PushBotAutoSensors.class);
     //manager.register ("PushBotIrEvent", PushBotIrEvent.class);
