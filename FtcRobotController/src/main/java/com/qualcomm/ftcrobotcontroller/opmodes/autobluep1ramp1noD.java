@@ -49,6 +49,12 @@ public class autobluep1ramp1noD extends LinearOpMode {
             rightMotor.setPower(.5);
             leftMotor.setPower(.5);
             Thread.sleep(4000);
+
+            rightRearMotor.setPower(-.5);
+            leftRearMotor.setPower(.5);
+            rightMotor.setPower(-.5);
+            leftMotor.setPower(.5);
+            Thread.sleep(200);
         }
 
     }

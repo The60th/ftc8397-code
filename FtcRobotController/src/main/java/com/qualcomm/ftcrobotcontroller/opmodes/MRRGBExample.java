@@ -96,7 +96,7 @@ public class MRRGBExample extends LinearOpMode {
     // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
     while (opModeIsActive()) {
       // check the status of the x button on either gamepad.
-      bCurrState = gamepad1.x || gamepad2.x;
+      //bCurrState = gamepad1.x || gamepad2.x;
 
       // check for button state transitions.
       if (bCurrState == true && bCurrState != bPrevState)  {
@@ -113,7 +113,7 @@ public class MRRGBExample extends LinearOpMode {
 
         // turn on the LED.
         sensorRGB.enableLed(bEnabled);
-      } else if (bCurrState == false && bCurrState != bPrevState)  {
+      }  else if (bCurrState == false && bCurrState != bPrevState)  {
         // button is transitioning to a released state.
 
         // print a debug statement.
@@ -131,6 +131,7 @@ public class MRRGBExample extends LinearOpMode {
 
       // convert the RGB values to HSV values.
       //Color.RGBToHSV((sensorRGB.red() * 8), (sensorRGB.green() * 8), (sensorRGB.blue() * 8), hsvValues);
+
       Color.RGBToHSV(sensorRGB.red()*8, sensorRGB.green()*8, sensorRGB.blue()*8, hsvValues);
 
       // send the info back to driver station using telemetry function.
@@ -143,11 +144,13 @@ public class MRRGBExample extends LinearOpMode {
       // change the background color to match the color detected by the RGB sensor.
       // pass a reference to the hue, saturation, and value array as an argument
       // to the HSVToColor method.
+
       relativeLayout.post(new Runnable() {
         public void run() {
           relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
         }
-      });
+      }
+      );
 
       // wait a hardware cycle before iterating.
       waitOneFullHardwareCycle();
