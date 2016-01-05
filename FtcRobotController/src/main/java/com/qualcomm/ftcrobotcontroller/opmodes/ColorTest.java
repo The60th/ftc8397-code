@@ -106,7 +106,7 @@ public class ColorTest extends LinearOpMode {
             double rightY = -gamepad1.right_stick_y;
             double UpPower = -.50;
             double Stop =0.0;
-            float []HSVTest ={1,1,1};
+            float []HSVTest ={0F,0F,0F};
             int OutPut = 1; //does nothing just for testing ints in telemetry outputs.
             Color.RGBToHSV(sensorRGB.red(), sensorRGB.green(), sensorRGB.blue(), HSVTest);
             telemetry.addData("Clear", sensorRGB.alpha()); //Is just out puting what the sensor picks up for the color value?
@@ -114,6 +114,8 @@ public class ColorTest extends LinearOpMode {
             telemetry.addData("Green", sensorRGB.green()); // ^
             telemetry.addData("Blue ", sensorRGB.blue()); //^
             telemetry.addData("Hue", HSVTest[0]);      //  Is giving off what the HSV values are now? Like its just converting the RGB stuff
+            telemetry.addData("Saturation", HSVTest[1]); // This should return the saturation value
+            telemetry.addData("Value", HSVTest[2]);    // This should output the value value
             telemetry.addData("TestOutPut", OutPut);     // to HSV then outputing it in the array HSVTest?
                                                         // Sooo you take the hsv and need to compare whatever you test to that
                                                         // to for using in if statements ect?
