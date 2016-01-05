@@ -58,7 +58,7 @@ public class ColorTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         hardwareMap.logDevices();
         sensorRGB = hardwareMap.colorSensor.get("mr");
-        sensorRGB.enableLed(true);
+        sensorRGB.enableLed(false);
         leftMotor = hardwareMap.dcMotor.get("leftMotor");
         rightMotor = hardwareMap.dcMotor.get("rightMotor");
         UpLeftMotor =hardwareMap.dcMotor.get("midLeftMotor");
@@ -108,7 +108,7 @@ public class ColorTest extends LinearOpMode {
             double Stop =0.0;
             float []HSVTest ={0F,0F,0F};
             int OutPut = 1; //does nothing just for testing ints in telemetry outputs.
-            Color.RGBToHSV(sensorRGB.red(), sensorRGB.green(), sensorRGB.blue(), HSVTest);
+            Color.RGBToHSV(sensorRGB.red()*8, sensorRGB.green()*8, sensorRGB.blue()*8, HSVTest);
             telemetry.addData("Clear", sensorRGB.alpha()); //Is just out puting what the sensor picks up for the color value?
             telemetry.addData("Red  ", sensorRGB.red());   // ^
             telemetry.addData("Green", sensorRGB.green()); // ^
