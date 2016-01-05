@@ -40,21 +40,18 @@ import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.ftcrobotcontroller.R;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
-/*
- *
- * This is an example LinearOpMode that shows how to use
- * a Modern Robotics Color Sensor.
- *
- * The op mode assumes that the color sensor
- * is configured with a name of "mr".
- *
- * You can use the X button on either gamepad to turn the LED on and off.
- *
- */
+
 public class ColorTest extends LinearOpMode {
 
     ColorSensor sensorRGB;
+    DcMotor rightRearMotor;
+    DcMotor leftRearMotor;
+    DcMotor leftMotor;
+    DcMotor rightMotor;
+    DcMotor UpLeftMotor;
+    DcMotor UpRightMotor;
 
 
     @Override
@@ -62,15 +59,26 @@ public class ColorTest extends LinearOpMode {
         hardwareMap.logDevices();
         sensorRGB = hardwareMap.colorSensor.get("mr");
         sensorRGB.enableLed(true);
+        leftMotor = hardwareMap.dcMotor.get("leftMotor");
+        rightMotor = hardwareMap.dcMotor.get("rightMotor");
+        UpLeftMotor =hardwareMap.dcMotor.get("midLeftMotor");
+        UpRightMotor = hardwareMap.dcMotor.get("midRightMotor");
+        leftRearMotor =hardwareMap.dcMotor.get("leftRearMotor");
+        rightRearMotor = hardwareMap.dcMotor.get("rightRearMotor");
+
+        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        UpRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
         waitOneFullHardwareCycle();
         waitForStart();
-        float []ColorValue =  {0F,0F,0F};
-        final float []values2 = ColorValue;
 
-        float []hsvValues = {0F,0F,0F};
-        final float []values = hsvValues;
+        //float []ColorValue =  {0F,0F,0F};
+        //final float []values2 = ColorValue;
 
-        while (opModeIsActive()) {
+        //float []hsvValues = {0F,0F,0F};
+        //final float []values = hsvValues;
+
+        /*while (opModeIsActive()) {
             Color.RGBToHSV(sensorRGB.red() * 8, sensorRGB.green() * 8, sensorRGB.blue() * 8, hsvValues);
             telemetry.addData("Clear", sensorRGB.alpha());
             telemetry.addData("Red  ", sensorRGB.red());
@@ -89,6 +97,49 @@ public class ColorTest extends LinearOpMode {
             }
             waitOneFullHardwareCycle();
 
+            float []HSVTest ={1,1,1};
+            Color.RGBToHSV(sensorRGB.red(),sensorRGB.green(),sensorRGB.blue(), HSVTest);
+
+        }*/
+        while (opModeIsActive()) {
+            double leftY = -gamepad1.left_stick_y;
+            double rightY = -gamepad1.right_stick_y;
+            double UpPower = -.50;
+            double Stop =0.0;
+            float []HSVTest ={1,1,1};
+            int OutPut = 1; //does nothing just for testing ints in telemetry outputs.
+            Color.RGBToHSV(sensorRGB.red(), sensorRGB.green(), sensorRGB.blue(), HSVTest);
+            telemetry.addData("Clear", sensorRGB.alpha()); //Is just out puting what the sensor picks up for the color value?
+            telemetry.addData("Red  ", sensorRGB.red());   // ^
+            telemetry.addData("Green", sensorRGB.green()); // ^
+            telemetry.addData("Blue ", sensorRGB.blue()); //^
+            telemetry.addData("Hue", HSVTest[0]);      //  Is giving off what the HSV values are now? Like its just converting the RGB stuff
+            telemetry.addData("TestOutPut", OutPut);     // to HSV then outputing it in the array HSVTest?
+                                                        // Sooo you take the hsv and need to compare whatever you test to that
+                                                        // to for using in if statements ect?
+            //Notes:
+            //Might use just hue from HSV to tell if a color is red/blue because of a range of 0-360? test it later.
+            //Need notes of what the sensor picks up in diffrent colors the RBG, HSV ect.
+            //
+            leftMotor.setPower(rightY / 75);
+            leftRearMotor.setPower(rightY / 75);
+            rightMotor.setPower(leftY / 75);
+            rightRearMotor.setPower(leftY/75);
+            telemetry.addData("Both left motors are running at the power of", leftY);
+            telemetry.addData("Both right morors are running at the power of", rightY);
+
+            if (gamepad1.left_bumper){
+                UpLeftMotor.setPower(UpPower);
+                UpRightMotor.setPower(UpPower);
+                telemetry.addData("Up left motor running at power",UpPower);
+                telemetry.addData("Up right motor running at power",UpPower);
+            }
+            else{
+                UpLeftMotor.setPower(Stop);
+                UpRightMotor.setPower(Stop);
+                telemetry.addData("Up left motor is currently","not running");
+                telemetry.addData("Up right motor is currently","not running");
+            }
 
         }
 
