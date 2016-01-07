@@ -45,10 +45,16 @@ public class allterrain extends OpMode{
         rightRearMotor.setPower(leftY/275);
 
         if (gamepad1.left_bumper){
-            UpLeftMotor.setPower(-.50);
-            UpRightMotor.setPower(-.50);
+            UpLeftMotor.setPower(.25);
+            UpRightMotor.setPower(.25);
 
+            if (gamepad1.right_bumper){
+                UpLeftMotor.setPower(-.25);
+                UpRightMotor.setPower(-.25);
+
+            }
         }
+
         else{
             UpLeftMotor.setPower(0.0);
             UpRightMotor.setPower(0.0);
@@ -57,7 +63,9 @@ public class allterrain extends OpMode{
 
         }
 
-}}
+
+
+    }}
 
 
 
