@@ -46,20 +46,22 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class ColorTest extends LinearOpMode {
 
     ColorSensor sensorRGB;
-    DcMotor rightRearMotor;
+    /*DcMotor rightRearMotor;
     DcMotor leftRearMotor;
     DcMotor leftMotor;
     DcMotor rightMotor;
     DcMotor UpLeftMotor;
-    DcMotor UpRightMotor;
+    DcMotor UpRightMotor;*/
 
+                                           //NOTICE THIS SHOULD WORK AND OUTPUTS THE VALUES OF RED AS: HSV 0,1,1 AND BLUE AS 240,1,1
 
     @Override
+
     public void runOpMode() throws InterruptedException {
         hardwareMap.logDevices();
         sensorRGB = hardwareMap.colorSensor.get("mr");
         sensorRGB.enableLed(false);
-        leftMotor = hardwareMap.dcMotor.get("leftMotor");
+       /* leftMotor = hardwareMap.dcMotor.get("leftMotor");
         rightMotor = hardwareMap.dcMotor.get("rightMotor");
         UpLeftMotor =hardwareMap.dcMotor.get("midLeftMotor");
         UpRightMotor = hardwareMap.dcMotor.get("midRightMotor");
@@ -68,46 +70,18 @@ public class ColorTest extends LinearOpMode {
 
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
         UpRightMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightRearMotor.setDirection(DcMotor.Direction.REVERSE);*/
         waitOneFullHardwareCycle();
         waitForStart();
 
-        //float []ColorValue =  {0F,0F,0F};
-        //final float []values2 = ColorValue;
 
-        //float []hsvValues = {0F,0F,0F};
-        //final float []values = hsvValues;
-
-        /*while (opModeIsActive()) {
-            Color.RGBToHSV(sensorRGB.red() * 8, sensorRGB.green() * 8, sensorRGB.blue() * 8, hsvValues);
-            telemetry.addData("Clear", sensorRGB.alpha());
-            telemetry.addData("Red  ", sensorRGB.red());
-            telemetry.addData("Green", sensorRGB.green());
-            telemetry.addData("Blue ", sensorRGB.blue());
-            telemetry.addData("Hue", hsvValues[0]);
-
-
-            Log.d("Test", "This is my test");
-            telemetry.addData("Test", "Test"); //Shows message if values ==?
-
-            if(values2 == values)
-            {
-                Log.w("Test","This is my test");
-            telemetry.addData("Test","Test"); //Shows message if values ==?
-            }
-            waitOneFullHardwareCycle();
-
-            float []HSVTest ={1,1,1};
-            Color.RGBToHSV(sensorRGB.red(),sensorRGB.green(),sensorRGB.blue(), HSVTest);
-
-        }*/
         while (opModeIsActive()) {
-            double leftY = -gamepad1.left_stick_y;
+            /*double leftY = -gamepad1.left_stick_y;
             double rightY = -gamepad1.right_stick_y;
             double UpPower = -.50;
-            double Stop =0.0;
+            double Stop =0.0; */
             float []HSVTest ={0F,0F,0F};
-            int OutPut = 1; //does nothing just for testing ints in telemetry outputs.
+            sensorRGB.enableLed(true);
             Color.RGBToHSV(sensorRGB.red()*8, sensorRGB.green()*8, sensorRGB.blue()*8, HSVTest);
             telemetry.addData("Clear", sensorRGB.alpha()); //Is just out puting what the sensor picks up for the color value?
             telemetry.addData("Red  ", sensorRGB.red());   // ^
@@ -116,14 +90,14 @@ public class ColorTest extends LinearOpMode {
             telemetry.addData("Hue", HSVTest[0]);      //  Is giving off what the HSV values are now? Like its just converting the RGB stuff
             telemetry.addData("Saturation", HSVTest[1]); // This should return the saturation value
             telemetry.addData("Value", HSVTest[2]);    // This should output the value value
-            telemetry.addData("TestOutPut", OutPut);     // to HSV then outputing it in the array HSVTest?
+                                                        // to HSV then outputing it in the array HSVTest?
                                                         // Sooo you take the hsv and need to compare whatever you test to that
                                                         // to for using in if statements ect?
             //Notes:
             //Might use just hue from HSV to tell if a color is red/blue because of a range of 0-360? test it later.
             //Need notes of what the sensor picks up in diffrent colors the RBG, HSV ect.
             //
-            leftMotor.setPower(rightY / 75);
+           /* leftMotor.setPower(rightY / 75);
             leftRearMotor.setPower(rightY / 75);
             rightMotor.setPower(leftY / 75);
             rightRearMotor.setPower(leftY/75);
@@ -141,7 +115,18 @@ public class ColorTest extends LinearOpMode {
                 UpRightMotor.setPower(Stop);
                 telemetry.addData("Up left motor is currently","not running");
                 telemetry.addData("Up right motor is currently","not running");
-            }
+            } */
+
+        if(HSVTest[0] >= 235 && HSVTest[1] > 0.5 && HSVTest[2] > 0.5 )
+        {
+        telemetry.addData("We found the color blue!","Yayyyy! Good Job team beta! We are going to go to worlds!");
+
+        }
+        else
+        {
+         telemetry.addData("Ohh no,we didn't find the color blue!","This is bad guys! I don't think we are going to worlds!");
+
+        }
 
         }
 
