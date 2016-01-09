@@ -41,6 +41,9 @@ import com.qualcomm.ftcrobotcontroller.R;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.Range;
+
+import java.util.Random;
 
 
 public class ColorTest extends LinearOpMode {
@@ -80,8 +83,15 @@ public class ColorTest extends LinearOpMode {
             double rightY = -gamepad1.right_stick_y;
             double UpPower = -.50;
             double Stop =0.0; */
+
             double blue = sensorRGB.blue();
+            double red = sensorRGB.red();
+            double clear = sensorRGB.alpha();
+            double green = sensorRGB.green();
             float []HSVTest ={0F,0F,0F};
+
+
+
             sensorRGB.enableLed(true);
             Color.RGBToHSV(sensorRGB.red()*8, sensorRGB.green()*8, sensorRGB.blue()*8, HSVTest);
             telemetry.addData("Clear", sensorRGB.alpha()); //Is just out puting what the sensor picks up for the color value?
@@ -118,16 +128,23 @@ public class ColorTest extends LinearOpMode {
                 telemetry.addData("Up right motor is currently","not running");
             } */
 
-        if(HSVTest[0] >= 235 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.08 && blue >= 2.5)
+        if(HSVTest[0] >= 225 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.08 && blue >= 5 && green >=1 && clear >=2 && green <= 15 && clear <= 10 && red >= 0 && red <= 2)
         {
-        telemetry.addData("We found the color blue!","Yayyyy! Good Job team beta! We are going to go to worlds!");
+            telemetry.addData("Found Blue","");
 
         }
+        else if(HSVTest[0] >= 0 && HSVTest[1] >= 1 && HSVTest[2] >= 0.3 && red >= 8 && green >=3 && clear >=10 && green <= 7 && clear <= 21 && blue >= 0 && blue <= 2) {
+            telemetry.addData("Found Red","");
+
+        }
+
         else
         {
-         telemetry.addData("Ohh no,we didn't find the color blue!","This is bad guys! I don't think we are going to worlds!");
+         telemetry.addData("No","Colors");
 
         }
+
+
 
         }
 
