@@ -12,6 +12,8 @@ public class allterrain extends OpMode{
     DcMotor rightMotor;
     DcMotor UpLeftMotor;
     DcMotor UpRightMotor;
+    DcMotor oneArmMotor;
+    DcMotor twoArmMotor;
 
     @Override
 
@@ -23,6 +25,8 @@ public class allterrain extends OpMode{
         UpRightMotor = hardwareMap.dcMotor.get("midRightMotor");
         leftRearMotor =hardwareMap.dcMotor.get("leftRearMotor");
         rightRearMotor = hardwareMap.dcMotor.get("rightRearMotor");
+        oneArmMotor = hardwareMap.dcMotor.get("oneArmMotor");
+        twoArmMotor = hardwareMap.dcMotor.get("twoAreMotor");
 
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
         UpRightMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -44,6 +48,14 @@ public class allterrain extends OpMode{
        // midRightMotor.setPower(rightY/275);
         rightRearMotor.setPower(leftY/275);
 
+        double leftx = -gamepad2.left_stick_y * 100;
+        double rightx = -gamepad2.right_stick_y * 100;
+        //double UpPower = -.50;
+        oneArmMotor.setPower(rightx/275);
+        //midLeftMotor.setPower(leftY/275);
+        twoArmMotor.setPower(leftx/275);
+
+
         if (gamepad1.left_bumper){
             UpLeftMotor.setPower(.25);
             UpRightMotor.setPower(.25);
@@ -62,6 +74,8 @@ public class allterrain extends OpMode{
 
 
         }
+
+
 
 
 
