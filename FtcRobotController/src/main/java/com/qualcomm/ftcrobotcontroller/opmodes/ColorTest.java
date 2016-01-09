@@ -80,6 +80,7 @@ public class ColorTest extends LinearOpMode {
             double rightY = -gamepad1.right_stick_y;
             double UpPower = -.50;
             double Stop =0.0; */
+            double blue = sensorRGB.blue();
             float []HSVTest ={0F,0F,0F};
             sensorRGB.enableLed(true);
             Color.RGBToHSV(sensorRGB.red()*8, sensorRGB.green()*8, sensorRGB.blue()*8, HSVTest);
@@ -117,7 +118,7 @@ public class ColorTest extends LinearOpMode {
                 telemetry.addData("Up right motor is currently","not running");
             } */
 
-        if(HSVTest[0] >= 235 && HSVTest[1] > 0.5 && HSVTest[2] > 0.5 )
+        if(HSVTest[0] >= 235 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.08 && blue >= 2.5)
         {
         telemetry.addData("We found the color blue!","Yayyyy! Good Job team beta! We are going to go to worlds!");
 
