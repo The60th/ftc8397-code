@@ -64,16 +64,7 @@ public class ColorTest extends LinearOpMode {
         hardwareMap.logDevices();
         sensorRGB = hardwareMap.colorSensor.get("mr");
         sensorRGB.enableLed(false);
-       /* leftMotor = hardwareMap.dcMotor.get("leftMotor");
-        rightMotor = hardwareMap.dcMotor.get("rightMotor");
-        UpLeftMotor =hardwareMap.dcMotor.get("midLeftMotor");
-        UpRightMotor = hardwareMap.dcMotor.get("midRightMotor");
-        leftRearMotor =hardwareMap.dcMotor.get("leftRearMotor");
-        rightRearMotor = hardwareMap.dcMotor.get("rightRearMotor");
 
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
-        UpRightMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightRearMotor.setDirection(DcMotor.Direction.REVERSE);*/
         waitOneFullHardwareCycle();
         waitForStart();
 
@@ -104,29 +95,6 @@ public class ColorTest extends LinearOpMode {
                                                         // to HSV then outputing it in the array HSVTest?
                                                         // Sooo you take the hsv and need to compare whatever you test to that
                                                         // to for using in if statements ect?
-            //Notes:
-            //Might use just hue from HSV to tell if a color is red/blue because of a range of 0-360? test it later.
-            //Need notes of what the sensor picks up in diffrent colors the RBG, HSV ect.
-            //
-           /* leftMotor.setPower(rightY / 75);
-            leftRearMotor.setPower(rightY / 75);
-            rightMotor.setPower(leftY / 75);
-            rightRearMotor.setPower(leftY/75);
-            telemetry.addData("Both left motors are running at the power of", leftY);
-            telemetry.addData("Both right morors are running at the power of", rightY);
-
-            if (gamepad1.left_bumper){
-                UpLeftMotor.setPower(UpPower);
-                UpRightMotor.setPower(UpPower);
-                telemetry.addData("Up left motor running at power",UpPower);
-                telemetry.addData("Up right motor running at power",UpPower);
-            }
-            else{
-                UpLeftMotor.setPower(Stop);
-                UpRightMotor.setPower(Stop);
-                telemetry.addData("Up left motor is currently","not running");
-                telemetry.addData("Up right motor is currently","not running");
-            } */
 
         if(HSVTest[0] >= 225 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.08 && blue >= 5 && green >=1 && clear >=2 && green <= 15 && clear <= 10 && red >= 0 && red <= 2)
         {
