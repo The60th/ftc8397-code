@@ -49,13 +49,10 @@ import java.util.Random;
 public class ColorTest extends LinearOpMode {
 
     ColorSensor sensorRGB;
-    /*DcMotor rightRearMotor;
-    DcMotor leftRearMotor;
+    //DcMotor rightRearMotor;
+    //DcMotor leftRearMotor;
     DcMotor leftMotor;
     DcMotor rightMotor;
-    DcMotor UpLeftMotor;
-    DcMotor UpRightMotor;*/
-
                                            //NOTICE THIS SHOULD WORK AND OUTPUTS THE VALUES OF RED AS: HSV 0,1,1 AND BLUE AS 240,1,1
 
     @Override
@@ -64,6 +61,10 @@ public class ColorTest extends LinearOpMode {
         hardwareMap.logDevices();
         sensorRGB = hardwareMap.colorSensor.get("mr");
         sensorRGB.enableLed(false);
+        //leftRearMotor =hardwareMap.dcMotor.get("leftRearMotor");
+        //rightRearMotor = hardwareMap.dcMotor.get("rightRearMotor");
+        leftMotor = hardwareMap.dcMotor.get("leftMotor");
+        rightMotor = hardwareMap.dcMotor.get("rightMotor");
 
         waitOneFullHardwareCycle();
         waitForStart();
@@ -74,50 +75,58 @@ public class ColorTest extends LinearOpMode {
             double rightY = -gamepad1.right_stick_y;
             double UpPower = -.50;
             double Stop =0.0; */
-
             double blue = sensorRGB.blue();
             double red = sensorRGB.red();
             double clear = sensorRGB.alpha();
             double green = sensorRGB.green();
             float []HSVTest ={0F,0F,0F};
-
-
-
             sensorRGB.enableLed(true);
-            Color.RGBToHSV(sensorRGB.red()*8, sensorRGB.green()*8, sensorRGB.blue()*8, HSVTest);
-            telemetry.addData("Clear", sensorRGB.alpha()); //Is just out puting what the sensor picks up for the color value?
-            telemetry.addData("Red  ", sensorRGB.red());   // ^
-            telemetry.addData("Green", sensorRGB.green()); // ^
-            telemetry.addData("Blue ", sensorRGB.blue()); //^
-            telemetry.addData("Hue", HSVTest[0]);      //  Is giving off what the HSV values are now? Like its just converting the RGB stuff
-            telemetry.addData("Saturation", HSVTest[1]); // This should return the saturation value
-            telemetry.addData("Value", HSVTest[2]);    // This should output the value value
-                                                        // to HSV then outputing it in the array HSVTest?
-                                                        // Sooo you take the hsv and need to compare whatever you test to that
-                                                        // to for using in if statements ect?
+            Color.RGBToHSV(sensorRGB.red() * 8, sensorRGB.green() * 8, sensorRGB.blue() * 8, HSVTest);
+            telemetry.addData("Clear", sensorRGB.alpha());
+            telemetry.addData("Red  ", sensorRGB.red());
+            telemetry.addData("Green", sensorRGB.green());
+            telemetry.addData("Blue ", sensorRGB.blue());
+            telemetry.addData("Hue", HSVTest[0]);
+            telemetry.addData("Saturation", HSVTest[1]);
+            telemetry.addData("Value", HSVTest[2]);
 
-        if(HSVTest[0] >= 225 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.08 && blue >= 5 && green >=1 && clear >=2 && green <= 15 && clear <= 10 && red >= 0 && red <= 2)
+
+
+        if(HSVTest[0] >= 225 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.08 && blue >= 5 && green >=1 && clear >=2 && green <= 15 && clear <= 10 && red >= 0 && red <= 2) //Tests for blue
         {
-            telemetry.addData("Found Blue","");
-
+            telemetry.addData("Found Blue", "");
+            //rightRearMotor.setPower(-1);
+            //leftRearMotor.setPower(-1);
+            leftMotor.setPower(1);
+            rightMotor.setPower(-1);
+            sleep(1000);
+            leftMotor.setPower(0);
+            rightMotor.setPower(0);
+            telemetry.addData("Motor has been run","");
+            sleep(5000);
+            telemetry.clearData();
         }
-        else if(HSVTest[0] >= 0 && HSVTest[1] >= 1 && HSVTest[2] >= 0.3 && red >= 8 && green >=3 && clear >=10 && green <= 7 && clear <= 21 && blue >= 0 && blue <= 2) {
+        else if(HSVTest[0] >= 0 && HSVTest[1] >= 1 && HSVTest[2] >= 0.3 && red >= 8 && green >=3 && clear >=10 && green <= 7 && clear <= 21 && blue >= 0 && blue <= 2) //Tests for red
+        {
             telemetry.addData("Found Red","");
-
+            //rightRearMotor.setPower(1);
+            //leftRearMotor.setPower(1);
+             leftMotor.setPower(-1);
+             rightMotor.setPower(1);
+             sleep(1000);
+            leftMotor.setPower(0);
+            rightMotor.setPower(0);
+            telemetry.addData("Motor has been run","");
+            sleep(5000);
+            telemetry.clearData();
         }
 
         else
         {
          telemetry.addData("No","Colors");
-
         }
 
 
-
         }
-
-
-
-
     }
 }
