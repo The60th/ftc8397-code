@@ -67,12 +67,10 @@ public class allterrain extends OpMode{
             }
         }
 
-        else{
+        else
+        {
             UpLeftMotor.setPower(0.0);
             UpRightMotor.setPower(0.0);
-
-
-
         }
 
 
