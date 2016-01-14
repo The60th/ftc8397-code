@@ -41,6 +41,7 @@ import com.qualcomm.ftcrobotcontroller.R;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.Random;
@@ -66,6 +67,11 @@ public class ColorTest extends LinearOpMode {
         leftMotor = hardwareMap.dcMotor.get("leftMotor");
         rightMotor = hardwareMap.dcMotor.get("rightMotor");
 
+        rightMotor.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        rightMotor.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+
+        String colorfound = "none";
+
         waitOneFullHardwareCycle();
         waitForStart();
 
@@ -90,43 +96,43 @@ public class ColorTest extends LinearOpMode {
             telemetry.addData("Saturation", HSVTest[1]);
             telemetry.addData("Value", HSVTest[2]);
 
+            if(HSVTest[0] >= 225 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.08 && blue >= 5 && green >=1 && clear >=2 && green <= 15 && clear <= 10 && red >= 0 && red <= 2) //Tests for blue
+            {
+                colorfound = "blue";
+                telemetry.addData("Found Blue", "");
+                //rightRearMotor.setPower(-1);
+                //leftRearMotor.setPower(-1);
+                leftMotor.setPower(1);
+                rightMotor.setPower(1);
+                sleep(1000);
+                leftMotor.setPower(0);
+                rightMotor.setPower(0);
+                telemetry.addData("Motor has been run","");
+                sleep(5000);
+                telemetry.clearData();
+            }
+            else if(HSVTest[0] >= 0 && HSVTest[1] >= 1 && HSVTest[2] >= 0.3 && red >= 8 && green >=3 && clear >=10 && green <= 7 && clear <= 21 && blue >= 0 && blue <= 2) //Tests for red
+            {
+                colorfound = "red";
+                telemetry.addData("Found Red","");
+                //rightRearMotor.setPower(1);
+                //leftRearMotor.setPower(1);
+                 leftMotor.setPower(-1);
+                 rightMotor.setPower(1);
+                 sleep(1000);
+                leftMotor.setPower(0);
+                rightMotor.setPower(0);
+                telemetry.addData("Motor has been run","");
+                sleep(5000);
+                telemetry.clearData();
+            }
+            else
+            {
+                colorfound = "none";
+                telemetry.addData("No","Colors");
+            }
 
-
-        if(HSVTest[0] >= 225 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.08 && blue >= 5 && green >=1 && clear >=2 && green <= 15 && clear <= 10 && red >= 0 && red <= 2) //Tests for blue
-        {
-            telemetry.addData("Found Blue", "");
-            //rightRearMotor.setPower(-1);
-            //leftRearMotor.setPower(-1);
-            leftMotor.setPower(1);
-            rightMotor.setPower(-1);
-            sleep(1000);
-            leftMotor.setPower(0);
-            rightMotor.setPower(0);
-            telemetry.addData("Motor has been run","");
-            sleep(5000);
-            telemetry.clearData();
-        }
-        else if(HSVTest[0] >= 0 && HSVTest[1] >= 1 && HSVTest[2] >= 0.3 && red >= 8 && green >=3 && clear >=10 && green <= 7 && clear <= 21 && blue >= 0 && blue <= 2) //Tests for red
-        {
-            telemetry.addData("Found Red","");
-            //rightRearMotor.setPower(1);
-            //leftRearMotor.setPower(1);
-             leftMotor.setPower(-1);
-             rightMotor.setPower(1);
-             sleep(1000);
-            leftMotor.setPower(0);
-            rightMotor.setPower(0);
-            telemetry.addData("Motor has been run","");
-            sleep(5000);
-            telemetry.clearData();
-        }
-
-        else
-        {
-         telemetry.addData("No","Colors");
-        }
-
-
+            telemetry.addData(colorfound,"");
         }
     }
 }
