@@ -2,7 +2,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
+import com.qualcomm.robotcore.hardware.Servo;
 //Created by CanAdirondack on 11/25/2015.
 
 public class allterrain extends OpMode{
@@ -10,26 +10,27 @@ public class allterrain extends OpMode{
     DcMotor leftRearMotor;
     DcMotor leftMotor;
     DcMotor rightMotor;
-    DcMotor UpLeftMotor;
-    DcMotor UpRightMotor;
+    DcMotor UpMidleMotor;
+    DcMotor threeArmMotor;
     DcMotor oneArmMotor;
     DcMotor twoArmMotor;
-
+    Servo turnServo;
     @Override
 
     public void init() {
         //get references to the motors from the hardware map
         leftMotor = hardwareMap.dcMotor.get("leftMotor");
         rightMotor = hardwareMap.dcMotor.get("rightMotor");
-        UpLeftMotor =hardwareMap.dcMotor.get("midLeftMotor");
-        UpRightMotor = hardwareMap.dcMotor.get("midRightMotor");
+        UpMidleMotor =hardwareMap.dcMotor.get("UpMidleMotor");
+        threeArmMotor = hardwareMap.dcMotor.get("threeArmMotor");
         leftRearMotor =hardwareMap.dcMotor.get("leftRearMotor");
         rightRearMotor = hardwareMap.dcMotor.get("rightRearMotor");
         oneArmMotor = hardwareMap.dcMotor.get("oneArmMotor");
         twoArmMotor = hardwareMap.dcMotor.get("twoAreMotor");
+        turnServo = hardwareMap.servo.get("turnServo");
 
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
-        UpRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        //UpRightMotor.setDirection(DcMotor.Direction.REVERSE);
         rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
     }
 
@@ -52,29 +53,43 @@ public class allterrain extends OpMode{
         double rightx = -gamepad2.right_stick_y * 100;
         //double UpPower = -.50;
         oneArmMotor.setPower(rightx/275);
-        //midLeftMotor.setPower(leftY/275);
+
         twoArmMotor.setPower(leftx/275);
+
+        if (gamepad2.right_bumper){
+            threeArmMotor.setPower(.5);
+
+
+        }
+        else{
+            threeArmMotor.setPower(0.0);
+        }
 
 
         if (gamepad1.left_bumper){
-            UpLeftMotor.setPower(.25);
-            UpRightMotor.setPower(.25);
+            UpMidleMotor.setPower(.25);
+
 
             if (gamepad1.right_bumper){
-                UpLeftMotor.setPower(-.25);
-                UpRightMotor.setPower(-.25);
+                UpMidleMotor.setPower(-.25);
+
 
             }
         }
 
         else
         {
-            UpLeftMotor.setPower(0.0);
-            UpRightMotor.setPower(0.0);
+            UpMidleMotor.setPower(0.0);
+
         }
 
-
-
+        if(gamepad2.left_bumper)
+        {
+            turnServo.setPosition(6);
+        }
+        else{
+          turnServo.setPosition(0);
+        }
 
 
     }}

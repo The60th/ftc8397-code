@@ -28,11 +28,13 @@ public class EncoderExample extends LinearOpMode {
         right.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS); //setMode() is used instead of setChannelMode(), which is now deprecated
         waitForStart();
         left.setTargetPosition(1440); //Sets motor to move 1440 ticks (1440 is one rotation for Tetrix motors)
-        right.setTargetPosition(1440);
-        left.setPower(.5);
-        right.setPower(.5);
-        while(left.getCurrentPosition() < left.getTargetPosition() || right.getCurrentPosition() < right.getTargetPosition()) { //While target has not been reached
+        //right.setTargetPosition(1440);
+        left.setPower(.2);
+        right.setPower(.2);
+        while(Math.abs(left.getCurrentPosition()) < Math.abs(left.getTargetPosition()) ) { //While target has not been reached
             waitOneFullHardwareCycle(); //Needed within all loops
+            telemetry.addData("Left Motor: ", left.getCurrentPosition());
+            telemetry.addData("Right Motor: ", right.getCurrentPosition());
         }
         left.setPower(0);
         right.setPower(0);
