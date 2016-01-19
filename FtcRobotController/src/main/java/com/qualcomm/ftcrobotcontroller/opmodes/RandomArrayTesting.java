@@ -58,20 +58,18 @@ public class RandomArrayTesting extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         hardwareMap.logDevices();
         boolean Bradley_Likes_Tacos = false;
-    /*sensorRGB = hardwareMap.colorSensor.get("mr");
+    sensorRGB = hardwareMap.colorSensor.get("mr");
     sensorRGB.enableLed(false);
     double blue = sensorRGB.blue();
     double red = sensorRGB.red();
     double clear = sensorRGB.alpha();
     double green = sensorRGB.green();
-    float []HSVTest ={0F,0F,0F};*/
+    float []HSVTest ={0F,0F,0F};
         if(Bradley_Likes_Tacos = false){
             byte Tacos = 1;
             telemetry.addData("Bradle likes tacos!", Tacos );
         }
-        String[] Test;
-       /* Test = new String [
-                "( .-. )",
+        String[] values2 = {"( .-. )",
                 "( .o.)",
                 "( `·´ )",
                 "( ° ͜ ʖ °)",
@@ -198,7 +196,7 @@ public class RandomArrayTesting extends LinearOpMode {
                 "꒰･◡･๑꒱",
                 "﴾͡๏̯͡๏﴿",
                 "｡◕‿◕｡",
-                "ʕノ◔ϖ◔ʔノ","( .-. )",
+                "ʕノ◔ϖ◔ʔノ", "( .-. )",
                 "( .o.)",
                 "( `·´ )",
                 "( ° ͜ ʖ °)",
@@ -325,24 +323,38 @@ public class RandomArrayTesting extends LinearOpMode {
                 "꒰･◡･๑꒱",
                 "﴾͡๏̯͡๏﴿",
                 "｡◕‿◕｡",
-                "ʕノ◔ϖ◔ʔノ"
-        ];*/
+                "ʕノ◔ϖ◔ʔノ"};
+
+
+
+
+
+    /*String[] Test;
+    Test = new String [100];
+    Test[0] = "test"; */
+
+
 
 
         while (true) {
             telemetry.addData("test","hi");
-            //String RandomFace = (Test[new Random().nextInt(Test.length)]);
-            double[] RanNumberArray = {512047293};
+            String RandomFace = (values2[new Random().nextInt(values2.length)]);
+            double[] RanNumberArray = {};
             double RanNumber = (RanNumberArray[new Random().nextInt()]);
             telemetry.addData("Number Value?", RanNumber);
                 telemetry.addData("test", RanNumber);
             if(RanNumber == 66 || RanNumber ==17 || RanNumber == 76 || RanNumber == 2 || RanNumber == 82 || RanNumber == 30 || RanNumber == 52 || RanNumber == 62 || RanNumber ==14 || RanNumber == 83 || RanNumber == 43 || RanNumber == 55 || RanNumber == 72 || RanNumber == 20 || RanNumber == 90  ) {
-               // telemetry.addData("Test", RandomFace);
-                wait(2000);
+                telemetry.addData("Test", RandomFace);
+                sleep(2000);
                 telemetry.clearData();
-
+                sleep(5000);
             }
-            wait(5000);
+
+            if(Bradley_Likes_Tacos = false){
+                byte Tacos = 1;
+                telemetry.addData("Bradle likes tacos!", Tacos );
+            }
+
             if(RanNumber >= 10){
                 Bradley_Likes_Tacos = true;
 
