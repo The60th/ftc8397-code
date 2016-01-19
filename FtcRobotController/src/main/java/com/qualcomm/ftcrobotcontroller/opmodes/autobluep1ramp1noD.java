@@ -3,9 +3,6 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-/**
- * Created by CanAdirondack on 12/22/2015.
- */
 
 public class autobluep1ramp1noD extends LinearOpMode {
 
@@ -58,6 +55,8 @@ public class autobluep1ramp1noD extends LinearOpMode {
         }
 
     }
+
+
 
 
 
