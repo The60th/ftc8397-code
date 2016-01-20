@@ -91,6 +91,9 @@ public class allterrain extends OpMode{
           turnServo.setPosition(0);
         }
 
+        //To Do:
+        //Work with switching turnservo over to a joystick control rather then with buttons to make it flow better.
+        //Also switch over the main arms over to joystick control and trigersr rather then what the are currently set to.
 
     }}
 
