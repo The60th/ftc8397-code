@@ -68,8 +68,8 @@ public class ColorTest extends LinearOpMode {
         leftMotor = hardwareMap.dcMotor.get("leftMotor");
         rightMotor = hardwareMap.dcMotor.get("rightMotor");
 
-        rightMotor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
-        rightMotor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        //rightMotor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
+       // rightMotor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
 
         String colorfound = "none";
 
@@ -87,7 +87,7 @@ public class ColorTest extends LinearOpMode {
             double clear = sensorRGB.alpha();
             double green = sensorRGB.green();
             float []HSVTest ={0F,0F,0F};
-            sensorRGB.enableLed(true);
+            sensorRGB.enableLed(false);
             Color.RGBToHSV(sensorRGB.red() * 8, sensorRGB.green() * 8, sensorRGB.blue() * 8, HSVTest);
             telemetry.addData("Clear", sensorRGB.alpha());
             telemetry.addData("Red  ", sensorRGB.red());
@@ -97,10 +97,18 @@ public class ColorTest extends LinearOpMode {
             telemetry.addData("Saturation", HSVTest[1]);
             telemetry.addData("Value", HSVTest[2]);
 
+            rightMotor.setPower(.5);
+            leftMotor.setPower(-.5);
+            sleep(2500);
+
+            rightMotor.setPower(-.2);
+            leftMotor.setPower(-.2);
+            sleep(800);
+
             if(HSVTest[0] >= 225 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.08 && blue >= 5 && green >=1 && clear >=2 && green <= 15 && clear <= 10 && red >= 0 && red <= 2) //Tests for blue
             {
                 colorfound = "blue";
-                leftMotor.setTargetPosition(1440); //1140 should be a full spin source: https://www.reddit.com/r/FTC/comments/3qhfvj/help_with_encoders/?
+                /*leftMotor.setTargetPosition(1440); //1140 should be a full spin source: https://www.reddit.com/r/FTC/comments/3qhfvj/help_with_encoders/?
                 rightMotor.setTargetPosition(1440);
                 rightMotor.setPower(.5);
                 leftMotor.setPower(.5);
@@ -110,12 +118,12 @@ public class ColorTest extends LinearOpMode {
 
 
                 //sleep(5000);
-                //telemetry.clearData();
+                //telemetry.clearData();*/
             }
             else if(HSVTest[0] >= 0 && HSVTest[1] >= 1 && HSVTest[2] >= 0.3 && red >= 8 && green >=3 && clear >=10 && green <= 7 && clear <= 21 && blue >= 0 && blue <= 2) //Tests for red
             {
                 colorfound = "red";
-                 leftMotor.setTargetPosition(1440); //1140 should be a full spin source: https://www.reddit.com/r/FTC/comments/3qhfvj/help_with_encoders/?
+                /* leftMotor.setTargetPosition(1440); //1140 should be a full spin source: https://www.reddit.com/r/FTC/comments/3qhfvj/help_with_encoders/?
                  rightMotor.setTargetPosition(1440);
                  leftMotor.setPower(-.5);
                  rightMotor.setPower(-.5);
@@ -123,7 +131,7 @@ public class ColorTest extends LinearOpMode {
                 // leftMotor.setPower(0);
                  //rightMotor.setPower(0);
                 // sleep(5000);
-
+*/
             }
             else
             {

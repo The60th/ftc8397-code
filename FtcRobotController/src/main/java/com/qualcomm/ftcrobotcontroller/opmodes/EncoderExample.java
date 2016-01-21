@@ -14,6 +14,11 @@ public class EncoderExample extends LinearOpMode {
        left = hardwareMap.dcMotor.get("left");
        right = hardwareMap.dcMotor.get("right");
 
+        //not true anymore
+        double OneSpin = 1440;
+        double TenSpin = 14400;
+        double HalfSpin = 720;
+
 //Move 23inch*3.5 then turn to move 23*2.5
 
         left.setMode(DcMotorController.RunMode.RESET_ENCODERS); //Resets encoders
@@ -27,7 +32,24 @@ public class EncoderExample extends LinearOpMode {
         left.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS); //Sets mode to use encoders
         right.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS); //setMode() is used instead of setChannelMode(), which is now deprecated
         waitForStart();
-        left.setTargetPosition(1440); //Sets motor to move 1440 ticks (1440 is one rotation for Tetrix motors)
+        left.setTargetPosition(7200); //Sets motor to move 1440 ticks (1440 is one rotation for Tetrix motors)
+        //right.setTargetPosition(1440);
+        left.setPower(-.20);
+        right.setPower(.20);
+        while(Math.abs(left.getCurrentPosition()) < Math.abs(left.getTargetPosition()) ) { //While target has not been reached
+            waitOneFullHardwareCycle(); //Needed within all loops
+            telemetry.addData("Left Motor: ", left.getCurrentPosition());
+            telemetry.addData("Right Motor: ", right.getCurrentPosition());
+        }
+
+        left.setPower(0);
+        right.setPower(0);
+//1440 = 1 || 720 = .5 || 14400 = 10
+
+        left.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS); //Sets mode to use encoders
+        right.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS); //setMode() is used instead of setChannelMode(), which is now deprecated
+        waitForStart();
+        left.setTargetPosition(720); //Sets motor to move 1440 ticks (1440 is one rotation for Tetrix motors)
         //right.setTargetPosition(1440);
         left.setPower(.20);
         right.setPower(.20);
@@ -39,6 +61,13 @@ public class EncoderExample extends LinearOpMode {
 
         left.setPower(0);
         right.setPower(0);
+
+
+
+
+
+
+
         //To Do:
 
         //clear encoders
