@@ -16,7 +16,7 @@ public class allterrain extends OpMode{
     DcMotor threeArmMotor;
     //DcMotor oneArmMotor;
     //DcMotor twoArmMotor;
-    //Servo turnServo;
+    Servo turnServo;
     @Override
     public void init() {
         //get references to the motors from the hardware map
@@ -28,7 +28,7 @@ public class allterrain extends OpMode{
         rightRearMotor = hardwareMap.dcMotor.get("RM2"); //R_M2 was rightRearMotor
         //oneArmMotor = hardwareMap.dcMotor.get("oneArmMotor");
         //twoArmMotor = hardwareMap.dcMotor.get("twoArmMotor");
-        //turnServo = hardwareMap.servo.get("turnServo");
+        turnServo = hardwareMap.servo.get("turnServo");
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
         rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
     }
@@ -72,10 +72,10 @@ public class allterrain extends OpMode{
 
         if(gamepad2.left_bumper)
         {
-            //turnServo.setPosition(6);
+            turnServo.setPosition(0);
         }
         else{
-          //turnServo.setPosition(0);
+          turnServo.setPosition(.5);
         }
         //To Do:
         //Work with switching turnservo over to a joystick control rather then with buttons to make it flow better.
