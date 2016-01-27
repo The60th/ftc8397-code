@@ -57,8 +57,8 @@ public class ColorTest extends LinearOpMode {
         leftMotor = hardwareMap.dcMotor.get("LM1");
         rightMotor = hardwareMap.dcMotor.get("RM1");
         String colorfound = "none";
+        waitForStart();
         while (opModeIsActive()) {
-            waitForStart();
             double blue = sensorRGB.blue();
             double red = sensorRGB.red();
             double clear = sensorRGB.alpha();
@@ -74,26 +74,33 @@ public class ColorTest extends LinearOpMode {
             telemetry.addData("Saturation", HSVTest[1]);
             telemetry.addData("Value", HSVTest[2]);
 
-            rightMotor.setPower(.5); //foward
-            leftMotor.setPower(-.5);
-            sleep(2500);
+            rightMotor.setPower(.488); //foward
+            leftMotor.setPower(-.519);
+            sleep(2750);
 
-            rightMotor.setPower(-.2); //turn
+
+            rightMotor.setPower(-.2); //turn about 85-95°
             leftMotor.setPower(-.2);
-            sleep(800);
+            sleep(990);
+
 
             rightMotor.setPower(.5); //foward
             leftMotor.setPower(-.5);
-            sleep(1000);
+            sleep(3100);
 
-            if(HSVTest[0] >= 225 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.08 && blue >= 5 && green >=1 && clear >=2 && green <= 15 && clear <= 10 && red >= 0 && red <= 2) //Tests for blue
+
+            rightMotor.setPower(0);
+            leftMotor.setPower(0);
+            sleep(2000);
+
+            if(HSVTest[0] >= 180 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.033) // && blue >= 5 && green >=1 && clear >=2 && green <= 15 && clear <= 10 && red >= 0 && red <= 2) //Tests for blue
             {
                 colorfound = "blue";
-                rightMotor.setPower(.5); //foward
-                leftMotor.setPower(-.5);
-                sleep(100);
-                rightMotor.setPower(0); //stop
-                leftMotor.setPower(0);
+                //rightMotor.setPower(.5); //foward
+                //leftMotor.setPower(-.5);
+                //sleep(100);
+                //rightMotor.setPower(0); //stop
+                //leftMotor.setPower(0);
                 telemetry.addData("Color found:",colorfound);
             }
             else
@@ -102,24 +109,24 @@ public class ColorTest extends LinearOpMode {
                 telemetry.addData("No","Colors");
                 rightMotor.setPower(-.5); //backwards
                 leftMotor.setPower(.5);
-                sleep(100);
+                sleep(1000);
 
-                rightMotor.setPower(-.2);//turn
-                rightMotor.setPower(-.2);
-                sleep(250);
+                //rightMotor.setPower(-.2);//turn
+                //rightMotor.setPower(-.2);
+                //sleep(250);
 
-                rightMotor.setPower(.2);//foward
-                leftMotor.setPower(-.2);
-                sleep(250);
+                //rightMotor.setPower(.2);//foward
+                //leftMotor.setPower(-.2);
+                //sleep(250);
 
-                if(HSVTest[0] >= 0 && HSVTest[1] >= 1 && HSVTest[2] >= 0.3 && red >= 8 && green >=3 && clear >=10 && green <= 7 && clear <= 21 && blue >= 0 && blue <= 2){
+                if(HSVTest[0] >= 0 && HSVTest[1] >= 1 && HSVTest[2] >= 0.03 && HSVTest[0] <= 50) //&& red >= 8 && green >=3 && clear >=10 && green <= 7 && clear <= 21 && blue >= 0 && blue <= 2){
                     colorfound = "red";
 
-                    rightMotor.setPower(.5);//foward
-                    leftMotor.setPower(-.5);
-                    sleep(500);
-                    rightMotor.setPower(0);
-                    leftMotor.setPower(0);
+                    //rightMotor.setPower(.5);//foward
+                    //leftMotor.setPower(-.5);
+                    //sleep(500);
+                    //rightMotor.setPower(0);
+                    //leftMotor.setPower(0);
                     telemetry.addData("Color found:",colorfound);
                 }
             }
@@ -131,8 +138,8 @@ public class ColorTest extends LinearOpMode {
              * does not run correctly it will just run the robot forward and try*
              * and push the correct button.                                     *
              *------------------------------------------------------------------*/
-
-           /* rightMotor.setPower(.5); //foward
+/*
+            rightMotor.setPower(.5); //foward
             leftMotor.setPower(-.5);
             sleep(1000);
 
@@ -183,11 +190,11 @@ public class ColorTest extends LinearOpMode {
                     telemetry.addData("Color found:",colorfound);
 
                 }
-            } */
+            }*/
 
 
             telemetry.addData(colorfound,"");
             waitOneFullHardwareCycle();
         }
     }
-}
+//}
