@@ -65,7 +65,7 @@ public class FtcOpModeRegister implements OpModeRegister {
      */
 
     //manager.register("AdafruitRGBExample", AdafruitRGBExample.class);
-    manager.register("MRRGBExample", MRRGBExample.class);
+    //manager.register("MRRGBExample", MRRGBExample.class);
     //manager.register("ColorSensorDriver", ColorSensorDriver.class);
     //manager.register("HTRGBExample", HTRGBExample.class);
 
@@ -74,16 +74,16 @@ public class FtcOpModeRegister implements OpModeRegister {
     //manager.register("I2cAddressChangeExample", LinearI2cAddressChange.class);
 
 
-    manager.register("NxtTeleOp", NxtTeleOp.class);
+    //manager.register("NxtTeleOp", NxtTeleOp.class);
     //manager.register("NxtTeleOp2", NxtTeleOp2.class);
    // manager.register("LinearK9TeleOp", LinearK9TeleOp.class);
    // manager.register("LinearIrExample", LinearIrExample.class);
-    manager.register("TeleOpTankMode", TeleOpTankMode.class);
-    manager.register("NxtTeleOpNew", NxtTeleOpNew.class);
+    //manager.register("TeleOpTankMode", TeleOpTankMode.class);
+    //manager.register("NxtTeleOpNew", NxtTeleOpNew.class);
     manager.register("allterrain", allterrain.class);
-    manager.register("AutoModeTesting", AutoModeTesting.class);
-    manager.register("ReUseAbleTest", MotorServoClass.class);
-    manager.register("autobluep1ramp1noD",autobluep1ramp1noD.class);
+   // manager.register("AutoModeTesting", AutoModeTesting.class);
+    //manager.register("ReUseAbleTest", MotorServoClass.class);
+   // manager.register("autobluep1ramp1noD",autobluep1ramp1noD.class);
     //manager.register ("PushBotManual1", PushBotManual1.class);
     //manager.register ("PushBotAutoSensors", PushBotAutoSensors.class);
     //manager.register ("PushBotIrEvent", PushBotIrEvent.class);
@@ -92,8 +92,8 @@ public class FtcOpModeRegister implements OpModeRegister {
     //manager.register ("PushBotOdsDetectEvent", PushBotOdsDetectEvent.class);
     //manager.register ("PushBotOdsFollowEvent", PushBotOdsFollowEvent.class);
     //manager.register ("PushBotTouchEvent", PushBotTouchEvent.class);    
-    manager.register("RandomArrayTesting",RandomArrayTesting.class);
-    manager.register("EncoderExample",EncoderExample.class);
+    //manager.register("RandomArrayTesting",RandomArrayTesting.class);
+    //manager.register("EncoderExample",EncoderExample.class);
     //manager.register("PushBotDriveTouch", PushBotDriveTouch.class);
     //manager.register("PushBotIrSeek", PushBotIrSeek.class);
     //manager.register("PushBotSquare", PushBotSquare.class);

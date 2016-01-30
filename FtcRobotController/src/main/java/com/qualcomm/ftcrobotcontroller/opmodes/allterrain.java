@@ -25,8 +25,8 @@ public class allterrain extends OpMode{
         rightMotor = hardwareMap.dcMotor.get("RM1"); //R_M1 was rightMotor
        upMiddleMotor = hardwareMap.dcMotor.get("MM1"); //M_M1 was middlemotor
         //threeArmMotor = hardwareMap.dcMotor.get("A_M3"); //A_M3 arm motor 3
-        leftRearMotor = hardwareMap.dcMotor.get("LM2"); //L_M2 was leftRearMotor
-        rightRearMotor = hardwareMap.dcMotor.get("RM2"); //R_M2 was rightRearMotor
+        //leftRearMotor = hardwareMap.dcMotor.get("LM2"); //L_M2 was leftRearMotor
+        //rightRearMotor = hardwareMap.dcMotor.get("RM2"); //R_M2 was rightRearMotor
        // oneArmMotor = hardwareMap.dcMotor.get("AM1");
        // twoArmMotor = hardwareMap.dcMotor.get("AM2");
         turnServo = hardwareMap.servo.get("TS1");
@@ -42,10 +42,10 @@ public class allterrain extends OpMode{
         rightY = Range.clip(rightY, -1,1);
 
             leftMotor.setPower(leftY);
-            leftRearMotor.setPower(leftY);
+           // leftRearMotor.setPower(leftY);
 
             rightMotor.setPower(rightY);
-            rightRearMotor.setPower(rightY);
+            //rightRearMotor.setPower(rightY);
 
         //double leftx = -gamepad2.left_stick_y;
        // double rightx = -gamepad2.right_stick_y;
@@ -109,6 +109,10 @@ public class allterrain extends OpMode{
         }
 
 
+
+                         // -1
+                       //.5   .5
+                         //  1
 
 
         //To Do:
