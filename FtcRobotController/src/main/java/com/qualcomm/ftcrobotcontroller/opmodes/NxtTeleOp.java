@@ -58,12 +58,8 @@ public class NxtTeleOp extends OpMode {
 
   DcMotorController.DeviceMode devMode;
   DcMotorController wheelController;
-  //DcMotorController.DeviceMode devMode;
-  DcMotorController WheelRearControler; //New 10/17/15
-  DcMotor Tracksright;
-  DcMotor Tracksleft;
-  DcMotor motorRightWheel;//New 10/17/15
-  DcMotor motorLeftWheel; //New 10/17/15
+  DcMotor motorRight;
+  DcMotor motorLeft;
 
   Servo claw;
   Servo wrist;
@@ -76,15 +72,14 @@ public class NxtTeleOp extends OpMode {
    */
   @Override
   public void init() {
-    Tracksright = hardwareMap.dcMotor.get("motor_2");
-    Tracksleft = hardwareMap.dcMotor.get("motor_1");
+    motorRight = hardwareMap.dcMotor.get("motor_2");
+    motorLeft = hardwareMap.dcMotor.get("motor_1");
     claw = hardwareMap.servo.get("servo_6"); // channel 6
     wrist = hardwareMap.servo.get("servo_1"); // channel 1
-    motorRightWheel = hardwareMap.dcMotor.get("motor_3");//New 10/17/15
+
     wheelController = hardwareMap.dcMotorController.get("wheels");
-    motorLeftWheel = hardwareMap.dcMotor.get("motor_4");//new10/17/15
-    WheelRearControler = hardwareMap.dcMotorController.get("wheelscontroler");//New 10/17/15
   }
+
   /*
    * Code that runs repeatedly when the op mode is first enabled goes here
    * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#init_loop()
@@ -94,17 +89,13 @@ public class NxtTeleOp extends OpMode {
 
     devMode = DcMotorController.DeviceMode.WRITE_ONLY;
 
-    Tracksright.setDirection(DcMotor.Direction.REVERSE);
-    //Tracksleft.setDirection(DcMotor.Direction.REVERSE);
-   // motorLeftWheel.setDirection(DcMotor.Direction.REVERSE);//New 10/17/15
-    motorRightWheel.setDirection(DcMotor.Direction.REVERSE); //New 10/17/15
+    motorRight.setDirection(DcMotor.Direction.REVERSE);
+    //motorLeft.setDirection(DcMotor.Direction.REVERSE);
 
     // set the mode
     // Nxt devices start up in "write" mode by default, so no need to switch device modes here.
-    Tracksleft.setChannelMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
-    Tracksright.setChannelMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
-    motorRightWheel.setChannelMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);//New 10/17/15
-    motorLeftWheel.setChannelMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);//New 10/17/15
+    motorLeft.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+    motorRight.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
 
     wristPosition = 0.6;
     clawPosition = 0.5;
@@ -117,7 +108,7 @@ public class NxtTeleOp extends OpMode {
   @Override
   public void loop() {
 
-    // The op mode should only use "write" methods (setPower, setChannelMode, etc) while in
+    // The op mode should only use "write" methods (setPower, setMode, etc) while in
     // WRITE_ONLY mode or SWITCHING_TO_WRITE_MODE
     if (allowedToWrite()) {
     /*
@@ -129,18 +120,13 @@ public class NxtTeleOp extends OpMode {
 
       if (gamepad1.dpad_left) {
         // Nxt devices start up in "write" mode by default, so no need to switch modes here.
-        Tracksleft.setChannelMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
-        Tracksright.setChannelMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
-        motorLeftWheel.setChannelMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);//New 10/17/15
-        motorRightWheel.setChannelMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);//New 10/17/15
+        motorLeft.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
+        motorRight.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
       }
       if (gamepad1.dpad_right) {
         // Nxt devices start up in "write" mode by default, so no need to switch modes here.
-        Tracksleft.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        Tracksright.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        motorRightWheel.setChannelMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);//New 10/17/15
-        motorLeftWheel.setChannelMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);//New 10/17/15
-
+        motorLeft.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        motorRight.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
       }
 
       // throttle:  left_stick_y ranges from -1 to 1, where -1 is full up,  and 1 is full down
@@ -155,10 +141,8 @@ public class NxtTeleOp extends OpMode {
       left = Range.clip(left, -1, 1);
 
       // write the values to the motors
-      Tracksright.setPower(right);
-      Tracksleft.setPower(left);
-      motorLeftWheel.setPower(left);//New 10/17/15
-      motorRightWheel.setPower(right);//New 10/17/15
+      motorRight.setPower(right);
+      motorLeft.setPower(left);
 
       // update the position of the wrist
       if (gamepad1.a) {
@@ -195,7 +179,7 @@ public class NxtTeleOp extends OpMode {
 
       // we only want to process gamepad2 if someone is using one of it's analog inputs. If you always
       // want to process gamepad2, remove this check
-      if (!gamepad2.atRest()) { //New 10/17/15
+      if (gamepad2.atRest() == false) {
 
         // throttle is taken directly from the right trigger, the right trigger ranges in values from
         // 0 to 1
@@ -223,8 +207,8 @@ public class NxtTeleOp extends OpMode {
         }
 
         // write the values to the motor. This will over write any values placed while processing gamepad1
-        Tracksright.setPower(right);
-        Tracksleft.setPower(left);
+        motorRight.setPower(right);
+        motorLeft.setPower(left);
       }
     }
 
@@ -239,7 +223,6 @@ public class NxtTeleOp extends OpMode {
       // and writes without changing modes. The NxtDcMotorControllers start up in "write" mode.
       // This method does nothing on USB devices, but is needed on Nxt devices.
       wheelController.setMotorControllerDeviceMode(DcMotorController.DeviceMode.READ_ONLY);
-      WheelRearControler.setMotorControllerDeviceMode(DcMotorController.DeviceMode.READ_ONLY);//New 10/17/15
     }
 
     // Every 17 loops, switch to read mode so we can read data from the NXT device.
@@ -248,16 +231,12 @@ public class NxtTeleOp extends OpMode {
 
       // Update the reads after some loops, when the command has successfully propagated through.
       telemetry.addData("Text", "free flow text");
-      telemetry.addData("left motor", Tracksleft.getPower());
-      telemetry.addData("right motor", Tracksright.getPower());
-      telemetry.addData("RunMode: ", Tracksleft.getChannelMode().toString());
-      telemetry.addData("motor left wheel", motorLeftWheel.getPower()); //New 10/17/15
-      telemetry.addData("motor right wheel", motorRightWheel.getPower()); //New 10/17/15
-      telemetry.addData("RunMode:", motorLeftWheel.getChannelMode().toString());//New 10/17/15
+      telemetry.addData("left motor", motorLeft.getPower());
+      telemetry.addData("right motor", motorRight.getPower());
+      telemetry.addData("RunMode: ", motorLeft.getMode().toString());
 
       // Only needed on Nxt devices, but not on USB devices
       wheelController.setMotorControllerDeviceMode(DcMotorController.DeviceMode.WRITE_ONLY);
-      WheelRearControler.setMotorControllerDeviceMode(DcMotorController.DeviceMode.WRITE_ONLY); //New 10/17/15
 
       // Reset the loop
       numOpLoops = 0;
@@ -265,7 +244,6 @@ public class NxtTeleOp extends OpMode {
 
     // Update the current devMode
     devMode = wheelController.getMotorControllerDeviceMode();
-    devMode = WheelRearControler.getMotorControllerDeviceMode();//New 10/17/15
     numOpLoops++;
   }
 

@@ -8,8 +8,8 @@ import java.util.UUID;
 //Created by CanAdirondack on 11/25/2015.
 
 public class allterrain extends OpMode{
-    DcMotor rightRearMotor;
-    DcMotor leftRearMotor;
+    //DcMotor rightRearMotor;
+    //DcMotor leftRearMotor;
     DcMotor leftMotor;
     DcMotor rightMotor;
     DcMotor upMiddleMotor;
@@ -29,8 +29,8 @@ public class allterrain extends OpMode{
        // twoArmMotor = hardwareMap.dcMotor.get("AM2");
         turnServo = hardwareMap.servo.get("TS1");
         dumpServo = hardwareMap.servo.get("DS");
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
+        //rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        //rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
     }
     @Override
     public void loop() {
