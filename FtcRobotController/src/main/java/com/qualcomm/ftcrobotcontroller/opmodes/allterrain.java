@@ -34,30 +34,33 @@ public class allterrain extends OpMode
 
 
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftMotor.setDirection(DcMotor.Direction.REVERSE);
+
     }
     @Override
     public void loop()
     {
-        double leftY = gamepad1.left_stick_y/2;
-        double rightY = gamepad1.right_stick_y/2;
-        double leftx = -gamepad2.left_stick_y/2;
-        double rightx = -gamepad2.right_stick_y/2;
+        double leftY = gamepad1.left_stick_y/2.5; //2am
+        double rightY = -gamepad1.right_stick_y/2.5;// am
 
-        leftY = Range.clip(leftY, -1, 1);
-        rightY = Range.clip(rightY, -1,1);
-        leftx = Range.clip(leftx, -1,1);
-        rightx = Range.clip(rightx, -1,1);
+        double rightX = -gamepad2.left_stick_y/2;  //is driving 1AM          // this power is going to MM1 and rightmotor  RM
+        double leftX = -gamepad2.right_stick_y/2;  //is driving MM1         // ^^                                       MM1
 
-        leftMotor.setPower(leftY);
-        rightMotor.setPower(rightY);
+        //MM1 and armmotor are comeing in as left and right
+         //Left right motor are showing up as two and three for some reason
 
-        oneArmMotor.setPower(leftx);
-        twoArmMotor.setPower(rightx);
+
+        leftMotor.setPower(leftX); //runs arm motors as leftmotor
+        rightMotor.setPower(rightX); //runs arm motors as right motor
+
+        oneArmMotor.setPower(rightY); //runing as 1AM, but on right wheels?
+        upMiddleMotor.setPower(leftY); //running as MM1
 
 
       //***********************************
 
-       if (gamepad2.dpad_up)
+      if (gamepad2.dpad_up) //This controls the arm of the robot, lifting it up and down.
+
         {
             threeArmMotor.setPower(.5);
         }
@@ -72,31 +75,26 @@ public class allterrain extends OpMode
         //tried
         //**********************************
 
-        if (gamepad1.left_bumper)
+        if (gamepad1.left_bumper) //controls the lifting part of the robot in the front.
         {
-            upMiddleMotor.setPower(-.25);
+            twoArmMotor.setPower(.45);
         }
-        else if (gamepad1.right_bumper)
+        else if(gamepad1.right_bumper)
         {
-            upMiddleMotor.setPower(.25);
+            twoArmMotor.setPower(-.45);
         }
         else
         {
-            upMiddleMotor.setPower(0.0);
+            twoArmMotor.setPower(0.0);
         }
 
         //**********************************
 
-        if(gamepad2.left_trigger >= .80)
+        if(gamepad2.left_trigger >= .80) //Spins the turn table
         {
             turnServo.setPosition(0);
         }
-        else
-        {
-            turnServo.setPosition(.5);
-        }
-
-        if(gamepad2.right_trigger >= .80)
+         else if(gamepad2.right_trigger >= .80)
         {
             turnServo.setPosition(1);
         }
@@ -107,21 +105,37 @@ public class allterrain extends OpMode
 
         //********************
 
-        if(gamepad2.x){
+        if(gamepad2.x){ //dumps the blocks
          dumpServo.setPosition(0);
         }
         else{
             dumpServo.setPosition(1);
         }
-
+        //Full set of debug info.
         telemetry.addData("Turn Servo's current position is:",turnServo.getPosition());
-
-
         telemetry.addData("Dump Servo's current position is:",dumpServo.getPosition());
-
-                         // -1
-                       //.5   .5
-                         //  1
+        telemetry.addData("Left Motor's assigned name is:",leftMotor.getDeviceName());
+        telemetry.addData("Left Motor's current connection info is :", leftMotor.getConnectionInfo());
+        telemetry.addData("left motor power:",leftMotor.getPower());
+        telemetry.addData("MM1 name:",upMiddleMotor.getDeviceName());
+        telemetry.addData("MM1: connect info",upMiddleMotor.getConnectionInfo());
+        telemetry.addData("MM1 power:",upMiddleMotor.getPower());
+        telemetry.addData("Right Motor's assigned name is:", rightMotor.getDeviceName());
+        telemetry.addData("Right Motor's current connection info is :", rightMotor.getConnectionInfo());
+        telemetry.addData("right motor power:",rightMotor.getPower());
+        telemetry.addData("1AM assigned name is:",oneArmMotor.getDeviceName());
+        telemetry.addData("1AM current connection info is :", oneArmMotor.getConnectionInfo());
+        telemetry.addData("1AM power:", oneArmMotor.getPower());
+        telemetry.addData("2AM assigned name is:",twoArmMotor.getDeviceName());
+        telemetry.addData("2AM current connection info is :", twoArmMotor.getConnectionInfo());
+        telemetry.addData("2AM power:", twoArmMotor.getPower());
+        telemetry.addData("3AM assigned name is:",threeArmMotor.getDeviceName());
+        telemetry.addData("3AM current connection info is :", threeArmMotor.getConnectionInfo());
+        telemetry.addData("3AM:", threeArmMotor.getPower());
+        telemetry.addData("TS assigned name is:",turnServo.getDeviceName());
+        telemetry.addData("TS current connection info is :", turnServo.getConnectionInfo());
+        telemetry.addData("DS assigned name is:",dumpServo.getDeviceName());
+        telemetry.addData("DS current connection info is :", dumpServo.getConnectionInfo());
 
 
         //To Do:
