@@ -42,22 +42,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.Random;
-public class ColorTest extends LinearOpMode {
+public class BlueAuto5 extends LinearOpMode {
+    ColorSensor sensorRGB;
     DcMotor leftMotor;
     DcMotor rightMotor;
-    DcMotor upMiddleMotor;
-    DcMotor threeArmMotor;
-    DcMotor oneArmMotor;
-    DcMotor twoArmMotor;
-    Servo turnServo;
-    Servo dumpServo;
-    ColorSensor sensorRGB;
-    //DcMotor leftMotor;
-    //DcMotor rightMotor;
     @Override
     public void runOpMode() throws InterruptedException {
         hardwareMap.logDevices();
@@ -65,28 +56,10 @@ public class ColorTest extends LinearOpMode {
         sensorRGB.enableLed(false);
         leftMotor = hardwareMap.dcMotor.get("LM1");
         rightMotor = hardwareMap.dcMotor.get("RM1");
-
-        upMiddleMotor = hardwareMap.dcMotor.get("MM1");//controller two
-        oneArmMotor = hardwareMap.dcMotor.get("AM1");//controller two
-
-        threeArmMotor = hardwareMap.dcMotor.get("AM3");//Controller three
-        twoArmMotor = hardwareMap.dcMotor.get("AM2");//controller three
-
-        turnServo = hardwareMap.servo.get("TS1");//Servo controller one
-        dumpServo = hardwareMap.servo.get("DS1"); //Servo controller one
-
-
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
-        leftMotor.setDirection(DcMotor.Direction.REVERSE);
-
         String colorfound = "none";
         waitForStart();
         int Control = 1;
         while (Control == 1) {
-
-            double ArmUp = .25;
-            double ArmLift = .25; //Update values to reflect the real world on what is needed
-
             double blue = sensorRGB.blue();
             double red = sensorRGB.red();
             double clear = sensorRGB.alpha();
@@ -156,38 +129,18 @@ public class ColorTest extends LinearOpMode {
                 sleep(1500);
                 telemetry.addData("Color found:", colorfound);
 
-                if (HSVTest[0] >= 0 && HSVTest[1] >= 1 && HSVTest[2] >= 0.03 && HSVTest[0] <= 50) {
+                if (/*HSVTest[0] >= 180 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.033*/HSVTest[0] >= 0 && HSVTest[1] >= 1 && HSVTest[2] >= 0.03 && HSVTest[0] <= 50) {
                     colorfound = "red";
                     rightMotor.setPower(.5);
                     leftMotor.setPower(-.5);
                     sleep(150);
                     telemetry.addData("Color found:", colorfound);
                     sleep(2000);
-
-                    threeArmMotor.setPower(ArmLift);
-                    sleep(250);
-                    leftMotor.setPower(ArmUp);
-                    rightMotor.setPower(ArmUp);
-                    sleep(575);
-                    dumpServo.setPosition(0);
-                    sleep(500);
-                    /*
-                    *
-                    *
-                    *
-                    *
-                    *
-                    * TODO: 2/9/2016 add the controls to dump from the arm here
-                    */
                     Control = 2;
 
-
                 }
-
+                //break the robot has found blue and pushed the button
             }
-
-
-
 
                 else{
                 //drive to find blue
@@ -221,9 +174,19 @@ public class ColorTest extends LinearOpMode {
                             rightMotor.setPower(0);
                             leftMotor.setPower(0);
                             sleep(2000);
-                // TODO: 2/9/2016 add the controls to dump from the arm here
                             Control = 4;
+
+
+
+
+
+
+
+
                 }
+
+
+
             }
 
         while (Control == 2){
@@ -285,159 +248,7 @@ public class ColorTest extends LinearOpMode {
             sleep(1000);
 
 
-        } //drive to ramp from second side goes here
-           /* else {
-                colorfound = "none";
-                telemetry.addData("No", "Colors");
-
-                rightMotor.setPower(.2); //forward
-                leftMotor.setPower(-.2);
-                sleep(500);
-
-                rightMotor.setPower(0);
-                leftMotor.setPower(0);
-
-                if(HSVTest[0] >= 180 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.033  || HSVTest[0] >= 0 && HSVTest[1] >= 1 && HSVTest[2] >= 0.03 && HSVTest[0] <= 50 ) // && blue >= 5 && green >=1 && clear >=2 && green <= 15 && clear <= 10 && red >= 0 && red <= 2) //Tests for blue
-                {
-                    colorfound = "blue or red";
-                    rightMotor.setPower(.5); //foward
-                    leftMotor.setPower(-.5);
-                    sleep(1000);                        //a button press?
-                    rightMotor.setPower(0); //stop
-                    leftMotor.setPower(0);
-                    telemetry.addData("Color found:",colorfound);
-
-                    if (HSVTest[0] >= 180 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.033){
-                        colorfound = "blue";
-                        rightMotor.setPower(.5);
-                        leftMotor.setPower(-.5);
-                        sleep(1000);
-                        telemetry.addData("Color found:", colorfound);
-                    }
-                    //break the robot has found blue and pushed the button
-
-
-                    else{//drive to find blue
-                        if (HSVTest[0] >= 0 && HSVTest[1] >= 1 && HSVTest[2] >= 0.03 && HSVTest[0] <= 50 ) {
-                            colorfound = "red"; //No Button Press Wrong Color.
-                            telemetry.addData("Color found:",colorfound);
-                            rightMotor.setPower(-.5);
-                            leftMotor.setPower(.5);
-                            sleep(1000);
-
-                            rightMotor.setPower(-.2); //turn about 85-95°
-                            leftMotor.setPower(-.2);
-                            sleep(990);
-
-                            rightMotor.setPower(.5);
-                            leftMotor.setPower(-.5);
-                            sleep(1000);
-
-                            rightMotor.setPower(-.2); //turn about 85-95°
-                            leftMotor.setPower(-.2);
-                            sleep(990);
-
-
-                            rightMotor.setPower(.5);
-                            leftMotor.setPower(-.5);
-                            sleep(1000);
-                            //break parks the robot in front of the color beacon
-                            if (HSVTest[0] >= 180 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.033){
-                                colorfound = "blue"; //Press button.
-                                telemetry.addData("Color found:",colorfound);
-                                rightMotor.setPower(.5);
-                                leftMotor.setPower(-.5);
-                                sleep(1000);
-                            }
-
-
-                        }
-
-
-                    }
-                }*/
-
-                    //rightMotor.setPower(-.2);//turn
-                //rightMotor.setPower(-.2);
-                //sleep(250);
-
-                //rightMotor.setPower(.2);//foward
-                //leftMotor.setPower(-.2);
-                //sleep(250);
-
-               /* if(HSVTest[0] >= 0 && HSVTest[1] >= 1 && HSVTest[2] >= 0.03 && HSVTest[0] <= 50) //&& red >= 8 && green >=3 && clear >=10 && green <= 7 && clear <= 21 && blue >= 0 && blue <= 2){
-                    colorfound = "red";
-
-                    //rightMotor.setPower(.5);//foward
-                    //leftMotor.setPower(-.5);
-                    //sleep(500);
-                    //rightMotor.setPower(0);
-                    //leftMotor.setPower(0);
-                    telemetry.addData("Color found:",colorfound);
-                }
-            }*/
-            /*------------------------------------------------------------------*
-             * Above this line is still WIP to run the robot forward from the   *
-             * wall and turn it and check for colors                            *
-             * and then trying a push the correct button for are color.         *
-             * Below this is a back up program to use currently if the first one*
-             * does not run correctly it will just run the robot forward and try*
-             * and push the correct button.                                     *
-             *------------------------------------------------------------------*/
-/*
-            rightMotor.setPower(.5); //foward
-            leftMotor.setPower(-.5);
-            sleep(1000);
-
-            if(HSVTest[0] >= 225 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.08 && blue >= 5 && green >=1 && clear >=2 && green <= 15 && clear <= 10 && red >= 0 && red <= 2) //Tests for blue
-            {
-                colorfound = "blue";
-                rightMotor.setPower(.5); //foward
-                leftMotor.setPower(-.5);
-                sleep(100);                         //#1
-                rightMotor.setPower(0); //stop
-                leftMotor.setPower(0);
-                telemetry.addData("Color found:",colorfound);
-            }
-
-            else{
-                colorfound = "red";
-             rightMotor.setPower(-.5); //BackWards                          //#2
-             leftMotor.setPower(.5);
-             sleep(1250);
-
-            rightMotor.setPower(-.5); //turn 90...?
-            leftMotor.setPower(-.5);
-            sleep(1000);
-
-            rightMotor.setPower(.5);    //forward
-            leftMotor.setPower(-.5);
-            sleep(2500);
-
-            rightMotor.setPower(-.5); //turn 90...?
-            leftMotor.setPower(-.5);
-            sleep(1000);
-
-            rightMotor.setPower(.5);//forward
-            leftMotor.setPower(-.5);
-            sleep(1250);
-
-            rightMotor.setPower(1);
-            leftMotor.setPower(1);
-
-                if(HSVTest[0] >= 0 && HSVTest[1] >= 1 && HSVTest[2] >= 0.3 && red >= 8 && green >=3 && clear >=10 && green <= 7 && clear <= 21 && blue >= 0 && blue <= 2)
-                {
-                    colorfound = "red";
-                    rightMotor.setPower(.5); //foward
-                    leftMotor.setPower(-.5);
-                    sleep(100);                         //#3
-                    rightMotor.setPower(0); //stop
-                    leftMotor.setPower(0);
-                    telemetry.addData("Color found:",colorfound);
-
-                }
-            }*/
-
+        }
 
             telemetry.addData(colorfound,"");
             waitOneFullHardwareCycle();

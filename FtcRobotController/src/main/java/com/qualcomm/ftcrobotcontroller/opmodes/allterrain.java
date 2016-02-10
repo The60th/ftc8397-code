@@ -105,10 +105,12 @@ public class allterrain extends OpMode
 
         //********************
 
-        if(gamepad2.x){ //dumps the blocks
+        if(gamepad2.x)
+        { //dumps the blocks
          dumpServo.setPosition(0);
         }
-        else{
+        else
+        {
             dumpServo.setPosition(1);
         }
         //Full set of debug info.
