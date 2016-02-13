@@ -53,7 +53,7 @@ public class allterrain extends OpMode
         rightMotor.setPower(rightX); //runs arm motors as right motor
         //Current drive wheel set up.
         //running as MM1
-        if(leftY == 1 || rightY == -1){
+        if(leftY >=.35 && rightY >= -.35  && rightY != 0 || leftY <= -.35 && rightY <= -.35 && rightY != 0){
             leftY = 0;
             rightY = 0;
             oneArmMotor.setPower(JoyOneRight);
@@ -151,7 +151,7 @@ public class allterrain extends OpMode
         telemetry.addData("DS assigned name is:",dumpServo.getDeviceName());
         telemetry.addData("DS current connection info is :", dumpServo.getConnectionInfo()); */
 
-//// TODO: 2/11/2016 added a speed up for the turn, idea on how it works is: When a both joysticks are on full max values as in 1,-1. It would increase the value from a /2 to a /1.25.
+        // // TODO: 2/13/2016 Add a turbo mode to the drive controlers using the joystick buttons
         //To Do:
         //Work with switching turnservo over to a joystick control rather then with buttons to make it flow better.
         //Also switch over the main arms over to joystick control and trigersr rather then what the are currently set to.
