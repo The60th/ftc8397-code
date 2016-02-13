@@ -67,10 +67,10 @@ public class MRRGBExample extends LinearOpMode {
     sensorRGB = hardwareMap.colorSensor.get("mr");
 
     // bEnabled represents the state of the LED.
-    boolean bEnabled = true;
+    //boolean bEnabled = true;
 
     // turn the LED on in the beginning, just so user will know that the sensor is active.
-    sensorRGB.enableLed(true);
+    sensorRGB.enableLed(false);
 
     // wait one cycle.
     waitOneFullHardwareCycle();
@@ -86,44 +86,44 @@ public class MRRGBExample extends LinearOpMode {
 
     // get a reference to the RelativeLayout so we can change the background
     // color of the Robot Controller app to match the hue detected by the RGB sensor.
-    final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(R.id.RelativeLayout);
+    //final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(R.id.RelativeLayout);
 
     // bPrevState and bCurrState represent the previous and current state of the button.
-    boolean bPrevState = false;
-    boolean bCurrState = false;
+    //boolean bPrevState = false;
+    //boolean bCurrState = false;
 
     // while the op mode is active, loop and read the RGB data.
     // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
     while (opModeIsActive()) {
       // check the status of the x button on either gamepad.
-      bCurrState = gamepad1.x || gamepad2.x;
+     // bCurrState = gamepad1.x || gamepad2.x;
 
       // check for button state transitions.
-      if (bCurrState == true && bCurrState != bPrevState)  {
+      //if (bCurrState == true && bCurrState != bPrevState)  {
         // button is transitioning to a pressed state.
 
         // print a debug statement.
-        DbgLog.msg("MY_DEBUG - x button was pressed!");
+       // DbgLog.msg("MY_DEBUG - x button was pressed!");
 
         // update previous state variable.
-        bPrevState = bCurrState;
+        //bPrevState = bCurrState;
 
         // on button press, enable the LED.
-        bEnabled = true;
+       // bEnabled = true;
 
         // turn on the LED.
-        sensorRGB.enableLed(bEnabled);
-      } else if (bCurrState == false && bCurrState != bPrevState)  {
+       /* sensorRGB.enableLed(bEnabled);
+      } else if (bCurrState == false && bCurrState != bPrevState)  {*/
         // button is transitioning to a released state.
 
         // print a debug statement.
-        DbgLog.msg("MY_DEBUG - x button was released!");
+       // DbgLog.msg("MY_DEBUG - x button was released!");
 
         // update previous state variable.
-        bPrevState = bCurrState;
+       // bPrevState = bCurrState;
 
         // on button press, enable the LED.
-        bEnabled = false;
+        //bEnabled = false;
 
         // turn off the LED.
         sensorRGB.enableLed(false);
@@ -131,7 +131,7 @@ public class MRRGBExample extends LinearOpMode {
 
       // convert the RGB values to HSV values.
       //Color.RGBToHSV((sensorRGB.red() * 8), (sensorRGB.green() * 8), (sensorRGB.blue() * 8), hsvValues);
-      Color.RGBToHSV(sensorRGB.red()*8, sensorRGB.green()*8, sensorRGB.blue()*8, hsvValues);
+      Color.RGBToHSV(sensorRGB.red() * 8, sensorRGB.green() * 8, sensorRGB.blue() * 8, hsvValues);
 
       // send the info back to driver station using telemetry function.
       telemetry.addData("Clear", sensorRGB.alpha());
@@ -140,17 +140,29 @@ public class MRRGBExample extends LinearOpMode {
       telemetry.addData("Blue ", sensorRGB.blue());
       telemetry.addData("Hue", hsvValues[0]);
 
+    telemetry.addData("Clear", sensorRGB.alpha());
+    telemetry.addData("Red  ", sensorRGB.red());
+    telemetry.addData("Green", sensorRGB.green());
+    telemetry.addData("Blue ", sensorRGB.blue());
+    telemetry.addData("Hue", hsvValues[0]);
+    telemetry.addData("Saturation", hsvValues[1]);
+    telemetry.addData("Value", hsvValues[2]);
+
+
+
       // change the background color to match the color detected by the RGB sensor.
       // pass a reference to the hue, saturation, and value array as an argument
       // to the HSVToColor method.
-      relativeLayout.post(new Runnable() {
+      /*relativeLayout.post(new Runnable() {
         public void run() {
           relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
         }
-      });
+      });*/
 
       // wait a hardware cycle before iterating.
+
+
       waitOneFullHardwareCycle();
     }
   }
-}
+//}//

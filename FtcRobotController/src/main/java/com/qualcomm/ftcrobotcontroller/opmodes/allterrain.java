@@ -23,8 +23,8 @@ public class allterrain extends OpMode
         leftMotor = hardwareMap.dcMotor.get("LM1"); //controler one
         rightMotor = hardwareMap.dcMotor.get("RM1"); //controller one
 
-        upMiddleMotor = hardwareMap.dcMotor.get("MM1");//controller two
-        oneArmMotor = hardwareMap.dcMotor.get("AM1");//controller two
+        upMiddleMotor = hardwareMap.dcMotor.get("MM1");//controller two Drive wheels
+        oneArmMotor = hardwareMap.dcMotor.get("AM1");//controller two drive wheel
 
         threeArmMotor = hardwareMap.dcMotor.get("AM3");//Controller three
         twoArmMotor = hardwareMap.dcMotor.get("AM2");//controller three
@@ -127,29 +127,14 @@ public class allterrain extends OpMode
         }
         //Full set of debug info.
         telemetry.addData("Turn Servo's current position is:",turnServo.getPosition());
-        telemetry.addData("Dump Servo's current position is:",dumpServo.getPosition());/*
-        telemetry.addData("Left Motor's assigned name is:",leftMotor.getDeviceName());
-        telemetry.addData("Left Motor's current connection info is :", leftMotor.getConnectionInfo());
-        */telemetry.addData("left motor power:",leftMotor.getPower());/*
-        telemetry.addData("MM1 name:",upMiddleMotor.getDeviceName());
-        telemetry.addData("MM1: connect info",upMiddleMotor.getConnectionInfo());
-        */telemetry.addData("MM1 power:",upMiddleMotor.getPower());/*
-        telemetry.addData("Right Motor's assigned name is:", rightMotor.getDeviceName());
-        telemetry.addData("Right Motor's current connection info is :", rightMotor.getConnectionInfo());
-        */telemetry.addData("right motor power:",rightMotor.getPower());/*
-        telemetry.addData("1AM assigned name is:",oneArmMotor.getDeviceName());
-        telemetry.addData("1AM current connection info is :", oneArmMotor.getConnectionInfo());
-       */ telemetry.addData("1AM power:", oneArmMotor.getPower());/*
-        telemetry.addData("2AM assigned name is:",twoArmMotor.getDeviceName());
-        telemetry.addData("2AM current connection info is :", twoArmMotor.getConnectionInfo());
-       */ telemetry.addData("2AM power:", twoArmMotor.getPower());/*
-        telemetry.addData("3AM assigned name is:",threeArmMotor.getDeviceName());
-        telemetry.addData("3AM current connection info is :", threeArmMotor.getConnectionInfo());
-       */ telemetry.addData("3AM:", threeArmMotor.getPower());/*
-        telemetry.addData("TS assigned name is:",turnServo.getDeviceName());
-        telemetry.addData("TS current connection info is :", turnServo.getConnectionInfo());
-        telemetry.addData("DS assigned name is:",dumpServo.getDeviceName());
-        telemetry.addData("DS current connection info is :", dumpServo.getConnectionInfo()); */
+        telemetry.addData("Dump Servo's current position is:",dumpServo.getPosition());
+        telemetry.addData("left motor power:",leftMotor.getPower());
+       telemetry.addData("MM1 power:",upMiddleMotor.getPower());
+        telemetry.addData("right motor power:",rightMotor.getPower());
+        telemetry.addData("1AM power:", oneArmMotor.getPower());
+        telemetry.addData("2AM power:", twoArmMotor.getPower());
+        telemetry.addData("3AM:", threeArmMotor.getPower());
+
 
         // // TODO: 2/13/2016 Add a turbo mode to the drive controlers using the joystick buttons
         //To Do:
