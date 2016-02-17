@@ -85,8 +85,8 @@ public class ColorTest extends LinearOpMode {
         waitForStart();
         while (Control == 1) {
 
-            double ArmUp = .25;
-            double ArmLift = .25; //Update values to reflect the real world on what is needed
+            double ArmUp = .5;
+            double ArmLift = .5; //Update values to reflect the real world on what is needed
 
             double blue = sensorRGB.blue();
             double red = sensorRGB.red();
@@ -103,7 +103,7 @@ public class ColorTest extends LinearOpMode {
             telemetry.addData("Saturation", HSVTest[1]);
             telemetry.addData("Value", HSVTest[2]);
 
-            oneArmMotor.setPower(.5); //foward
+            /*oneArmMotor.setPower(.5); //foward
             upMiddleMotor.setPower(-.5);
             sleep(1850);
             oneArmMotor.setPower(.25);
@@ -123,16 +123,16 @@ public class ColorTest extends LinearOpMode {
 
             oneArmMotor.setPower(-.5); //turn about 85-95°
             upMiddleMotor.setPower(-.5);
-            sleep(925);
+            sleep(950);
 
 
             oneArmMotor.setPower(.25); //foward
             upMiddleMotor.setPower(-.25);
-            sleep(2450);
+            sleep(2250);
 
             oneArmMotor.setPower(.10);
             upMiddleMotor.setPower(-.10);
-            sleep(550);
+            sleep(590);
 
             oneArmMotor.setPower(0);
             upMiddleMotor.setPower(0);
@@ -140,13 +140,61 @@ public class ColorTest extends LinearOpMode {
 
             oneArmMotor.setPower(.25);
             upMiddleMotor.setPower(-.25);
-            sleep(150);
+            sleep(170);
 
             oneArmMotor.setPower(0);
             upMiddleMotor.setPower(0);
             sleep(2000);
-            telemetry.clearData();
+            telemetry.clearData();*/
 
+
+            //turnServo.setPosition(0);
+            twoArmMotor.setPower(ArmLift);
+            sleep(700);
+            twoArmMotor.setPower(0);
+
+            rightMotor.setPower(ArmUp);
+            leftMotor.setPower(ArmUp);
+            sleep(1000);
+            rightMotor.setPower(0);
+            leftMotor.setPower(0);
+
+            sleep(500);
+            //turn
+
+            twoArmMotor.setPower(ArmLift);
+            sleep(100);
+            twoArmMotor.setPower(0);
+
+           rightMotor.setPower(ArmUp);
+           sleep(750);
+           rightMotor.setPower(0);
+
+            //sleep(250);
+            //dumpServo.setPosition(0);
+
+            telemetry.addData("Dump finished", "");
+            sleep(2500);
+            Control = 4;
+
+            while(Control == 4){
+                DbgLog.msg("Robot has stopped and is now in debug mode");
+                leftMotor.setPower(0);
+                rightMotor.setPower(0);
+                upMiddleMotor.setPower(0);
+                oneArmMotor.setPower(0);
+                twoArmMotor.setPower(0);
+                threeArmMotor.setPower(0);
+                telemetry.addData("Clear", sensorRGB.alpha());
+                telemetry.addData("Red  ", sensorRGB.red());
+                telemetry.addData("Green", sensorRGB.green());
+                telemetry.addData("Blue ", sensorRGB.blue());
+                telemetry.addData("Hue", HSVTest[0]);
+                telemetry.addData("Saturation", HSVTest[1]);
+                telemetry.addData("Value", HSVTest[2]);
+            }
+
+            /*
             telemetry.addData("Clear", sensorRGB.alpha());
             telemetry.addData("Red  ", sensorRGB.red());
             telemetry.addData("Green", sensorRGB.green());
@@ -179,7 +227,7 @@ public class ColorTest extends LinearOpMode {
             //break the robot is parked about a foot from the color sensor
 
 
-            if(HSVTest[0] >= 180 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.033  ||/*tests for red */ HSVTest[0] >= 0 && HSVTest[1] >= 1 && HSVTest[2] >= 0.03 && HSVTest[0] <= 50 ) // && blue >= 5 && green >=1 && clear >=2 && green <= 15 && clear <= 10 && red >= 0 && red <= 2) //Tests for blue
+            if(HSVTest[0] >= 180 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.033  ||/tests for red / HSVTest[0] >= 0 && HSVTest[1] >= 1 && HSVTest[2] >= 0.03 && HSVTest[0] <= 50) && blue >= 5 && green >=1 && clear >=2 && green <= 15 && clear <= 10 && red >= 0 && red <= 2) //Tests for blue
             {
                 colorfound = "blue or red";
                 oneArmMotor.setPower(.10); //foward
@@ -213,18 +261,18 @@ public class ColorTest extends LinearOpMode {
                     *
                     * TODO: 2/9/2016 add the controls to dump from the arm here
                     */
-                    Control = 2;
+                  //  Control = 2;
+
+//
+            //    }
+
+          //  }
 
 
-                }
-
-            }
 
 
-
-
-                else
-            {
+             //   else
+         /*   {
                 //drive to find blue
                     colorfound = "blue"; //No Button Press Wrong Color.
                         telemetry.addData("Color found:",colorfound);
@@ -262,7 +310,7 @@ public class ColorTest extends LinearOpMode {
                 }
             }
 
-        while (Control == 2){
+      /*  while (Control == 2){
             telemetry.addData("Control is equal to:", Control);
             oneArmMotor.setPower(0);
             upMiddleMotor.setPower(0);
@@ -292,7 +340,7 @@ public class ColorTest extends LinearOpMode {
 
         } //drive to ramp from first side goes here
 
-
+/*
         while (Control == 3) {
             telemetry.addData("Control is equal to:", Control);
             upMiddleMotor.setPower(0);
@@ -322,8 +370,10 @@ public class ColorTest extends LinearOpMode {
 
             Control = 5; //updated just to end the loop to stop forever looping.
         }
-            telemetry.addData(colorfound,"");
+        */
+            telemetry.addData(colorfound, "");
             waitOneFullHardwareCycle();
         }
     }
-//}
+}
+//

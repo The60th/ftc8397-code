@@ -41,31 +41,46 @@ public class allterrain extends OpMode
     //Notice most comments are out of date currently please ignore.
     public void loop()
     {
-        double leftY = gamepad1.left_stick_y/2.5; //2am || 0.4 when joystick at max power
-        double rightY = -gamepad1.right_stick_y/2.5;// am
+        double LeftDrive = gamepad1.left_stick_y/2.5; //2am || 0.4 when joystick at max power
+        double RightDrive = -gamepad1.right_stick_y/2.5;// am
         double JoyOneLeft = gamepad1.left_stick_y/1.25;
         double JoyOneRight = -gamepad1.right_stick_y/1.25;
         double rightX = -gamepad2.left_stick_y/2;  //is driving 1AM          // this power is going to MM1 and rightmotor  RM
-        double leftX = -gamepad2.right_stick_y/2;  //is driving MM1         // ^^                                       MM1
+        double leftX = -gamepad2.right_stick_y/2;//is driving MM1         // ^^                                       MM1
+        double JoyTwoLeft = - gamepad2.left_stick_y/1.25;
+        double JoyTwoRight = -gamepad2.right_stick_y/1.25;
         //MM1 and armmotor are comeing in as left and right
          //Left right motor are showing up as two and three for some reason
         leftMotor.setPower(leftX); //runs arm motors as leftmotor
         rightMotor.setPower(rightX); //runs arm motors as right motor
         //Current drive wheel set up.
         //running as MM1
-        if(leftY >=.35 && rightY >= -.35  && rightY != 0 || leftY <= -.35 && rightY <= -.35 && rightY != 0){
-            leftY = 0;
-            rightY = 0;
+        if(LeftDrive >=.35 && RightDrive >= -.35  && RightDrive != 0 || LeftDrive <= -.35 && RightDrive <= -.35 && RightDrive != 0){
+            LeftDrive = 0;
+            RightDrive = 0;
             oneArmMotor.setPower(JoyOneRight);
             upMiddleMotor.setPower(JoyOneLeft);
         }
         else
         {
-            oneArmMotor.setPower(rightY); //runing as 1AM, but on right wheels?
-            upMiddleMotor.setPower(leftY);
+            oneArmMotor.setPower(RightDrive); //runing as 1AM, but on right wheels?
+            upMiddleMotor.setPower(LeftDrive);
 
 
         }
+
+        if(gamepad1.right_stick_button && gamepad1.left_stick_button){
+            oneArmMotor.setPower(JoyOneRight);
+            upMiddleMotor.setPower(JoyOneLeft);
+        }
+        if(gamepad2.left_stick_button){
+           leftMotor.setPower(JoyTwoLeft);
+        }
+
+        if(gamepad2.right_stick_button){
+            rightMotor.setPower(JoyTwoRight);
+        }
+
 
 
 
