@@ -75,7 +75,7 @@ public class ColorTest extends LinearOpMode {
 
         turnServo = hardwareMap.servo.get("TS1");//Servo controller one
         dumpServo = hardwareMap.servo.get("DS1"); //Servo controller one
-
+//106 148 Drive the robot parking it in front of the beacon
 
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
         leftMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -86,7 +86,7 @@ public class ColorTest extends LinearOpMode {
         while (Control == 1) {
 
             double ArmUp = .5;
-            double ArmLift = .5; //Update values to reflect the real world on what is needed
+            double ArmLift = .5;
 
             double blue = sensorRGB.blue();
             double red = sensorRGB.red();
@@ -370,6 +370,28 @@ public class ColorTest extends LinearOpMode {
 
             Control = 5; //updated just to end the loop to stop forever looping.
         }
+                    while(Control == 4){
+                DbgLog.msg("Robot has stopped and is now in debug mode");
+                leftMotor.setPower(0);
+                rightMotor.setPower(0);
+                upMiddleMotor.setPower(0);
+                oneArmMotor.setPower(0);
+                twoArmMotor.setPower(0);
+                threeArmMotor.setPower(0);
+                telemetry.addData("Clear", sensorRGB.alpha());
+                telemetry.addData("Red  ", sensorRGB.red());
+                telemetry.addData("Green", sensorRGB.green());
+                telemetry.addData("Blue ", sensorRGB.blue());
+                telemetry.addData("Hue", HSVTest[0]);
+                telemetry.addData("Saturation", HSVTest[1]);
+                telemetry.addData("Value", HSVTest[2]);
+            }
+
+
+
+
+
+
         */
             telemetry.addData(colorfound, "");
             waitOneFullHardwareCycle();
