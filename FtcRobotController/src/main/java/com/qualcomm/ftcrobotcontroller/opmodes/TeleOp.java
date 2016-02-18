@@ -42,7 +42,7 @@ public class TeleOp extends OpMode
     public void loop()
     {
         double LeftDrive = gamepad1.left_stick_y/2.5; //2am || 0.4 when joystick at max power
-        double RightDrive = -gamepad1.right_stick_y/2.5;// am
+        double RightDrive = -gamepad1.right_stick_y/2.5;// am t
         double JoyOneLeft = gamepad1.left_stick_y/1.25;
         double JoyOneRight = -gamepad1.right_stick_y/1.25;
         double rightX = -gamepad2.left_stick_y/2;  //is driving 1AM          // this power is going to MM1 and rightmotor  RM
