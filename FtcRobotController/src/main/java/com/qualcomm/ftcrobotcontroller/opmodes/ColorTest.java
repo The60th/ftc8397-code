@@ -75,7 +75,8 @@ public class ColorTest extends LinearOpMode {
 
         turnServo = hardwareMap.servo.get("TS1");//Servo controller one
         dumpServo = hardwareMap.servo.get("DS1"); //Servo controller one
-//106 148 Drive the robot parking it in front of the beacon
+
+//106 148 Drive the robot parking it in front of the beacon new update
 
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
         leftMotor.setDirection(DcMotor.Direction.REVERSE);

@@ -38,7 +38,7 @@ public class TeleOp extends OpMode
 
     }
     @Override
-    //Notice most comments are out of date currently please ignore.
+//Driver control!
     public void loop()
     {
         double LeftDrive = gamepad1.left_stick_y/2.5; //2am || 0.4 when joystick at max power
