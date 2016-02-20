@@ -73,6 +73,12 @@ public class TeleOp extends OpMode
             oneArmMotor.setPower(JoyOneRight);
             upMiddleMotor.setPower(JoyOneLeft);
         }
+        else
+        {
+            oneArmMotor.setPower(RightDrive); //runing as 1AM, but on right wheels?
+            upMiddleMotor.setPower(LeftDrive);
+        }
+
         if(gamepad2.left_stick_button){
            leftMotor.setPower(JoyTwoLeft);
         }
@@ -86,12 +92,12 @@ public class TeleOp extends OpMode
 
       //***********************************
 
-      if (gamepad2.dpad_up) //This controls the arm of the robot, lifting it up and down.
+      if (gamepad2.right_bumper) //This controls the arm of the robot, lifting it up and down.
 
         {
             threeArmMotor.setPower(.5);
         }
-        else if(gamepad2.dpad_down)
+        else if(gamepad2.left_bumper)
         {
             threeArmMotor.setPower(-.5);
         }

@@ -86,8 +86,8 @@ public class ColorTest extends LinearOpMode {
         waitForStart();
         while (Control == 1) {
 
-            double ArmUp = .5;
-            double ArmLift = .5;
+            double ArmUp = .3;
+            double ArmLift = .3;
 
             double blue = sensorRGB.blue();
             double red = sensorRGB.red();
@@ -148,10 +148,19 @@ public class ColorTest extends LinearOpMode {
             sleep(2000);
             telemetry.clearData();*/
 
-
-            //turnServo.setPosition(0);
+            // TODO: 2/19/2016 Break this is the end of the drive the robot is now parked in front of the color beacon and is ready to press the button and dump thy climbers.
             twoArmMotor.setPower(ArmLift);
-            sleep(700);
+            sleep(300);
+            twoArmMotor.setPower(0);
+
+            rightMotor.setPower(ArmUp);
+            leftMotor.setPower(ArmUp);
+            sleep(650);
+            rightMotor.setPower(0);
+            leftMotor.setPower(0);
+
+            twoArmMotor.setPower(ArmLift);
+            sleep(450);
             twoArmMotor.setPower(0);
 
             rightMotor.setPower(ArmUp);
@@ -160,32 +169,63 @@ public class ColorTest extends LinearOpMode {
             rightMotor.setPower(0);
             leftMotor.setPower(0);
 
-            sleep(500);
-            //turn
+           rightMotor.setPower(ArmUp);
+           leftMotor.setPower(ArmUp / 2);
+           sleep(1600);
+           rightMotor.setPower(0);
+           leftMotor.setPower(0);
 
             twoArmMotor.setPower(ArmLift);
-            sleep(100);
+            sleep(425);
             twoArmMotor.setPower(0);
 
-           rightMotor.setPower(ArmUp);
-           sleep(750);
-           rightMotor.setPower(0);
+            rightMotor.setPower(ArmUp);
+            leftMotor.setPower(ArmUp);
+            sleep(1200);
+            rightMotor.setPower(0);
+            leftMotor.setPower(0);
+
 
             //sleep(250);
-            //dumpServo.setPosition(0);
+            turnServo.setPosition(1);
+            dumpServo.setPosition(1);
+            sleep(900);
+            turnServo.setPosition(.5);
+
+            twoArmMotor.setPower(-ArmLift);
+            sleep(150);
+            twoArmMotor.setPower(0);
+
+            rightMotor.setPower(ArmUp/2);
+            leftMotor.setPower(ArmUp);
+            sleep(250);
+            rightMotor.setPower(0);
+            leftMotor.setPower(0);
+
+            dumpServo.setPosition(0);
+            sleep(500);
+            telemetry.addData("We have turn the turntable!!!!!!!!!", "Filler data,Filler data,Filler data,Filler data,Filler data,Filler data,Filler data," +
+                    "Filler data,Filler data,Filler data,Filler data,Filler data,Filler data,Filler data,Filler data,Filler data,Filler data,Filler data,");
+            sleep(750);
+            //dumpServo.setPosition(1);
+
+
 
             telemetry.addData("Dump finished", "");
             sleep(2500);
             Control = 4;
 
             while(Control == 4){
-                DbgLog.msg("Robot has stopped and is now in debug mode");
+                DbgLog.msg("The robot is currently stoped and just running debuging info.");
                 leftMotor.setPower(0);
                 rightMotor.setPower(0);
                 upMiddleMotor.setPower(0);
                 oneArmMotor.setPower(0);
                 twoArmMotor.setPower(0);
                 threeArmMotor.setPower(0);
+
+                turnServo.setPosition(.5);
+
                 telemetry.addData("Clear", sensorRGB.alpha());
                 telemetry.addData("Red  ", sensorRGB.red());
                 telemetry.addData("Green", sensorRGB.green());
@@ -193,6 +233,9 @@ public class ColorTest extends LinearOpMode {
                 telemetry.addData("Hue", HSVTest[0]);
                 telemetry.addData("Saturation", HSVTest[1]);
                 telemetry.addData("Value", HSVTest[2]);
+
+                telemetry.addData(colorfound, "");
+                waitOneFullHardwareCycle();
             }
 
             /*
