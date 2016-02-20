@@ -55,43 +55,38 @@ public class TeleOp extends OpMode
         rightMotor.setPower(rightX); //runs arm motors as right motor
         //Current drive wheel set up.
         //running as MM1
-        if(LeftDrive >=.35 && RightDrive >= -.35  && RightDrive != 0 || LeftDrive <= -.35 && RightDrive <= -.35 && RightDrive != 0){
+        if(LeftDrive >=.35 && RightDrive >= -.35  && RightDrive != 0 && !gamepad1.right_stick_button && !gamepad1.left_stick_button
+                || LeftDrive <= -.35 && RightDrive <= -.35 && RightDrive != 0 && !gamepad1.right_stick_button && !gamepad1.left_stick_button)
+        {
             LeftDrive = 0;
             RightDrive = 0;
             oneArmMotor.setPower(JoyOneRight);
             upMiddleMotor.setPower(JoyOneLeft);
         }
-        else
-        {
-            oneArmMotor.setPower(RightDrive); //runing as 1AM, but on right wheels?
-            upMiddleMotor.setPower(LeftDrive);
-
-
-        }
-
-        if(gamepad1.right_stick_button && gamepad1.left_stick_button){
-            oneArmMotor.setPower(JoyOneRight);
+        else if(gamepad1.right_stick_button && gamepad1.left_stick_button){
+            oneArmMotor.setPower(JoyOneRight); //runing as 1AM, but on right wheels?
             upMiddleMotor.setPower(JoyOneLeft);
         }
-        else
-        {
-            oneArmMotor.setPower(RightDrive); //runing as 1AM, but on right wheels?
+        else{
+            oneArmMotor.setPower(RightDrive);
             upMiddleMotor.setPower(LeftDrive);
         }
 
-        if(gamepad2.left_stick_button){
+        if(gamepad2.left_stick_button && !gamepad2.right_stick_button)
+        {
            leftMotor.setPower(JoyTwoLeft);
         }
 
-        if(gamepad2.right_stick_button){
+        else if(gamepad2.right_stick_button && !gamepad2.left_stick_button)
+        {
             rightMotor.setPower(JoyTwoRight);
         }
-
-
-
-
+        else
+        {
+            leftMotor.setPower(leftX);
+            rightMotor.setPower(rightX);
+        }
       //***********************************
-
       if (gamepad2.right_bumper) //This controls the arm of the robot, lifting it up and down.
 
         {

@@ -104,34 +104,23 @@ public class ColorTest extends LinearOpMode {
             telemetry.addData("Saturation", HSVTest[1]);
             telemetry.addData("Value", HSVTest[2]);
 
-            /*oneArmMotor.setPower(.5); //foward
+            oneArmMotor.setPower(.48); //foward
             upMiddleMotor.setPower(-.5);
             sleep(1850);
-            oneArmMotor.setPower(.25);
+
+            oneArmMotor.setPower(.23);
             upMiddleMotor.setPower(-.25);
             sleep(370);
 
-            telemetry.addData("Turn Servo's current position is:", turnServo.getPosition());
-            telemetry.addData("Dump Servo's current position is:", dumpServo.getPosition());
-            telemetry.addData("left motor power:", leftMotor.getPower());
-            telemetry.addData("MM1 power:", upMiddleMotor.getPower());
-            telemetry.addData("right motor power:", rightMotor.getPower());
-            telemetry.addData("1AM power:", oneArmMotor.getPower());
-            telemetry.addData("2AM power:", twoArmMotor.getPower());
-            telemetry.addData("3AM:", threeArmMotor.getPower());
-            //sleep(2500);
+            oneArmMotor.setPower(-.8); //turn about 85-95°
+            upMiddleMotor.setPower(-.8);
+            sleep(1500);
 
-
-            oneArmMotor.setPower(-.5); //turn about 85-95°
-            upMiddleMotor.setPower(-.5);
-            sleep(950);
-
-
-            oneArmMotor.setPower(.25); //foward
+            oneArmMotor.setPower(.23); //foward
             upMiddleMotor.setPower(-.25);
             sleep(2250);
 
-            oneArmMotor.setPower(.10);
+            oneArmMotor.setPower(.08);
             upMiddleMotor.setPower(-.10);
             sleep(590);
 
@@ -139,14 +128,14 @@ public class ColorTest extends LinearOpMode {
             upMiddleMotor.setPower(0);
             sleep(250);
 
-            oneArmMotor.setPower(.25);
+            oneArmMotor.setPower(.23);
             upMiddleMotor.setPower(-.25);
             sleep(170);
 
             oneArmMotor.setPower(0);
             upMiddleMotor.setPower(0);
             sleep(2000);
-            telemetry.clearData();*/
+            telemetry.clearData();
 
             // TODO: 2/19/2016 Break this is the end of the drive the robot is now parked in front of the color beacon and is ready to press the button and dump thy climbers.
             twoArmMotor.setPower(ArmLift);
@@ -169,11 +158,11 @@ public class ColorTest extends LinearOpMode {
             rightMotor.setPower(0);
             leftMotor.setPower(0);
 
-           rightMotor.setPower(ArmUp);
-           leftMotor.setPower(ArmUp / 2);
-           sleep(1600);
-           rightMotor.setPower(0);
-           leftMotor.setPower(0);
+            rightMotor.setPower(ArmUp);
+            leftMotor.setPower(ArmUp / 2);
+            sleep(1600);
+            rightMotor.setPower(0);
+            leftMotor.setPower(0);
 
             twoArmMotor.setPower(ArmLift);
             sleep(425);
@@ -185,8 +174,6 @@ public class ColorTest extends LinearOpMode {
             rightMotor.setPower(0);
             leftMotor.setPower(0);
 
-
-            //sleep(250);
             turnServo.setPosition(1);
             dumpServo.setPosition(1);
             sleep(900);
@@ -204,12 +191,6 @@ public class ColorTest extends LinearOpMode {
 
             dumpServo.setPosition(0);
             sleep(500);
-            telemetry.addData("We have turn the turntable!!!!!!!!!", "Filler data,Filler data,Filler data,Filler data,Filler data,Filler data,Filler data," +
-                    "Filler data,Filler data,Filler data,Filler data,Filler data,Filler data,Filler data,Filler data,Filler data,Filler data,Filler data,");
-            sleep(750);
-            //dumpServo.setPosition(1);
-
-
 
             telemetry.addData("Dump finished", "");
             sleep(2500);
