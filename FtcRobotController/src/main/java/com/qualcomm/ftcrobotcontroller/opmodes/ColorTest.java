@@ -106,7 +106,7 @@ public class ColorTest extends LinearOpMode {
 
             oneArmMotor.setPower(.48); //foward
             upMiddleMotor.setPower(-.5);
-            sleep(2075);
+            sleep(1975);
 
             oneArmMotor.setPower(.10);
             upMiddleMotor.setPower(-.10);
@@ -122,23 +122,23 @@ public class ColorTest extends LinearOpMode {
 
             oneArmMotor.setPower(.23); //foward
             upMiddleMotor.setPower(-.25);
-            sleep(2200);
+            sleep(2270);
 
             oneArmMotor.setPower(.08);
             upMiddleMotor.setPower(-.10);
-            sleep(670);
+            sleep(750);
 
             oneArmMotor.setPower(0);
             upMiddleMotor.setPower(0);
-            sleep(250);
+            sleep(100);
 
             oneArmMotor.setPower(.23);
             upMiddleMotor.setPower(-.25);
-            sleep(220);
+            sleep(260);
 
             oneArmMotor.setPower(0);
             upMiddleMotor.setPower(0);
-            sleep(2000);
+            sleep(100);
             telemetry.clearData();
 
             // TODO: 2/19/2016 Break this is the end of the drive the robot is now parked in front of the color beacon and is ready to press the button and dump thy climbers.
@@ -197,7 +197,7 @@ public class ColorTest extends LinearOpMode {
             sleep(500);
 
             telemetry.addData("Dump finished", "");
-            sleep(2500);
+            sleep(100);
             Control = 4;
 
             while(Control == 4){
