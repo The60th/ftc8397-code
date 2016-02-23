@@ -40,14 +40,15 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
-// ^^ check this out? File path is com>qualcomm>robotcore>util for documents on this import to find diffrent commands?
 
-import java.util.Random;
+//This program has been made by members of the FTC Team, Beta8397 for the 2016 comeptition year and the challenge First-Resq this is only one of many
+//programs team Beta's software development team worked on through the year, this one in practiculery is the program we will use for competition autonomous.
 
-//// TODO: 2/13/2016 Idea on drive slow down? Run off a set double value with a clock that lowers the values per second of run time?
-//// TODO: 2/13/2016 Also rewrite all motor commands so the names make sense on how the work, aka leftmotor driving the left not the right and so on.
+
 public class ColorTest extends LinearOpMode {
+
+    //Here we first have a set of varibale deculations for the diffrent DC and Servo motors we will be using thought out the program.
+
     DcMotor leftMotor;
     DcMotor rightMotor;
     DcMotor upMiddleMotor;
@@ -56,12 +57,21 @@ public class ColorTest extends LinearOpMode {
     DcMotor twoArmMotor;
     Servo turnServo;
     Servo dumpServo;
+
+    //Something new to are autonomous programs not seen in teleop is a color sensor. Here we have where we are first declaring that we will be using
+    //a color sensor, the one we ended up using is the Modern Robotics Color Sensor.
     ColorSensor sensorRGB;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        //Here we have a large list of commands the are naming the motors(Servo and DC) and color sensors we plan to use through out this program.
+        //This also sets the name for the diffrent motors that are check for in the configuration files.
+
         hardwareMap.logDevices();
         sensorRGB = hardwareMap.colorSensor.get("mr");
+
+        //The line right below this is seting the LED light on our color sensor to false(Turned off) this is so the color sensor picks up the color of
+        //lights rather then shining a light to find the color of something like tape or paint ect.
         sensorRGB.enableLed(false);
 
         leftMotor = hardwareMap.dcMotor.get("LM1");
@@ -76,25 +86,39 @@ public class ColorTest extends LinearOpMode {
         turnServo = hardwareMap.servo.get("TS1");//Servo controller one
         dumpServo = hardwareMap.servo.get("DS1"); //Servo controller one
 
-//106 148 Drive the robot parking it in front of the beacon new update
+
 
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
         leftMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        //Here we are declaring a few more varibales such as one of them is the int "Control" and the string Colorfound. The reasons for them are:
+        //Color found updates depending on what colors are sensor picks up then prints what it finds back to use so we know what we are looking at.
+        //The control varibale is used for controling while loops through the program, while this is not does as well as it could be it was fast and
+        //easy and meet the demandeds we needed at the time.
+        //Also here is a waitForStart line what this does is it will not let the program contuine past this till it is given the command to start.
 
         String colorfound = "none";
         int Control = 1;
         waitForStart();
         while (Control == 1) {
-
+            //Here we have a few varibales that will be used later on in the program to control the power of diffrent arms and wheels.
             double ArmUp = .3;
             double ArmLift = .3;
-
+            //Now we have a few varibales that update in realtime with the values the color sensor sees for each one. A example of this is if you were
+            //looking at a red piece of tape the double red would go very high as the red light output from the color sensor is high.
+            //We also have here a float array which is being used to contain the HSV(Hue Satutrion Values) from the color sensor.
             double blue = sensorRGB.blue();
             double red = sensorRGB.red();
             double clear = sensorRGB.alpha();
             double green = sensorRGB.green();
             float []HSVTest ={0F,0F,0F};
+
+            //Again here we are just making sure the color sensor light is off.
             sensorRGB.enableLed(false);
+
+            //Now we are converting the values from the color sensor from RGB(Red Green Blue) to HSV to be better used latter in the program.
+            //Also we have here a set of telemetry data prints, which what they do is print data from the program to the FTC Driver Station app
+            //so that we can watch the values of the color sensor in real time.
             Color.RGBToHSV(sensorRGB.red() * 8, sensorRGB.green() * 8, sensorRGB.blue() * 8, HSVTest);
             telemetry.addData("Clear", sensorRGB.alpha());
             telemetry.addData("Red  ", sensorRGB.red());
@@ -104,7 +128,19 @@ public class ColorTest extends LinearOpMode {
             telemetry.addData("Saturation", HSVTest[1]);
             telemetry.addData("Value", HSVTest[2]);
 
-            oneArmMotor.setPower(.25); //foward
+            //We are now moving out of most of the set up for the program and varibale declaring and are moving in to the commands for the wheels and
+            //arms of the robot. First we can tell you a bit more about are plan for the automouse peroid, are plan is to drive the robot forward to about
+            //the middle of the map then make a 90dergee turn and drive forward again being lined up with the color beacon. Which we then inspect the color
+            //of the beacon and push the correct button, after pushing the button we park and start moving are arm. The arm will move most of the way out
+            //with the turn table spinning then the arm will move out more then dump are climbers in to the goal then is right behind the color beacon.
+
+
+            //The next few lines(138-165 control the robot driving it forward to about the middle of the map. A key point of this you might notice
+            //and ask about is why do we have more then one motor forward command. The reason for this is to give us more control over the robot and also
+            //to start to phase down the speed as we move closer to are target so we dont jerk around as much and maybe cause damage to the robot.
+            //Another thing you might see is at the end of the move forward we then drive back a bit before turning, the reason for this is so that
+            //we can clear any balls or blocks from in front of the robot that may stop it from driving correctly.
+            oneArmMotor.setPower(.25);
             upMiddleMotor.setPower(-.27);
             sleep(2850);
 
@@ -128,10 +164,16 @@ public class ColorTest extends LinearOpMode {
             upMiddleMotor.setPower(0);
             sleep(55);
 
+            //Now are robot should be park in about the middle of the mats free from all balls and blocks and ready to turn! The turn we have here works
+            //by driveing one set up wheels one way at full power at the other then opistate way to give is a very fast right turn.
+
             oneArmMotor.setPower(-.7); //turn about 85-95°
             upMiddleMotor.setPower(-.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
             sleep(950);
 
+            //The robot has now driven forward then turned 90dergees and its now ready for its last major step of driving. The robot now drives forward
+            //and parks it selfs in front of the color beacon so it can check for colors and dump the clibmers. This code here is written the same as the
+            //above drive code made to make the robot drive fast at first and slowly bring its speed down to a good stop.
             oneArmMotor.setPower(.23); //foward
             upMiddleMotor.setPower(-.25);
             sleep(2325);
@@ -153,7 +195,17 @@ public class ColorTest extends LinearOpMode {
             sleep(100);
             telemetry.clearData();
 
-            // TODO: 2/19/2016 Break this is the end of the drive the robot is now parked in front of the color beacon and is ready to press the button and dump thy climbers.
+            //The robot has now finished all major wheel driving for a while it has driven forward, turn then forward again parking its self in front of
+            //the color beacon it is now up to the robot to move its arm out and dump the climbers.
+
+           //The arm controls for the robot are a pretty long set of code compared to what we have written so far going from line 200-260.
+            //The arm has been one of the harder things for us to program this year with it being so complacited and heavy.
+            //The main way the arm works is to first drive the gear box motor to angle the arm so we can move it out without runing in to anything.
+            //You might notice now that all the powers for the arm are being used as varibales not set numbers the reason for this is so that
+            //but only changing one line we can change the power for all the arm commands.
+
+            //Lines 207-220 the robot starts by angling the arm upwards a small amount this drive it out more, after is drives out for little over
+            //half a second it then brings the angle up even more.
             twoArmMotor.setPower(ArmLift);
             sleep(300);
             twoArmMotor.setPower(0);
@@ -168,6 +220,9 @@ public class ColorTest extends LinearOpMode {
             sleep(450);
             twoArmMotor.setPower(0);
 
+            //Lines 223-245. This part of the code starts by bringing the arm out even more, and then incressing the angle more so that it can clear
+            //the front guards of the robot the robot keeps doing this updating the angle and leangth of the arm for about 3seconds till it is at
+            //the correct spot the robot then stops doing this and moves to the next set of code.
             rightMotor.setPower(ArmUp);
             leftMotor.setPower(ArmUp);
             sleep(1050);
@@ -190,6 +245,14 @@ public class ColorTest extends LinearOpMode {
             rightMotor.setPower(0);
             leftMotor.setPower(0);
 
+            //This covers lines 248-275
+            //Here we are now using Servo motors rather then DC motors. A major diffrence between the two is that servos are self aware of what thier current
+            //position is while DC motors are not. So to start off we turn the servo motor on the buttom of the robot that is geared and chained to the turn
+            //table to give it more power. This then turns the turn table to bring it to the front of the robot so that the arm is now over the scoring
+            //bucket for the climbers.
+            //After moving the turn table we then drive the arms out just a tad bit more to make sure we are right on top of the bucket, so the climbers
+            //always go in, atfer doing then we then rotate the dump servo which is connected to are bucket to dump the clibmers and score them
+            //right behind the color beacon.
             turnServo.setPosition(1);
             dumpServo.setPosition(1);
             sleep(900);
@@ -210,8 +273,10 @@ public class ColorTest extends LinearOpMode {
 
             telemetry.addData("Dump finished", "");
             sleep(100);
-            Control = 4;
 
+            Control = 4;
+        //The code here now is just a set of debug info in where we set the power of all motors to 0 and all servos to rest postiton and then
+        //and then bring debuging info to the FTC driver station app.
             while(Control == 4){
                 DbgLog.msg("The robot is currently stoped and just running debuging info.");
                 leftMotor.setPower(0);
@@ -234,6 +299,28 @@ public class ColorTest extends LinearOpMode {
                 telemetry.addData(colorfound, "");
                 waitOneFullHardwareCycle();
             }
+        //Sadley now we have reached the end of the working code we currently have below here you can see many lines of commented non working code, all this
+        //was made to control the color sensor to search for diffrent beacon colors and then press then button and hopeful park on the ramp. Sadley becuase
+        //of time and design limit we were unable to get this all working in time for the competition on the 27th. There is a sligh chance that this
+        //program may be given a update in time and have all this color sensor code work as it would hopefuly scoring us around another 20-40 points.
+        //Even while it does not work it has been left as a framework for use to work with and inspect.
+
+        //After reading this all if you have any questions feel free to contact any memeber of FTC Team Beta8397 for more infomation on how any of this code
+        //all are memebers would be more then happy to walk you threw on how it works!
+
+            telemetry.addData(colorfound, "");
+            waitOneFullHardwareCycle();
+        }
+    }
+}
+
+
+
+
+
+           //Dead code!
+
+
 
             /*
             telemetry.addData("Clear", sensorRGB.alpha());
@@ -433,10 +520,10 @@ public class ColorTest extends LinearOpMode {
 
 
 
-        */
+
             telemetry.addData(colorfound, "");
             waitOneFullHardwareCycle();
         }
     }
-}
+} */
 //
