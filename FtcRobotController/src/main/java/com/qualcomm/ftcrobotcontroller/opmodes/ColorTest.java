@@ -104,17 +104,17 @@ public class ColorTest extends LinearOpMode {
             telemetry.addData("Saturation", HSVTest[1]);
             telemetry.addData("Value", HSVTest[2]);
 
-            oneArmMotor.setPower(.48); //foward
-            upMiddleMotor.setPower(-.5);
-            sleep(2150);
+            oneArmMotor.setPower(.25); //foward
+            upMiddleMotor.setPower(-.27);
+            sleep(2850);
 
             oneArmMotor.setPower(.10);
             upMiddleMotor.setPower(-.10);
-            sleep(140);
+            sleep(200);
 
             oneArmMotor.setPower(.23);
             upMiddleMotor.setPower(-.25);
-            sleep(550);
+            sleep(590);
 
             oneArmMotor.setPower(0);
             upMiddleMotor.setPower(0);
@@ -124,17 +124,21 @@ public class ColorTest extends LinearOpMode {
             upMiddleMotor.setPower(.20);
             sleep(500);
 
+            oneArmMotor.setPower(0);
+            upMiddleMotor.setPower(0);
+            sleep(55);
+
             oneArmMotor.setPower(-.7); //turn about 85-95°
             upMiddleMotor.setPower(-.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
-            sleep(790);
+            sleep(950);
 
             oneArmMotor.setPower(.23); //foward
             upMiddleMotor.setPower(-.25);
-            sleep(2270);
+            sleep(2325);
 
             oneArmMotor.setPower(.08);
             upMiddleMotor.setPower(-.10);
-            sleep(750);
+            sleep(800);
 
             oneArmMotor.setPower(0);
             upMiddleMotor.setPower(0);
@@ -142,7 +146,7 @@ public class ColorTest extends LinearOpMode {
 
             oneArmMotor.setPower(.23);
             upMiddleMotor.setPower(-.25);
-            sleep(260);
+            sleep(350);
 
             oneArmMotor.setPower(0);
             upMiddleMotor.setPower(0);
@@ -156,7 +160,7 @@ public class ColorTest extends LinearOpMode {
 
             rightMotor.setPower(ArmUp);
             leftMotor.setPower(ArmUp);
-            sleep(650);
+            sleep(670);
             rightMotor.setPower(0);
             leftMotor.setPower(0);
 
@@ -166,7 +170,7 @@ public class ColorTest extends LinearOpMode {
 
             rightMotor.setPower(ArmUp);
             leftMotor.setPower(ArmUp);
-            sleep(1000);
+            sleep(1050);
             rightMotor.setPower(0);
             leftMotor.setPower(0);
 
