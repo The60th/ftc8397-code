@@ -86,8 +86,8 @@ public class Blue_Auto_One extends LinearOpMode {
         waitForStart();
         while (Control == 1) {
 
-            double ArmUp = .5;
-            double ArmLift = .5;
+            double ArmUp = .3;
+            double ArmLift = .3;
 
             double blue = sensorRGB.blue();
             double red = sensorRGB.red();
@@ -104,54 +104,56 @@ public class Blue_Auto_One extends LinearOpMode {
             telemetry.addData("Saturation", HSVTest[1]);
             telemetry.addData("Value", HSVTest[2]);
 
-            /*oneArmMotor.setPower(.5); //foward
+            oneArmMotor.setPower(.48); //foward
             upMiddleMotor.setPower(-.5);
-            sleep(1850);
-            oneArmMotor.setPower(.25);
-            upMiddleMotor.setPower(-.25);
-            sleep(370);
-
-            telemetry.addData("Turn Servo's current position is:", turnServo.getPosition());
-            telemetry.addData("Dump Servo's current position is:", dumpServo.getPosition());
-            telemetry.addData("left motor power:", leftMotor.getPower());
-            telemetry.addData("MM1 power:", upMiddleMotor.getPower());
-            telemetry.addData("right motor power:", rightMotor.getPower());
-            telemetry.addData("1AM power:", oneArmMotor.getPower());
-            telemetry.addData("2AM power:", twoArmMotor.getPower());
-            telemetry.addData("3AM:", threeArmMotor.getPower());
-            //sleep(2500);
-
-
-            oneArmMotor.setPower(-.5); //turn about 85-95°
-            upMiddleMotor.setPower(-.5);
-            sleep(950);
-
-
-            oneArmMotor.setPower(.25); //foward
-            upMiddleMotor.setPower(-.25);
-            sleep(2250);
+            sleep(1975);
 
             oneArmMotor.setPower(.10);
             upMiddleMotor.setPower(-.10);
-            sleep(590);
+            sleep(50);
 
-            oneArmMotor.setPower(0);
-            upMiddleMotor.setPower(0);
-            sleep(250);
-
-            oneArmMotor.setPower(.25);
+            oneArmMotor.setPower(.23);
             upMiddleMotor.setPower(-.25);
-            sleep(170);
+            sleep(460);
+
+            oneArmMotor.setPower(.7); //turn about 85-95°
+            upMiddleMotor.setPower(.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
+            sleep(790);
+
+            oneArmMotor.setPower(.23); //foward
+            upMiddleMotor.setPower(-.25);
+            sleep(2270);
+
+            oneArmMotor.setPower(.08);
+            upMiddleMotor.setPower(-.10);
+            sleep(750);
 
             oneArmMotor.setPower(0);
             upMiddleMotor.setPower(0);
-            sleep(2000);
-            telemetry.clearData();*/
+            sleep(100);
 
+            oneArmMotor.setPower(.23);
+            upMiddleMotor.setPower(-.25);
+            sleep(260);
 
-            //turnServo.setPosition(0);
+            oneArmMotor.setPower(0);
+            upMiddleMotor.setPower(0);
+            sleep(100);
+            telemetry.clearData();
+
+            // TODO: 2/19/2016 Break this is the end of the drive the robot is now parked in front of the color beacon and is ready to press the button and dump thy climbers.
             twoArmMotor.setPower(ArmLift);
-            sleep(700);
+            sleep(300);
+            twoArmMotor.setPower(0);
+
+            rightMotor.setPower(ArmUp);
+            leftMotor.setPower(ArmUp);
+            sleep(650);
+            rightMotor.setPower(0);
+            leftMotor.setPower(0);
+
+            twoArmMotor.setPower(ArmLift);
+            sleep(450);
             twoArmMotor.setPower(0);
 
             rightMotor.setPower(ArmUp);
@@ -160,32 +162,55 @@ public class Blue_Auto_One extends LinearOpMode {
             rightMotor.setPower(0);
             leftMotor.setPower(0);
 
-            sleep(500);
-            //turn
+            rightMotor.setPower(ArmUp);
+            leftMotor.setPower(ArmUp / 2);
+            sleep(1600);
+            rightMotor.setPower(0);
+            leftMotor.setPower(0);
 
             twoArmMotor.setPower(ArmLift);
-            sleep(100);
+            sleep(425);
             twoArmMotor.setPower(0);
 
             rightMotor.setPower(ArmUp);
-            sleep(750);
+            leftMotor.setPower(ArmUp);
+            sleep(1200);
             rightMotor.setPower(0);
+            leftMotor.setPower(0);
 
-            //sleep(250);
-            //dumpServo.setPosition(0);
+            turnServo.setPosition(1);
+            dumpServo.setPosition(1);
+            sleep(900);
+            turnServo.setPosition(.5);
+
+            twoArmMotor.setPower(-ArmLift);
+            sleep(150);
+            twoArmMotor.setPower(0);
+
+            rightMotor.setPower(ArmUp/2);
+            leftMotor.setPower(ArmUp);
+            sleep(300);
+            rightMotor.setPower(0);
+            leftMotor.setPower(0);
+
+            dumpServo.setPosition(0);
+            sleep(500);
 
             telemetry.addData("Dump finished", "");
-            sleep(2500);
+            sleep(100);
             Control = 4;
 
             while(Control == 4){
-                DbgLog.msg("Robot has stopped and is now in debug mode");
+                DbgLog.msg("The robot is currently stoped and just running debuging info.");
                 leftMotor.setPower(0);
                 rightMotor.setPower(0);
                 upMiddleMotor.setPower(0);
                 oneArmMotor.setPower(0);
                 twoArmMotor.setPower(0);
                 threeArmMotor.setPower(0);
+
+                turnServo.setPosition(.5);
+
                 telemetry.addData("Clear", sensorRGB.alpha());
                 telemetry.addData("Red  ", sensorRGB.red());
                 telemetry.addData("Green", sensorRGB.green());
@@ -193,6 +218,9 @@ public class Blue_Auto_One extends LinearOpMode {
                 telemetry.addData("Hue", HSVTest[0]);
                 telemetry.addData("Saturation", HSVTest[1]);
                 telemetry.addData("Value", HSVTest[2]);
+
+                telemetry.addData(colorfound, "");
+                waitOneFullHardwareCycle();
             }
 
             /*
