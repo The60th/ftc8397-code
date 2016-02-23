@@ -47,7 +47,7 @@ import java.util.Random;
 
 //// TODO: 2/13/2016 Idea on drive slow down? Run off a set double value with a clock that lowers the values per second of run time?
 //// TODO: 2/13/2016 Also rewrite all motor commands so the names make sense on how the work, aka leftmotor driving the left not the right and so on.
-public class Blue_Auto_One extends LinearOpMode {
+public class Red_Auto_One extends LinearOpMode {
     DcMotor leftMotor;
     DcMotor rightMotor;
     DcMotor upMiddleMotor;
@@ -116,8 +116,8 @@ public class Blue_Auto_One extends LinearOpMode {
             upMiddleMotor.setPower(-.25);
             sleep(460);
 
-            oneArmMotor.setPower(-.7); //turn about 85-95°
-            upMiddleMotor.setPower(-.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
+            oneArmMotor.setPower(.7); //turn about 85-95°
+            upMiddleMotor.setPower(.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
             sleep(790);
 
             oneArmMotor.setPower(.23); //foward

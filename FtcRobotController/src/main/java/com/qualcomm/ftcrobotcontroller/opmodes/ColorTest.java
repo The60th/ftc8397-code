@@ -106,15 +106,23 @@ public class ColorTest extends LinearOpMode {
 
             oneArmMotor.setPower(.48); //foward
             upMiddleMotor.setPower(-.5);
-            sleep(1975);
+            sleep(2150);
 
             oneArmMotor.setPower(.10);
             upMiddleMotor.setPower(-.10);
-            sleep(50);
+            sleep(140);
 
             oneArmMotor.setPower(.23);
             upMiddleMotor.setPower(-.25);
-            sleep(460);
+            sleep(550);
+
+            oneArmMotor.setPower(0);
+            upMiddleMotor.setPower(0);
+            sleep(250);
+
+            oneArmMotor.setPower(-.18);
+            upMiddleMotor.setPower(.20);
+            sleep(500);
 
             oneArmMotor.setPower(-.7); //turn about 85-95°
             upMiddleMotor.setPower(-.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
