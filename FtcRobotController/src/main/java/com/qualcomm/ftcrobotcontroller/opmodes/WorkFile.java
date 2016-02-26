@@ -61,7 +61,7 @@ public class WorkFile extends LinearOpMode {
 
                 oneArmMotor.setPower(.10);
                 upMiddleMotor.setPower(-.10);
-                sleep(250);
+                sleep(850);
 
                 oneArmMotor.setPower(0);
                 upMiddleMotor.setPower(0);
@@ -69,7 +69,7 @@ public class WorkFile extends LinearOpMode {
 
                 oneArmMotor.setPower(-.7); //turn about 85-95°
                 upMiddleMotor.setPower(-.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
-                sleep(475);
+                sleep(310);
 
                 oneArmMotor.setPower(.25);
                 upMiddleMotor.setPower(-.27);
@@ -90,7 +90,7 @@ public class WorkFile extends LinearOpMode {
 
                 oneArmMotor.setPower(-.7); //turn about 85-95°
                 upMiddleMotor.setPower(-.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
-                sleep(495);
+                sleep(380);
 
                 oneArmMotor.setPower(.10);
                 upMiddleMotor.setPower(-.10);
