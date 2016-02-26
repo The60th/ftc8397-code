@@ -54,5 +54,8 @@ public class FtcOpModeRegister implements OpModeRegister {
 
     manager.register("Blue",Blue_Auto_One.class); //Comp Program
     manager.register("Blue_Wait",BlueAutoTenWait.class); //Comp Program
+
+    manager.register("Work",WorkFile.class);
+    //manager.register("BradSwagswagyswawgdawgswagyswag With some extra swag on top dawg, go bradbrad",RampTest.class); //Test Program
   }
 }

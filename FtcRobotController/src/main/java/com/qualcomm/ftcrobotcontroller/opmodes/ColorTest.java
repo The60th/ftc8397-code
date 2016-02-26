@@ -104,6 +104,162 @@ public class ColorTest extends LinearOpMode {
             //Here we have a few variables that will be used later on in the program to control the power of different arms and wheels.
             double ArmUp = .3;
             double ArmLift = .3;
+            Control = 6;
+            while(Control ==6){
+                telemetry.addData("In while loop 6","");
+
+                threeArmMotor.setPower(ArmLift);
+                sleep(150);
+                threeArmMotor.setPower(0);
+
+                oneArmMotor.setPower(.10);
+                upMiddleMotor.setPower(-.10);
+                sleep(250);
+
+                oneArmMotor.setPower(0);
+                upMiddleMotor.setPower(0);
+                sleep(150);
+
+                oneArmMotor.setPower(-.7); //turn about 85-95°
+                upMiddleMotor.setPower(-.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
+                sleep(475);
+
+                oneArmMotor.setPower(.25);
+                upMiddleMotor.setPower(-.27);
+                sleep(2890);
+
+                oneArmMotor.setPower(.10);
+                upMiddleMotor.setPower(-.10);
+                sleep(250);
+
+                oneArmMotor.setPower(.23);
+                upMiddleMotor.setPower(-.25);
+                sleep(760);
+
+                //oneArmMotor.setPower(-.18);
+                //upMiddleMotor.setPower(.20);
+                //sleep(500);
+
+                oneArmMotor.setPower(0);
+                upMiddleMotor.setPower(0);
+                sleep(55);
+
+                //oneArmMotor.setPower(.10);
+                //upMiddleMotor.setPower(-.10);
+                //sleep(200);
+
+                oneArmMotor.setPower(-.7); //turn about 85-95°
+                upMiddleMotor.setPower(-.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
+                sleep(495);
+
+                oneArmMotor.setPower(.10);
+                upMiddleMotor.setPower(-.10);
+                sleep(500 );
+                oneArmMotor.setPower(0);
+                upMiddleMotor.setPower(0);
+
+
+                threeArmMotor.setPower(ArmLift);
+                sleep(100);
+                threeArmMotor.setPower(0);
+
+                rightMotor.setPower(ArmUp);
+                leftMotor.setPower(ArmUp);
+                sleep(670);
+                rightMotor.setPower(0);
+                leftMotor.setPower(0);
+
+                threeArmMotor.setPower(ArmLift);
+                sleep(450);
+                threeArmMotor.setPower(0);
+
+                //Lines 223-245. This part of the code starts by bringing the arm out even more, and then increasing the angle more so that it can clear
+                //the front guards of the robot the robot keeps doing this updating the angle and length of the arm for about 3seconds till it is at
+                //the correct spot the robot then stops doing this and moves to the next set of code.
+                rightMotor.setPower(ArmUp);
+                leftMotor.setPower(ArmUp);
+                sleep(1050);
+                rightMotor.setPower(0);
+                leftMotor.setPower(0);
+
+                rightMotor.setPower(ArmUp);
+                leftMotor.setPower(ArmUp/2);
+                sleep(1600);
+                rightMotor.setPower(0);
+                leftMotor.setPower(0);
+
+                threeArmMotor.setPower(ArmLift);
+                sleep(425);
+                threeArmMotor.setPower(0);
+
+                rightMotor.setPower(ArmUp);
+                leftMotor.setPower(ArmUp);
+                sleep(1200);
+                rightMotor.setPower(0);
+                leftMotor.setPower(0);
+
+                //This covers lines 248-275
+                //Here we are now using Servo motors rather then DC motors. A major difference between the two is that servos are self aware of what their current
+                //position is while DC motors are not. So to start off we turn the servo motor on the bottom of the robot that is geared and chained to the turn
+                //table to give it more power. This then turns the turn table to bring it to the front of the robot so that the arm is now over the scoring
+                //bucket for the climbers.
+                //After moving the turn table we then drive the arms out just a tad bit more to make sure we are right on top of the bucket, so the climbers
+                //always go in, after doing then we then rotate the dump servo which is connected to are bucket to dump the climbers and score them
+                //right behind the color beacon.
+                turnServo.setPosition(1);
+                dumpServo.setPosition(1);
+                sleep(1150);
+                turnServo.setPosition(.5);
+
+                //threeArmMotor.setPower(-ArmLift);
+                //sleep(150);
+                //twoArmMotor.setPower(0);
+
+                rightMotor.setPower(ArmUp/2);
+                leftMotor.setPower(ArmUp);
+                sleep(375);
+                rightMotor.setPower(0);
+                leftMotor.setPower(0);
+
+
+                dumpServo.setPosition(0);
+                sleep(500);
+
+                telemetry.addData("Dump finished", "");
+                sleep(100);
+
+                Control = 4;
+                waitOneFullHardwareCycle();
+            }
+            while(Control == 4){
+                DbgLog.msg("The robot is currently stoped and just running debuging info.");
+                leftMotor.setPower(0);
+                rightMotor.setPower(0);
+                upMiddleMotor.setPower(0);
+                oneArmMotor.setPower(0);
+                threeArmMotor.setPower(0);
+                twoArmMotor.setPower(0);
+                turnServo.setPosition(.5);
+                dumpServo.setPosition(1);
+
+                if(gamepad1.x){
+                    //Debug test to test arm return pos code.
+                    Control = 5;
+
+                }
+
+                //telemetry.addData("Clear", sensorRGB.alpha());
+                //telemetry.addData("Red  ", sensorRGB.red());
+                //telemetry.addData("Green", sensorRGB.green());
+                //telemetry.addData("Blue ", sensorRGB.blue());
+                //telemetry.addData("Hue", HSVTest[0]);
+                //telemetry.addData("Saturation", HSVTest[1]);
+                //telemetry.addData("Value", HSVTest[2]);
+
+                //telemetry.addData(colorfound, "");
+                waitOneFullHardwareCycle();
+            }
+
             //Now we have a few variables that update in real-time with the values the color sensor sees for each one. A example of this is if you were
             //looking at a red piece of tape the double red would go very high as the red light output from the color sensor is high.
             //We also have here a float array which is being used to contain the HSV(Hue Saturation Values) from the color sensor.
@@ -169,7 +325,7 @@ public class ColorTest extends LinearOpMode {
 
             oneArmMotor.setPower(-.7); //turn about 85-95°
             upMiddleMotor.setPower(-.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
-            sleep(900);
+            sleep(850);
 
             //The robot has now driven forward then turned 90degrees and its now ready for its last major step of driving. The robot now drives forward
             //and parks it selfs in front of the color beacon so it can check for colors and dump the climbers. This code here is written the same as the
@@ -180,7 +336,7 @@ public class ColorTest extends LinearOpMode {
 
             oneArmMotor.setPower(.08);
             upMiddleMotor.setPower(-.10);
-            sleep(800);
+            sleep(775);
 
             oneArmMotor.setPower(0);
             upMiddleMotor.setPower(0);
@@ -188,7 +344,7 @@ public class ColorTest extends LinearOpMode {
 
             oneArmMotor.setPower(.23);
             upMiddleMotor.setPower(-.25);
-            sleep(350);
+            sleep(325);
 
             oneArmMotor.setPower(0);
             upMiddleMotor.setPower(0);
@@ -276,41 +432,15 @@ public class ColorTest extends LinearOpMode {
             telemetry.addData("Dump finished", "");
             sleep(100);
 
-            Control = 4;
+            //Control = 5;
             //Small test in control 5 loop to run the program to make the arm return to its start pos.
 
 
 
         //The code here now is just a set of debug info in where we set the power of all motors to 0 and all servos to rest position and then
         //and then bring debugging info to the FTC driver station app.
-            while(Control == 4){
-                DbgLog.msg("The robot is currently stoped and just running debuging info.");
-                leftMotor.setPower(0);
-                rightMotor.setPower(0);
-                upMiddleMotor.setPower(0);
-                oneArmMotor.setPower(0);
-                threeArmMotor.setPower(0);
-                twoArmMotor.setPower(0);
 
-                turnServo.setPosition(.5);
 
-                if(gamepad1.x){
-                   //Debug test to test arm return pos code.
-                    Control = 5;
-
-                }
-
-                //telemetry.addData("Clear", sensorRGB.alpha());
-                //telemetry.addData("Red  ", sensorRGB.red());
-                //telemetry.addData("Green", sensorRGB.green());
-                //telemetry.addData("Blue ", sensorRGB.blue());
-                //telemetry.addData("Hue", HSVTest[0]);
-                //telemetry.addData("Saturation", HSVTest[1]);
-                //telemetry.addData("Value", HSVTest[2]);
-
-                //telemetry.addData(colorfound, "");
-                waitOneFullHardwareCycle();
-            }
 
 
             //This while loop needs be be flips because of a mistake in logic... on how to reverse it. Aka because you need run the commands backwards not just all in reverse, duhh!
