@@ -69,7 +69,7 @@ public class WorkFile extends LinearOpMode {
 
                 oneArmMotor.setPower(-.7); //turn about 85-95°
                 upMiddleMotor.setPower(-.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
-                sleep(310);
+                sleep(290);
 
                 oneArmMotor.setPower(.25);
                 upMiddleMotor.setPower(-.27);
@@ -90,11 +90,11 @@ public class WorkFile extends LinearOpMode {
 
                 oneArmMotor.setPower(-.7); //turn about 85-95°
                 upMiddleMotor.setPower(-.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
-                sleep(380);
+                sleep(400);
 
-                oneArmMotor.setPower(.10);
-                upMiddleMotor.setPower(-.10);
-                sleep(500);
+                oneArmMotor.setPower(.15);
+                upMiddleMotor.setPower(-.15);
+                sleep(1225);
                 oneArmMotor.setPower(0);
                 upMiddleMotor.setPower(0);
 
@@ -137,7 +137,7 @@ public class WorkFile extends LinearOpMode {
 
                 turnServo.setPosition(1);
                 dumpServo.setPosition(1);
-                sleep(1150);
+                sleep(1350);
                 turnServo.setPosition(.5);
 
                 //threeArmMotor.setPower(-ArmLift);
@@ -157,6 +157,9 @@ public class WorkFile extends LinearOpMode {
                 telemetry.addData("Dump finished", "");
                 sleep(100);
 
+
+
+
                 Control = 4;
                 waitOneFullHardwareCycle();
 
@@ -171,7 +174,11 @@ public class WorkFile extends LinearOpMode {
                 twoArmMotor.setPower(0);
                 turnServo.setPosition(.5);
                 dumpServo.setPosition(1);
+
+
                 waitOneFullHardwareCycle();
+
+
             }
         }
     }
