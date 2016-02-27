@@ -67,21 +67,21 @@ public class Red_Auto_One extends LinearOpMode {
                 upMiddleMotor.setPower(0);
                 sleep(150);
 
-                oneArmMotor.setPower(.7); //turn about 85-95°
-                upMiddleMotor.setPower(.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
+                oneArmMotor.setPower(-.7); //turn about 85-95°
+                upMiddleMotor.setPower(-.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
                 sleep(290);
 
-                oneArmMotor.setPower(.25);
-                upMiddleMotor.setPower(-.27);
-                sleep(2890);
+                oneArmMotor.setPower(.10);
+                upMiddleMotor.setPower(-.12);
+                sleep(6750);
 
                 oneArmMotor.setPower(.10);
                 upMiddleMotor.setPower(-.10);
                 sleep(250);
 
-                oneArmMotor.setPower(.23);
-                upMiddleMotor.setPower(-.25);
-                sleep(660);
+                oneArmMotor.setPower(.10);
+                upMiddleMotor.setPower(-.12);
+                sleep(1200);
 
                 oneArmMotor.setPower(.10);
                 upMiddleMotor.setPower(-.10);
@@ -92,71 +92,88 @@ public class Red_Auto_One extends LinearOpMode {
                 sleep(55);
 
 
-                oneArmMotor.setPower(.7); //turn about 85-95°t
-                upMiddleMotor.setPower(.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
+                oneArmMotor.setPower(-.7); //turn about 85-95°t
+                upMiddleMotor.setPower(-.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
                 sleep(400);
 
                 oneArmMotor.setPower(.15);
                 upMiddleMotor.setPower(-.15);
-                sleep(1050);
+                sleep(1200);
                 oneArmMotor.setPower(0);
                 upMiddleMotor.setPower(0);
 
 
-                threeArmMotor.setPower(ArmLift);
+                threeArmMotor.setPower(ArmLift); //angle
                 sleep(100);
                 threeArmMotor.setPower(0);
 
-                rightMotor.setPower(ArmUp);
+                rightMotor.setPower(ArmUp); //length
                 leftMotor.setPower(ArmUp);
                 sleep(670);
                 rightMotor.setPower(0);
                 leftMotor.setPower(0);
 
-                threeArmMotor.setPower(ArmLift);
-                sleep(450);
-                threeArmMotor.setPower(0);
+                //threeArmMotor.setPower(ArmLift);
+                //sleep(450);
+                //threeArmMotor.setPower(0);
 
                 rightMotor.setPower(ArmUp);
-                leftMotor.setPower(ArmUp);
+                leftMotor.setPower(ArmUp); //length
                 sleep(1050);
                 rightMotor.setPower(0);
                 leftMotor.setPower(0);
 
-                rightMotor.setPower(ArmUp);
-                leftMotor.setPower(ArmUp / 2);
-                sleep(1600);
-                rightMotor.setPower(0);
-                leftMotor.setPower(0);
 
-                threeArmMotor.setPower(ArmLift);
-                sleep(425);
+                threeArmMotor.setPower(ArmLift); //angle
+                sleep(280);
                 threeArmMotor.setPower(0);
 
-                rightMotor.setPower(ArmUp);
+                rightMotor.setPower(ArmUp); //lenfth
                 leftMotor.setPower(ArmUp);
                 sleep(1200);
                 rightMotor.setPower(0);
                 leftMotor.setPower(0);
 
-                turnServo.setPosition(1);
+                turnServo.setPosition(1); //turn hold on metal
                 dumpServo.setPosition(1);
-                sleep(1400);
+                sleep(1000);
                 turnServo.setPosition(.5);
+
+
 
                 //threeArmMotor.setPower(-ArmLift);
                 //sleep(150);
                 //twoArmMotor.setPower(0);
 
-                rightMotor.setPower(ArmUp / 2);
+                threeArmMotor.setPower(ArmLift); //lift
+                sleep(575);
+                threeArmMotor.setPower(0);
+
+                //rightMotor.setPower(ArmUp / 2);
+                //leftMotor.setPower(ArmUp);
+                //sleep(375);
+                //rightMotor.setPower(0);
+                //leftMotor.setPower(0);
+
+                turnServo.setPosition(1);
+                dumpServo.setPosition(1); //turn
+                sleep(450);
+                turnServo.setPosition(.5);
+
+                rightMotor.setPower(ArmUp); //lift removed /2 on this line at 11:02
                 leftMotor.setPower(ArmUp);
-                sleep(375);
+                sleep(1660);
                 rightMotor.setPower(0);
                 leftMotor.setPower(0);
 
+                sleep(1000);
 
-                dumpServo.setPosition(0);
-                sleep(500);
+                dumpServo.setPosition(0); //dump
+                sleep(1000);
+
+                dumpServo.setPosition(1);
+
+
 
                 telemetry.addData("Dump finished", "");
                 sleep(100);

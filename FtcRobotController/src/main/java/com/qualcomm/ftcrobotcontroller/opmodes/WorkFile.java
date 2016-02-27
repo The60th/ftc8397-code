@@ -71,17 +71,17 @@ public class WorkFile extends LinearOpMode {
                 upMiddleMotor.setPower(-.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
                 sleep(290);
 
-                oneArmMotor.setPower(.25);
-                upMiddleMotor.setPower(-.27);
-                sleep(2890);
+                oneArmMotor.setPower(.10);
+                upMiddleMotor.setPower(-.12);
+                sleep(6750);
 
                 oneArmMotor.setPower(.10);
                 upMiddleMotor.setPower(-.10);
                 sleep(250);
 
-                oneArmMotor.setPower(.23);
-                upMiddleMotor.setPower(-.25);
-                sleep(660);
+                oneArmMotor.setPower(.10);
+                upMiddleMotor.setPower(-.12);
+                sleep(1200);
 
                 oneArmMotor.setPower(.10);
                 upMiddleMotor.setPower(-.10);
@@ -98,7 +98,7 @@ public class WorkFile extends LinearOpMode {
 
                 oneArmMotor.setPower(.15);
                 upMiddleMotor.setPower(-.15);
-                sleep(910);
+                sleep(1200);
                 oneArmMotor.setPower(0);
                 upMiddleMotor.setPower(0);
 
@@ -162,7 +162,7 @@ public class WorkFile extends LinearOpMode {
 
                 rightMotor.setPower(ArmUp); //lift removed /2 on this line at 11:02
                 leftMotor.setPower(ArmUp);
-                sleep(1300);
+                sleep(1660);
                 rightMotor.setPower(0);
                 leftMotor.setPower(0);
 
