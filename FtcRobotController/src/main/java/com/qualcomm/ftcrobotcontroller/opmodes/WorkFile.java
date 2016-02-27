@@ -88,7 +88,7 @@ public class WorkFile extends LinearOpMode {
                 sleep(55);
 
 
-                oneArmMotor.setPower(-.7); //turn about 85-95°
+                oneArmMotor.setPower(-.7); //turn about 85-95°t
                 upMiddleMotor.setPower(-.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
                 sleep(400);
 
