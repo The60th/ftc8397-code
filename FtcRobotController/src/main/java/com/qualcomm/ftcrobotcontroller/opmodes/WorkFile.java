@@ -81,7 +81,11 @@ public class WorkFile extends LinearOpMode {
 
                 oneArmMotor.setPower(.23);
                 upMiddleMotor.setPower(-.25);
-                sleep(760);
+                sleep(660);
+
+                oneArmMotor.setPower(.10);
+                upMiddleMotor.setPower(-.10);
+                sleep(150);
 
                 oneArmMotor.setPower(0);
                 upMiddleMotor.setPower(0);
@@ -94,7 +98,7 @@ public class WorkFile extends LinearOpMode {
 
                 oneArmMotor.setPower(.15);
                 upMiddleMotor.setPower(-.15);
-                sleep(1225);
+                sleep(1050);
                 oneArmMotor.setPower(0);
                 upMiddleMotor.setPower(0);
 
@@ -137,7 +141,7 @@ public class WorkFile extends LinearOpMode {
 
                 turnServo.setPosition(1);
                 dumpServo.setPosition(1);
-                sleep(1350);
+                sleep(1400);
                 turnServo.setPosition(.5);
 
                 //threeArmMotor.setPower(-ArmLift);
