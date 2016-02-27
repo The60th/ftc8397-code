@@ -67,8 +67,8 @@ public class Red_Auto_One extends LinearOpMode {
                 upMiddleMotor.setPower(0);
                 sleep(150);
 
-                oneArmMotor.setPower(-.7); //turn about 85-95°
-                upMiddleMotor.setPower(-.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
+                oneArmMotor.setPower(.7); //turn about 85-95°
+                upMiddleMotor.setPower(.7); //// TODO: 2/21/2016 Always check motor wheel coneection if not checked it will effect turn if loose!!!!
                 sleep(290);
 
                 oneArmMotor.setPower(.10);
