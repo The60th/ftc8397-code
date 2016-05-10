@@ -28,6 +28,9 @@ public class EAFD_Robot extends OpMode
         LeftSweep = hardwareMap.servo.get("LS");
         RightSweep = hardwareMap.servo.get("RW");
 
+        Right_Motor.setDirection(DcMotor.Direction.REVERSE);
+        Arm2.setDirection(DcMotor.Direction.REVERSE);
+
 
     }
     public void loop(){
@@ -35,37 +38,57 @@ public class EAFD_Robot extends OpMode
         double RightDrive;
         double ArmPower;
         //Catapult mode!
-        if(gamepad1.a && gamepad1.b && gamepad2.a && gamepad2.b){
-            ArmPower = gamepad2.left_stick_y;
+       // if(gamepad1.a && gamepad1.b && gamepad2.a && gamepad2.b){
+        //    ArmPower = gamepad2.left_stick_y;
+        //    LeftDrive = gamepad1.left_stick_y;
+        //    RightDrive = gamepad1.right_stick_y;
+       // }
+        //Default mode with edited power values
+       // else{
+
             LeftDrive = gamepad1.left_stick_y;
             RightDrive = gamepad1.right_stick_y;
-        }
-        //Default mode with edited power values
-        else{
-
-            LeftDrive = gamepad1.left_stick_y/2;
-            RightDrive = gamepad1.right_stick_x/2;
             ArmPower = gamepad2.left_stick_y/4;
-        }
+       // }
         //Drive controls
         Left_Motor.setPower(LeftDrive);
         Right_Motor.setPower(RightDrive);
+
         //For arm controls
 
-        if(gamepad2.left_stick_y >= .20 || gamepad2.left_stick_y <= -.20 && gamepad2.x) {
+        if(gamepad2.left_stick_y >.20 && gamepad2.x) {
             Arm1.setPower(ArmPower);
             Arm2.setPower(ArmPower);
+            telemetry.addData("Running arm forwards", "");
         }
-
-        if(gamepad1.x){
-            LeftSweep.setPosition(1);
-            RightSweep.setPosition(1);
+        else if(gamepad2.left_stick_y< -(.20) && gamepad2.x){
+            Arm1.setPower(ArmPower);
+            Arm2.setPower(ArmPower);
+            telemetry.addData("Running arm backwards","");
         }
         else{
-            LeftSweep.setPosition(0);
+            Arm1.setPower(0);
+            Arm2.setPower(0);
+        }
+        // RightSweep moving code
+        if(gamepad1.b){
+            RightSweep.setPosition(1);
+        }
+        else if(gamepad1.x){
             RightSweep.setPosition(0);
         }
+        else{
+            RightSweep.setPosition(.5);
+        }
 
-
+        if (gamepad1.a) {
+            LeftSweep.setPosition(0);
+        }
+        else if(gamepad1.y){
+            LeftSweep.setPosition(1);
+        }
+        else{
+            LeftSweep.setPosition(.5);
+        }
     }
 }
