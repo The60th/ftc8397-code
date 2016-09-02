@@ -59,6 +59,6 @@ public class FtcOpModeRegister implements OpModeRegister {
     manager.register("EAFD", EAFD_Robot.class);
     manager.register("Test", Test_EAFD.class);
     //manager.register("BradSwagswagyswawgdawgswagyswag With some extra swag on top dawg, go bradbrad",RampTest.class); //Test Program
-
+    manager.register("Encoder", EncoderTesting.class);
   }
 }
