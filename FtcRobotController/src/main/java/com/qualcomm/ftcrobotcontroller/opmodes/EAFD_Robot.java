@@ -56,12 +56,12 @@ public class EAFD_Robot extends OpMode
 
         //For arm controls
 
-        if(gamepad2.left_stick_y >.20 && gamepad2.x) {
+        if(gamepad2.left_stick_y > (.20) && gamepad2.x) {
             Arm1.setPower(ArmPower);
             Arm2.setPower(ArmPower);
             telemetry.addData("Running arm forwards", "");
         }
-        else if(gamepad2.left_stick_y< -(.20) && gamepad2.x){
+        else if(gamepad2.left_stick_y< - (.20) && gamepad2.x){
             Arm1.setPower(ArmPower);
             Arm2.setPower(ArmPower);
             telemetry.addData("Running arm backwards","");

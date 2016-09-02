@@ -64,7 +64,7 @@ public class TeleOp extends OpMode
         double rightX = -gamepad2.left_stick_y/2;
         double leftX = -gamepad2.right_stick_y/2;
 
-        double JoyTwoLeft = - gamepad2.left_stick_y/1.25;
+        double JoyTwoLeft = -gamepad2.left_stick_y/1.25;
         double JoyTwoRight = -gamepad2.right_stick_y/1.25;
 
        //Here you can first see where we have the motors be set to the power of a variables that is taken from the joystick. In this it is the two variables leftX
@@ -207,6 +207,7 @@ public class TeleOp extends OpMode
         telemetry.addData("1AM power:", oneArmMotor.getPower());
         telemetry.addData("2AM power:", twoArmMotor.getPower());
         telemetry.addData("3AM:", threeArmMotor.getPower());
+
 
        //After reading this all if you have any questions feel free to contact any member of FTC Team Beta8397 for more information on how any of this code
        //all are members would be more then happy to walk you threw on how it works!

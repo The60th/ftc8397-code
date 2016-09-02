@@ -47,15 +47,18 @@ public class FtcOpModeRegister implements OpModeRegister {
    */
   public void register(OpModeManager manager) {
     manager.register("TeleOp", TeleOp.class); //Test Program
-    manager.register("ColorTest",ColorTest.class); //Test Program
+    //manager.register("ColorTest",ColorTest.class); //Test Program
 
-    manager.register("Red",Red_Auto_One.class); //Comp Program
-    manager.register("Red_Wait",RedAutoTenWait.class); //Comp Program
+    //manager.register("Red",Red_Auto_One.class); //Comp Program
+    //manager.register("Red_Wait",RedAutoTenWait.class); //Comp Program
 
-    manager.register("Blue",Blue_Auto_One.class); //Comp Program
-    manager.register("Blue_Wait",BlueAutoTenWait.class); //Comp Program
+    //manager.register("Blue",Blue_Auto_One.class); //Comp Program
+    //manager.register("Blue_Wait",BlueAutoTenWait.class); //Comp Program
 
-    manager.register("Work",WorkFile.class);
+    //manager.register("Work",WorkFile.class);
+    manager.register("EAFD", EAFD_Robot.class);
+    manager.register("Test", Test_EAFD.class);
     //manager.register("BradSwagswagyswawgdawgswagyswag With some extra swag on top dawg, go bradbrad",RampTest.class); //Test Program
+
   }
 }
