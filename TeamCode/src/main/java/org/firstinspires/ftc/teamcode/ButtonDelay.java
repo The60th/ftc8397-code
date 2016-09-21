@@ -1,5 +1,4 @@
-package com.qualcomm.ftcrobotcontroller.opmodes;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+package org.firstinspires.ftc.teamcode;import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import android.bluetooth.BluetoothClass;
 import android.graphics.Color;
@@ -14,7 +13,7 @@ import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.robocol.Telemetry;
+//import com.qualcomm.robotcore.robocol.Telemetry;
 //1(518)314-6727 gilly's #y
 import java.util.concurrent.TimeUnit;
 
@@ -22,8 +21,8 @@ import java.util.concurrent.TimeUnit;
  * Created by CanAdirondack on 8/12/2016.
  */ //test
 public class ButtonDelay {
-    int Ycount = 1;
-    public float LeftDrive;
+    int Ycount = 1;}
+   /* public float LeftDrive; *\
     public float RightDrive;
     DcMotor Left_Motor, Right_Motor;
 
@@ -64,3 +63,6 @@ public class ButtonDelay {
 
 
 }
+
+
+*/

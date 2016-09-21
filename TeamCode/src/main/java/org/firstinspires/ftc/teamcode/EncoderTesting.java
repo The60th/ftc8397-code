@@ -1,5 +1,4 @@
-package com.qualcomm.ftcrobotcontroller.opmodes;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+package org.firstinspires.ftc.teamcode;import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -26,8 +25,8 @@ public class EncoderTesting extends OpMode
 
         Right_Motor.setDirection(DcMotor.Direction.REVERSE);
 
-        Left_Motor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
-        Right_Motor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        //Left_Motor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        //Right_Motor.setMode(DcMotorController.RunMode.RUN_TO_POSITION);
 
     }
     public void loop(){
@@ -36,7 +35,7 @@ public class EncoderTesting extends OpMode
         Right_Motor.setTargetPosition(1220);
         Right_Motor.setPower(1);
 
-        Left_Motor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-        Right_Motor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        //Left_Motor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        //Right_Motor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
     }
 }
