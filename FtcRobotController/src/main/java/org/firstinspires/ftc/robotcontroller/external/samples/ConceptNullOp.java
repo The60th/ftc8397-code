@@ -1,10 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<!--
-
-strings.xml in FtcRobotController
-
-Copyright (c) 2014, 2015 Qualcomm Technologies Inc
+/* Copyright (c) 2014, 2015 Qualcomm Technologies Inc
 
 All rights reserved.
 
@@ -33,30 +27,55 @@ DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
 SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
--->
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
-<resources>
+package org.firstinspires.ftc.robotcontroller.external.samples;
 
-  <string name="app_name">FTC Robot Controller</string>
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-  <!-- Menu -->
-  <string name="inspection_mode_menu_item">Self Inspect</string>
-  <string name="programming_mode_menu_item">Programming Mode</string>
-  <string name="blocks_menu_item">Blocks</string>
-  <string name="settings_menu_item">Settings</string>
-  <string name="restart_robot_menu_item">Restart Robot</string>
-  <string name="configure_robot_menu_item">Configure Robot</string>
-  <string name="about_menu_item">About</string>
-  <string name="exit_menu_item">Exit</string>
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-  <!-- Preferences -->
-  <string name="pref_view_logs">View Logs</string>
-  <string name="pref_sound_on_off_title">Sound</string>
+/**
+ * Demonstrates empty OpMode
+ */
+@Autonomous(name = "Concept: NullOp", group = "Concept")
+@Disabled
+public class ConceptNullOp extends OpMode {
 
-  <!-- Toast messages -->  
-  <string name="toastWifiConfigurationComplete">Configuration Complete</string>
-  <string name="toastRestartingRobot">Restarting Robot</string>
-  <string name="toastConfigureRobotBeforeProgrammingMode">You must Configure Robot before starting Programming Mode.</string>
+  private ElapsedTime runtime = new ElapsedTime();
 
-</resources>
+  @Override
+  public void init() {
+    telemetry.addData("Status", "Initialized");
+  }
+
+  /*
+     * Code to run when the op mode is first enabled goes here
+     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
+     */
+  @Override
+  public void init_loop() {
+  }
+
+  /*
+   * This method will be called ONCE when start is pressed
+   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
+   */
+  @Override
+  public void start() {
+    runtime.reset();
+  }
+
+  /*
+   * This method will be called repeatedly in a loop
+   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
+   */
+  @Override
+  public void loop() {
+    telemetry.addData("Status", "Run Time: " + runtime.toString());
+  }
+}

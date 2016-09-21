@@ -54,7 +54,7 @@ public class EAFD_Robot extends OpMode
         Left_Motor.setPower(LeftDrive);
         Right_Motor.setPower(RightDrive);
 
-        //For arm controls
+        //For arm hcontrols
 
         if(gamepad2.left_stick_y > (.20) && gamepad2.x) {
             Arm1.setPower(ArmPower);
