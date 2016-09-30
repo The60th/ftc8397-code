@@ -101,7 +101,7 @@ public class MovementTest extends OpMode {
 
         @Override
         public void loop() {
-            //Forward power
+        /*    //Forward power
         if (gamepad1.right_trigger > 0){
             mainPower = gamepad1.right_trigger;
         }
@@ -133,10 +133,10 @@ public class MovementTest extends OpMode {
         if(gamepad1.left_trigger == 0 && gamepad1.right_trigger == 0){
             leftMotor.setPower(0);
             rightMotor.setPower(0);
-        }
-        //leftMotor.setPower(gamepad1.left_stick_y);
-        //rightMotor.setPower(gamepad1.right_stick_y);
-        //middleMotor.setPower(gamepad1.right_stick_x);
+        }*/
+        leftMotor.setPower(gamepad1.left_stick_y);
+        rightMotor.setPower(gamepad1.right_stick_y);
+        middleMotor.setPower(gamepad1.right_stick_x);
     }
 
     /*
