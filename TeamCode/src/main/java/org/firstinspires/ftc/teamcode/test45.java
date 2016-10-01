@@ -28,6 +28,7 @@ public class test45  extends OpMode {
         three = hardwareMap.dcMotor.get("M3");
         four = hardwareMap.dcMotor.get("M4");
 
+
         two.setDirection(DcMotor.Direction.REVERSE);
         three.setDirection(DcMotor.Direction.REVERSE);
 
@@ -45,14 +46,7 @@ public class test45  extends OpMode {
             one.setPower(-1);
             three.setPower(-1);
             }
-        else {
-            one.setPower(0);
-            three.setPower(0);
-        }
-
-
-
-            if (gamepad1.right_stick_x <= -.05) {
+        else if (gamepad1.right_stick_x <= -.05) {
                 two.setPower(1);
                 four.setPower(1);
             }
@@ -61,8 +55,25 @@ public class test45  extends OpMode {
             two.setPower(-1);
             four.setPower(-1);
         }
-            else{
+            else if (gamepad1.left_stick_x >= .05){
+
+            one.setPower(-1);
+            two.setPower(1);
+            three.setPower(1);
+            four.setPower(-1);
+        }
+        else if (gamepad1.left_stick_x <= -.05){
+
+            one.setPower(1);
+            two.setPower(-1);
+            three.setPower(-1);
+            four.setPower(1);
+        }
+        else {
+
+            one.setPower(0);
             two.setPower(0);
+            three.setPower(0);
             four.setPower(0);
         }
 
