@@ -1,100 +1,115 @@
 
-/* Copyright (c) 2015 Qualcomm Technologies Inc
 
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without modification,
-are permitted (subject to the limitations in the disclaimer below) provided that
-the following conditions are met:
-
-Redistributions of source code must retain the above copyright notice, this list
-of conditions and the following disclaimer.
-
-Redistributions in binary form must reproduce the above copyright notice, this
-list of conditions and the following disclaimer in the documentation and/or
-other materials provided with the distribution.
-
-Neither the name of Qualcomm Technologies Inc nor the names of its contributors
-may be used to endorse or promote products derived from this software without
-specific prior written permission.
-
-NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
-LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
-
-        package org.firstinspires.ftc.teamcode;
-
-        import android.app.Activity;
+package org.firstinspires.ftc.teamcode;
+        import android.content.Loader;
         import android.graphics.Color;
-        import android.util.Log;
-        import android.view.View;
+        import android.media.AudioManager;
+        import android.media.SoundPool;
 
-        import com.qualcomm.ftccommon.DbgLog;
-        import com.qualcomm.ftcrobotcontroller.R;
-        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-        import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+        import com.qualcomm.hardware.ams.AMSColorSensor;
+        import com.qualcomm.robotcore.eventloop.opmode.*;
+        import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
         import com.qualcomm.robotcore.hardware.ColorSensor;
-        import com.qualcomm.robotcore.hardware.DcMotor;
-        import com.qualcomm.robotcore.hardware.DcMotorController;
-        import com.qualcomm.robotcore.util.Range;
+        import com.qualcomm.robotcore.hardware.I2cAddr;
+        import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
+        import com.qualcomm.robotcore.hardware.TouchSensor;
 
-        import java.util.Random;
+
+@TeleOp(name=" ColorTest : Double Sensor ", group="Test")
 public class ColorTest extends OpMode {
-    public void init() {
-        // ColorSensor sensorRGB;
-        //DcMotor leftMotor;
-        //DcMotor rightMotor;
-    }
-
+    OpticalDistanceSensor odsSensor;
     ColorSensor sensorRGB;
+    ColorSensor sensorRGB2;
+    TouchSensor touchSensor;  // Hardware Device Object
+    public SoundPool mySound;
+    public int beepID;
+    public double baseLine;
+    public double odcValue;
 
-    @Override
-    public void loop() {
+
+    public void init() {
         hardwareMap.logDevices();
         sensorRGB = hardwareMap.colorSensor.get("mr");
-        //sensorRGB.enableLed(true);
+        sensorRGB2 = hardwareMap.colorSensor.get("mr2");
+        touchSensor=hardwareMap.touchSensor.get("mrT");
+        odsSensor = hardwareMap.opticalDistanceSensor.get("ods");
 
+        mySound = new SoundPool(1, AudioManager.STREAM_MUSIC, 0); // PSM
+        //mysound2 = new SoundPool()
+        beepID = mySound.load(hardwareMap.appContext, R.raw.nxtstartupsound, 1); // PSM
+       // I2cAddr test = 0x03;
+        sensorRGB2.setI2cAddress(I2cAddr.create8bit(0x70));
+
+        sensorRGB.enableLed(true);
+        sensorRGB2.enableLed(true);
+        baseLine = odsSensor.getRawLightDetected();
+
+    }
+    @Override
+    public void loop() {
+
+        //sensorRGB.setI2cAddress(t, 0x70);
         String colorfound = "none";
         double blue = sensorRGB.blue();
         double red = sensorRGB.red();
         double clear = sensorRGB.alpha();
         double green = sensorRGB.green();
+
+        double blue2 = sensorRGB2.blue();
+        double red2 = sensorRGB2.red();
+        double clear2 = sensorRGB2.alpha();
+        double green2 = sensorRGB2.green();
+
+        odcValue = odsSensor.getRawLightDetected();
+
         float[] HSVTest = {0F, 0F, 0F};
-        sensorRGB.enableLed(true);
+        float[] HSVTest2 = {0F, 0F, 0F};
         Color.RGBToHSV(sensorRGB.red() * 8, sensorRGB.green() * 8, sensorRGB.blue() * 8, HSVTest);
+        Color.RGBToHSV(sensorRGB2.red() * 8, sensorRGB2.green() * 8, sensorRGB2.blue() * 8, HSVTest2);;
+
         telemetry.addData("Clear", sensorRGB.alpha());
-        telemetry.addData("Red  ", sensorRGB.red());
-        telemetry.addData("Green", sensorRGB.green());
-        telemetry.addData("Blue ", sensorRGB.blue());
+        telemetry.addData("Red  ", red);
+        telemetry.addData("Green", green);
+        telemetry.addData("Blue ", blue);
         telemetry.addData("Hue", HSVTest[0]);
         telemetry.addData("Saturation", HSVTest[1]);
         telemetry.addData("Value", HSVTest[2]);
+
+        telemetry.addData("Clear2", sensorRGB2.alpha());
+        telemetry.addData("Red2  ", red2);
+        telemetry.addData("Green2", green2);
+        telemetry.addData("Blue2 ", blue2);
+        telemetry.addData("Hue2", HSVTest2[0]);
+        telemetry.addData("Saturation2", HSVTest2[1]);
+        telemetry.addData("Value2", HSVTest2[2]);
+
+        telemetry.addData("Base line values of ods is ",baseLine);
+        telemetry.addData("Current value of ods is ",odcValue);
+
+        if (touchSensor.isPressed()) {
+            sensorRGB2.enableLed(false);
+            telemetry.addData("Touch", "Is Pressed");
+            sensorRGB.enableLed(true);
+            for (int i =0; i<=2; ){
+            mySound.play(beepID,1,1,1,0,1);
+                i++;
+             }
+        }
+        else {
+            sensorRGB2.enableLed(true);
+            telemetry.addData("Touch", "Is Not Pressed");
+            sensorRGB.enableLed(false);
+
+
+
+
+
+
+        }
+
+
+
+        this.updateTelemetry(telemetry);
+
     }
 }
-           // if(HSVTest[0] >= 180 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.033  || HSVTest[0] >= 0 && HSVTest[1] >= 1 && HSVTest[2] >= 0.03 && HSVTest[0] <= 50){
-              //  colorfound = "blue or red";
-
-
-
-
-
-
-           // if(HSVTest[0] >= 180 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.033  ||/*tests for red */ HSVTest[0] >= 0 && HSVTest[1] >= 1 && HSVTest[2] >= 0.03 && HSVTest[0] <= 50 ) // && blue >= 5 && green >=1 && clear >=2 && green <= 15 && clear <= 10 && red >= 0 && red <= 2) //Tests for blue
-           // {
-                //colorfound = "blue or red";
-
-               // if (/*HSVTest[0] >= 180 && HSVTest[1] >= 0.5 && HSVTest[2] >= 0.033*/HSVTest[0] >= 0 && HSVTest[1] >= 1 && HSVTest[2] >= 0.03 && HSVTest[0] <= 50) {
-
-
-
-                //if(HSVTest[0] >= 0 && HSVTest[1] >= 1 && HSVTest[2] >= 0.3 && red >= 8 && green >=3 && clear >=10 && green <= 7 && clear <= 21 && blue >= 0 && blue <= 2)
-
-//
