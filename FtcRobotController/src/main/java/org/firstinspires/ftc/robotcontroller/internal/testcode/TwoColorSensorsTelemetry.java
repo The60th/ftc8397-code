@@ -57,11 +57,11 @@ public class TwoColorSensorsTelemetry extends LinearOpMode
 
         AMSColorSensor.Parameters params = leftColorSensor.getParameters();
         // possibly change some (notably gain and / or integration time), then
-        // leftColorSensor.initialize(params);
+        leftColorSensor.initialize(params);
 
         params = rightColorSensor.getParameters();
         // possibly change some (notably gain and / or integration time), then
-        // rightColorSensor.initialize(params);
+         rightColorSensor.initialize(params);
 
         waitForStart();
 

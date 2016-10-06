@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
  * Created by CanAdirondack on 9/22/2016.
  */
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name=" BallGun : second files ", group="Test")
 public class BallGun extends OpMode {
     DcMotor MotorOne;
     DcMotor MotorTwo;
