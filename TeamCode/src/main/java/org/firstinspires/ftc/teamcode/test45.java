@@ -35,39 +35,51 @@ public class test45  extends OpMode {
     }
     public void loop(){
 
-        if (gamepad1.right_stick_y <= -.05) {
+        double F_B_Drive = gamepad1.right_stick_y;
+        double L_R_Drive = gamepad1.right_stick_x;
+        double TurnDrive = gamepad1.left_stick_x;
+
+        if ( F_B_Drive <= -.05) {
         //Forward drive to the north east.
-            one.setPower(1);
-            three.setPower(1);
+            one.setPower(.5);
+            three.setPower(.5);
+            two.setPower(.5);
+            four.setPower(.5);
         }
 
-        else if (gamepad1.right_stick_y >= .05) {
+        else if ( F_B_Drive >= .05) {
         //Backwards drive to the south west.
-            one.setPower(-1);
-            three.setPower(-1);
+            one.setPower(-.5);
+            three.setPower(-.5);
+            two.setPower(-.5);
+            four.setPower(-.5);
             }
-        else if (gamepad1.right_stick_x <= -.05) {
-                two.setPower(1);
-                four.setPower(1);
+        else if ( L_R_Drive <= -.05) {
+                two.setPower(.5);
+                four.setPower(.5);
+                one.setPower(-.5);
+                three.setPower(-.5);
             }
-            else if (gamepad1.right_stick_x >= .05) {
+            else if ( L_R_Drive >= .05) {
 
-            two.setPower(-1);
-            four.setPower(-1);
+            two.setPower(-.5);
+            four.setPower(-.5);
+            one.setPower(.5);
+            three.setPower(.5);
         }
-            else if (gamepad1.left_stick_x >= .05){
+            else if (TurnDrive >= .05){
 
-            one.setPower(-1);
-            two.setPower(1);
-            three.setPower(1);
-            four.setPower(-1);
+            one.setPower(-.5);
+            two.setPower(.5);
+            three.setPower(.5);
+            four.setPower(-.5);
         }
-        else if (gamepad1.left_stick_x <= -.05){
+        else if (TurnDrive <= -.05){
 
-            one.setPower(1);
-            two.setPower(-1);
-            three.setPower(-1);
-            four.setPower(1);
+            one.setPower(.5);
+            two.setPower(-.5);
+            three.setPower(-.5);
+            four.setPower(.5);
         }
         else {
 
