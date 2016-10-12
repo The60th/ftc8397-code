@@ -7,6 +7,7 @@ package org.firstinspires.ftc.teamcode;
         import android.media.SoundPool;
 
         import com.qualcomm.hardware.ams.AMSColorSensor;
+        import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
         import com.qualcomm.robotcore.eventloop.opmode.*;
         import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
         import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -21,11 +22,14 @@ public class ColorTest extends OpMode {
     ColorSensor sensorRGB;
     ColorSensor sensorRGB2;
     TouchSensor touchSensor;  // Hardware Device Object
+    ModernRoboticsI2cGyro gyro;
     public SoundPool mySound;
     public int beepID;
     public double baseLine;
-    public double odcValue;
-
+    public double odsValue;
+    int xVal, yVal, zVal = 0;     // Gyro rate Values
+    int heading = 0;              // Gyro integrated heading
+    int angleZ = 0;
 
     public void init() {
         hardwareMap.logDevices();
@@ -33,22 +37,33 @@ public class ColorTest extends OpMode {
         sensorRGB2 = hardwareMap.colorSensor.get("mr2");
         touchSensor=hardwareMap.touchSensor.get("mrT");
         odsSensor = hardwareMap.opticalDistanceSensor.get("ods");
+        gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("gyro");
 
-        mySound = new SoundPool(1, AudioManager.STREAM_MUSIC, 0); // PSM
-        //mysound2 = new SoundPool()
-        beepID = mySound.load(hardwareMap.appContext, R.raw.nxtstartupsound, 1); // PSM
-       // I2cAddr test = 0x03;
         sensorRGB2.setI2cAddress(I2cAddr.create8bit(0x70));
 
         sensorRGB.enableLed(true);
         sensorRGB2.enableLed(true);
         baseLine = odsSensor.getRawLightDetected();
 
+
+        telemetry.addData(">", "Gyro Calibrating. Do Not move!");
+        telemetry.update();
+        gyro.calibrate();
+
+        // make sure the gyro is calibrated.
+        while (gyro.isCalibrating())  {
+            //Thread.sleep(50);
+            telemetry.addData(">", "Gyro Calibrating. Do Not move!");
+            telemetry.update();
+            //idle();
+        }
+
+        telemetry.addData(">", "Gyro Calibrated.  Press Start.");
+        telemetry.update();
     }
     @Override
     public void loop() {
 
-        //sensorRGB.setI2cAddress(t, 0x70);
         String colorfound = "none";
         double blue = sensorRGB.blue();
         double red = sensorRGB.red();
@@ -60,7 +75,9 @@ public class ColorTest extends OpMode {
         double clear2 = sensorRGB2.alpha();
         double green2 = sensorRGB2.green();
 
-        odcValue = odsSensor.getRawLightDetected();
+        odsValue = odsSensor.getRawLightDetected();
+        double odsValueScaled = odsSensor.getLightDetected();
+
 
         float[] HSVTest = {0F, 0F, 0F};
         float[] HSVTest2 = {0F, 0F, 0F};
@@ -84,28 +101,56 @@ public class ColorTest extends OpMode {
         telemetry.addData("Value2", HSVTest2[2]);
 
         telemetry.addData("Base line values of ods is ",baseLine);
-        telemetry.addData("Current value of ods is ",odcValue);
+        telemetry.addData("Current value of ods is ",odsValue);
+        telemetry.addData("Current scaled value of ods is:",odsValueScaled);
+
+
+        xVal = gyro.rawX();
+        yVal = gyro.rawY();
+        zVal = gyro.rawZ();
+
+        // get the heading info.
+        // the Modern Robotics' gyro sensor keeps
+        // track of the current heading for the Z axis only.
+        heading = gyro.getHeading();
+        angleZ  = gyro.getIntegratedZValue();
+
+        telemetry.addData(">", "Press A & B to reset Heading.");
+        telemetry.addData("0", "Heading %03d", heading);
+        telemetry.addData("1", "Int. Ang. %03d", angleZ);
+        telemetry.addData("2", "X av. %03d", xVal);
+        telemetry.addData("3", "Y av. %03d", yVal);
+        telemetry.addData("4", "Z av. %03d", zVal);
+
+
 
         if (touchSensor.isPressed()) {
             sensorRGB2.enableLed(false);
             telemetry.addData("Touch", "Is Pressed");
-            sensorRGB.enableLed(true);
-            for (int i =0; i<=2; ){
+            sensorRGB.enableLed(false);
+            /*for (int i =0; i<=2; ){
             mySound.play(beepID,1,1,1,0,1);
                 i++;
-             }
+             }*/
+            if(!( (heading >= 0&&heading <= 10) || (heading <= 360 && heading>=350) )){
+                telemetry.addData("Uh oh!","Looks like we got turned around! Try and turn is back!");
+                telemetry.update();
+            }
+            else{
+                telemetry.addData("We holding steady at a heading of:", heading);
+            }
         }
         else {
             sensorRGB2.enableLed(true);
             telemetry.addData("Touch", "Is Not Pressed");
-            sensorRGB.enableLed(false);
-
-
-
-
-
+            sensorRGB.enableLed(true);
+        }
+        //White Line    //was .601, min lowered to .551 for better chances
+        if((odsValue >= .551) && (odsValue <= .757)){ //Within the max and min values for the whiteline we have found in testing.
+            telemetry.addData("White line has been found."," ");
 
         }
+
 
 
 
