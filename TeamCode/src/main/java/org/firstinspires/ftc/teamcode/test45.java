@@ -19,6 +19,8 @@ public class test45  extends OpMode {
     DcMotor two;
     DcMotor three;
     DcMotor four;
+    DcMotor Lift;
+    DcMotor Grabber;
 
     @Override
     public void init() {
@@ -27,6 +29,8 @@ public class test45  extends OpMode {
         two = hardwareMap.dcMotor.get("M2");
         three = hardwareMap.dcMotor.get("M3");
         four = hardwareMap.dcMotor.get("M4");
+        Lift = hardwareMap.dcMotor.get("SL");
+        Grabber = hardwareMap.dcMotor.get("SG");
 
 
         two.setDirection(DcMotor.Direction.REVERSE);
@@ -40,32 +44,35 @@ public class test45  extends OpMode {
         double TurnDrive = gamepad1.left_stick_x;
 
         if ( F_B_Drive <= -.05) {
-        //Forward drive to the north east.
+        //Forward drive.
+            two.setPower(-.5);
+            four.setPower(-.5);
+            one.setPower(.5);
+            three.setPower(.5);
+        }
+
+        else if ( F_B_Drive >= .05) {
+        //Backwards drive.
+            two.setPower(.5);
+            four.setPower(.5);
+            one.setPower(-.5);
+            three.setPower(-.5);
+            }
+        else if ( L_R_Drive <= -.05) {
+            //Left drive. or back
+
             one.setPower(.5);
             three.setPower(.5);
             two.setPower(.5);
             four.setPower(.5);
-        }
-
-        else if ( F_B_Drive >= .05) {
-        //Backwards drive to the south west.
+            }
+            else if ( L_R_Drive >= .05) {
+            //Right drive. or forward
             one.setPower(-.5);
             three.setPower(-.5);
             two.setPower(-.5);
             four.setPower(-.5);
-            }
-        else if ( L_R_Drive <= -.05) {
-                two.setPower(.5);
-                four.setPower(.5);
-                one.setPower(-.5);
-                three.setPower(-.5);
-            }
-            else if ( L_R_Drive >= .05) {
 
-            two.setPower(-.5);
-            four.setPower(-.5);
-            one.setPower(.5);
-            three.setPower(.5);
         }
             else if (TurnDrive >= .05){
 
@@ -81,12 +88,23 @@ public class test45  extends OpMode {
             three.setPower(-.5);
             four.setPower(.5);
         }
+        else if (gamepad1.left_trigger >= .5){
+
+            Lift.setPower(1);
+
+        }
+        else if(gamepad1.right_trigger >= .5){
+
+            Grabber.setPower(-1);
+        }
         else {
 
             one.setPower(0);
             two.setPower(0);
             three.setPower(0);
             four.setPower(0);
+            Lift.setPower(0);
+            Grabber.setPower(0);
         }
 
 
@@ -94,6 +112,6 @@ public class test45  extends OpMode {
 
 
 
-    }
+}
 
 
