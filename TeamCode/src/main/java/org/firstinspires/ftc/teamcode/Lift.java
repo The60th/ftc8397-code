@@ -16,13 +16,13 @@ import com.qualcomm.ftccommon.DbgLog;
 
 public class Lift  extends OpMode {
 
-    CRServo Lift;
+    DcMotor Lift;
     DcMotor Grabber;
 
     @Override
     public void init() {
         hardwareMap.logDevices();
-        Lift = hardwareMap.crservo.get("SL");
+        Lift = hardwareMap.dcMotor.get("SL");
         Grabber = hardwareMap.dcMotor.get("SG");
 
 
@@ -31,7 +31,7 @@ public class Lift  extends OpMode {
         //Servo type now maters.
     if (gamepad1.left_trigger >= .5){
 
-       Lift.setPower(-1);
+       Lift.setPower(1);
 
     }
     else if(gamepad1.right_trigger >= .5){

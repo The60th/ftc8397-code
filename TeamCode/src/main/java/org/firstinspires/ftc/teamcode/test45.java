@@ -76,17 +76,17 @@ public class test45  extends OpMode {
         }
             else if (TurnDrive >= .05){
 
-            one.setPower(-.5);
-            two.setPower(.5);
-            three.setPower(.5);
-            four.setPower(-.5);
-        }
-        else if (TurnDrive <= -.05){
-
             one.setPower(.5);
             two.setPower(-.5);
             three.setPower(-.5);
             four.setPower(.5);
+        }
+        else if (TurnDrive <= -.05){
+
+            one.setPower(-.5);
+            two.setPower(.5);
+            three.setPower(.5);
+            four.setPower(-.5);
         }
         else if (gamepad1.left_trigger >= .5){
 
