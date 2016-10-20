@@ -38,7 +38,13 @@ public class autonomous extends LinearOpMode {
 
 
     }
-    public  void MoveAtAngle(double angle,int time, boolean BreakNotStop)throws InterruptedException{ //angle is in degrees
+    public void MoveAtAngle(double angle,int time, boolean FloatNotBreak)throws InterruptedException{ //angle is in degrees
+        if(FloatNotBreak){
+            one.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            two.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            three.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            four.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
 
         double radians = (angle*Math.PI)/180;
         one.setPower(.5*(Math.sin(radians)+Math.cos(radians)));
@@ -48,8 +54,14 @@ public class autonomous extends LinearOpMode {
         sleep(time);
     }
 
-    public void MoveStraight(double power, int time, boolean BreakNotStop)throws InterruptedException {
-        if(BreakNotStop)
+    public void MoveStraight(double power, int time, boolean FloatNotBreak)throws InterruptedException {
+        if(FloatNotBreak){
+            one.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            two.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            three.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            four.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+
         if(power>1){
             power = 1;
         }
@@ -59,13 +71,28 @@ public class autonomous extends LinearOpMode {
         else{
             power = power;
         }
+
         two.setPower(-power);
         four.setPower(-power);
         one.setPower(power);
         three.setPower(power);
         sleep(time);
     }
+    //200/360 = .5555
+    public double Remap(double x){
+        //x is your old value
+        double a=1; //max value of 1
+        double b=-1; //min value of -1
+        double c = 360; //new max value of 360
+        double d= 0; //new min value of 0
+
+        double y;//New Value
+
+        y =(x-a)/(b-a)*(d-c)+c; //Y = (X-A)/(B-A) * (D-C) + C
+        return y;
+    }
 }
+
 
 
 

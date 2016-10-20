@@ -2,7 +2,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-
+import org.firstinspires.ftc.teamcode.TestFunctions;
+import org.firstinspires.ftc.teamcode.TestFunctions;
 
 /**
  * Created by CanAdirondack on 4/26/2016.
@@ -17,6 +18,7 @@ public class EAFD_Robot extends OpMode
     Servo RightSweep;
 
     public void init(){
+        TestFunctions.Hello();
 
         hardwareMap.logDevices();
 
@@ -73,6 +75,7 @@ public class EAFD_Robot extends OpMode
         if(gamepad1.b){
             RightSweep.setPosition(1);
         }
+
         else if(gamepad1.x){
             RightSweep.setPosition(0);
         }

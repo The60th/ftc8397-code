@@ -15,7 +15,7 @@ package org.firstinspires.ftc.teamcode;
         import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
         import com.qualcomm.robotcore.hardware.TouchSensor;
 
-
+import org.firstinspires.ftc.teamcode.autonomous.*;
 @TeleOp(name=" ColorTest : Double Sensor ", group="Test")
 public class ColorTest extends OpMode {
     OpticalDistanceSensor odsSensor;
@@ -31,6 +31,7 @@ public class ColorTest extends OpMode {
     int heading = 0;              // Gyro integrated heading
     int angleZ = 0;
 
+
     public void init() {
         hardwareMap.logDevices();
         sensorRGB = hardwareMap.colorSensor.get("mr");
@@ -44,45 +45,53 @@ public class ColorTest extends OpMode {
         sensorRGB.enableLed(true);
         sensorRGB2.enableLed(true);
         baseLine = odsSensor.getRawLightDetected();
+        
 
-
-        telemetry.addData(">", "Gyro Calibrating. Do Not move!");
+        telemetry.addData(">", "Gyro Calibrating. Do not move!");
         telemetry.update();
-        gyro.calibrate();
+        //gyro.calibrate();
 
         // make sure the gyro is calibrated.
-        while (gyro.isCalibrating())  {
+       /* while (gyro.isCalibrating())  {
             //Thread.sleep(50);
             telemetry.addData(">", "Gyro Calibrating. Do Not move!");
             telemetry.update();
             //idle();
-        }
+        }*/
 
         telemetry.addData(">", "Gyro Calibrated.  Press Start.");
         telemetry.update();
     }
     @Override
     public void loop() {
-
+        autonomous.Tim();
         String colorfound = "none";
+
         double blue = sensorRGB.blue();
         double red = sensorRGB.red();
-        double clear = sensorRGB.alpha();
+        int clear = sensorRGB.alpha();
         double green = sensorRGB.green();
-
+        //sensorRGB.
         double blue2 = sensorRGB2.blue();
         double red2 = sensorRGB2.red();
         double clear2 = sensorRGB2.alpha();
         double green2 = sensorRGB2.green();
-
         odsValue = odsSensor.getRawLightDetected();
         double odsValueScaled = odsSensor.getLightDetected();
 
-
-        float[] HSVTest = {0F, 0F, 0F};
+        int test;
+        float[] HSVTest = {0F, 1F, 1F};
         float[] HSVTest2 = {0F, 0F, 0F};
-        Color.RGBToHSV(sensorRGB.red() * 8, sensorRGB.green() * 8, sensorRGB.blue() * 8, HSVTest);
-        Color.RGBToHSV(sensorRGB2.red() * 8, sensorRGB2.green() * 8, sensorRGB2.blue() * 8, HSVTest2);;
+        Color.RGBToHSV(sensorRGB.red(), sensorRGB.green(), sensorRGB.blue(), HSVTest);
+        Color.RGBToHSV(sensorRGB2.red() * 8, sensorRGB2.green() * 8, sensorRGB2.blue() * 8, HSVTest2);
+
+        test = Color.HSVToColor(sensorRGB.alpha(),HSVTest);
+        int test2 = 170;
+        int alpha = (test);
+        //test = Color.HSVToColor(clear,HSVTest);
+
+        String taco = Integer.toHexString(test);
+        telemetry.addData("HexString?: ", Integer.toHexString(test2));
 
         telemetry.addData("Clear", sensorRGB.alpha());
         telemetry.addData("Red  ", red);
@@ -92,6 +101,8 @@ public class ColorTest extends OpMode {
         telemetry.addData("Saturation", HSVTest[1]);
         telemetry.addData("Value", HSVTest[2]);
 
+        telemetry.addData("True color value testing: ",test);
+        telemetry.addData("True color value testing AA: ",alpha);
         telemetry.addData("Clear2", sensorRGB2.alpha());
         telemetry.addData("Red2  ", red2);
         telemetry.addData("Green2", green2);
@@ -158,3 +169,4 @@ public class ColorTest extends OpMode {
 
     }
 }
+
