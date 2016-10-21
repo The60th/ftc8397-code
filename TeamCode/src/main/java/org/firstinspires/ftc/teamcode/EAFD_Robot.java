@@ -18,7 +18,7 @@ public class EAFD_Robot extends OpMode
     Servo RightSweep;
 
     public void init(){
-        TestFunctions.Hello();
+       // TestFunctions.Hello();
 
         hardwareMap.logDevices();
 

@@ -64,7 +64,7 @@ public class ColorTest extends OpMode {
     }
     @Override
     public void loop() {
-        autonomous.Tim();
+
         String colorfound = "none";
 
         double blue = sensorRGB.blue();
