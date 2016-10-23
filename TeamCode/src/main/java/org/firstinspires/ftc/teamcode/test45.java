@@ -4,6 +4,7 @@ import android.widget.Switch;
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.hardware.configuration.MatrixConstants;
@@ -15,7 +16,7 @@ import org.firstinspires.ftc.teamcode.autonomous;
  */
 @TeleOp(name=" Test45 : Test ", group="Test")
 
-public class test45  extends OpMode {
+public class test45  extends LinearOpMode {
     boolean turnMode = false;
 
     DcMotor one;
@@ -24,9 +25,11 @@ public class test45  extends OpMode {
     DcMotor four;
     DcMotor Lift;
     DcMotor Grabber;
+    DcMotor LeftLaunch;
+    DcMotor RightLaunch;
 
     @Override
-    public void init() {
+    public void runOpMode() throws InterruptedException{
         one = hardwareMap.dcMotor.get("M1");
         two = hardwareMap.dcMotor.get("M2");
         three = hardwareMap.dcMotor.get("M3");
@@ -34,14 +37,17 @@ public class test45  extends OpMode {
         Lift = hardwareMap.dcMotor.get("SL");
         Grabber = hardwareMap.dcMotor.get("SG");
 
-        two.setDirection(DcMotor.Direction.REVERSE);
+        LeftLaunch = hardwareMap.dcMotor.get("LL");
+        RightLaunch = hardwareMap.dcMotor.get("RL");
+
+        RightLaunch.setDirection(DcMotor.Direction.REVERSE);
+        four.setDirection(DcMotor.Direction.REVERSE);
         three.setDirection(DcMotor.Direction.REVERSE);
-    }
-    public void loop(){
+        waitForStart();
+
         double F_B_Drive = gamepad1.right_stick_y;
         double L_R_Drive = gamepad1.right_stick_x;
         double TurnDrive = gamepad1.left_stick_x;
-
         boolean robotIsStopped = Math.abs(F_B_Drive) < .05 && Math.abs(L_R_Drive) < .05;
 
         boolean changeMode = (turnMode && Math.abs(TurnDrive) < .05 && !robotIsStopped) || (!turnMode && Math.abs(TurnDrive) > .05 && robotIsStopped);
@@ -68,6 +74,17 @@ public class test45  extends OpMode {
             Lift.setPower(0);
             Grabber.setPower(0);
         }
+        if (gamepad1.left_bumper){
+            LeftLaunch.setPower(-1);
+            RightLaunch.setPower(-1);
+        }
+        else{
+            for(double i = 1; i>.01; i = i-.25)
+            LeftLaunch.setPower(0);
+            RightLaunch.setPower(0);
+            wait(250);
+
+        }
     }
 
 
@@ -82,8 +99,8 @@ public class test45  extends OpMode {
             four.setPower(0);
             return 0;
         }
-        double w1 = x + y;
-        double w2 = -x + y;
+        double w1 = -x + y;
+        double w2 = x + y;
         double max = Math.max(Math.abs(w1),Math.abs(w2));
 
         if(max >1){
@@ -161,8 +178,6 @@ public class test45  extends OpMode {
         y =(x-a)/(b-a)*(d-c)+c; //Y = (X-A)/(B-A) * (D-C) + C
         return y;
     }
-
-
 }
 
 
