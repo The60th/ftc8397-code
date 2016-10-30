@@ -38,24 +38,28 @@ public class VuforiaNav  {
                 .multiplied(Orientation.getRotationMatrix(AxesReference.EXTRINSIC, AxesOrder.XZX,
                         AngleUnit.DEGREES, 90, 0, 0));
         trackables.get(0).setLocation(targetLocationsOnField[0]);
+        trackables.get(0).setName("Wheels");
 
 
         targetLocationsOnField[1] = OpenGLMatrix.translation(0, 1000, 0)
                 .multiplied(Orientation.getRotationMatrix(AxesReference.EXTRINSIC, AxesOrder.XZX,
                         AngleUnit.DEGREES, 90, 0, 0));
         trackables.get(1).setLocation(targetLocationsOnField[1]);
+        trackables.get(1).setName("Tools");
 
 
         targetLocationsOnField[2] = OpenGLMatrix.translation(0, 1000, 0)
                 .multiplied(Orientation.getRotationMatrix(AxesReference.EXTRINSIC, AxesOrder.XZX,
                         AngleUnit.DEGREES, 90, 0, 0));
         trackables.get(2).setLocation(targetLocationsOnField[2]);
+        trackables.get(2).setName("Legos");
 
 
         targetLocationsOnField[3] = OpenGLMatrix.translation(0, 1000, 0)
                 .multiplied(Orientation.getRotationMatrix(AxesReference.EXTRINSIC, AxesOrder.XZX,
                         AngleUnit.DEGREES, 90, 0, 0));
         trackables.get(3).setLocation(targetLocationsOnField[3]);
+        trackables.get(3).setName("Gears");
 
         for(int i =0; i <4; i++){
             ((VuforiaTrackableDefaultListener)trackables.get(i).getListener()).setPhoneInformation(phoneLocationOnRobot, parameters.cameraDirection);
@@ -87,12 +91,15 @@ public class VuforiaNav  {
             return null;
         }
     }
+    public OpenGLMatrix getTargetLocation(int targetNumber){
+        OpenGLMatrix relativeToCamera = ((VuforiaTrackableDefaultListener)trackables.get(targetNumber)).getPose();
+        if(relativeToCamera==null)return null;
+        return  phoneLocationOnRobot.multiplied(relativeToCamera);
+    }
 
-            //telemetry.update();
-           // idle();
-        }
+}
 
-   // }
+
 
 
 
