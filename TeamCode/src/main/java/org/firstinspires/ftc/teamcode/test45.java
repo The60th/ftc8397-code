@@ -63,31 +63,32 @@ public class test45  extends LinearOpMode {
             moveAtJoystickAngle();
         }
 
-        if (gamepad1.left_trigger >= .5) {
+        if (gamepad2.right_trigger >= .5) {
 
             Lift.setPower(1);
 
-        } else if (gamepad1.right_trigger >= .5) {
+        } else if (gamepad2.left_trigger >= .5) {
 
             Grabber.setPower(-1);
         } else {
             Lift.setPower(0);
             Grabber.setPower(0);
         }
-        if (gamepad1.left_bumper) {
+        if (gamepad2.right_bumper) {
             LeftLaunch.setPower(-1);
             RightLaunch.setPower(-1);
         } else {
-            double x = 1;
-            for (double i = 1; i > .01; i = i - .25)
-                x = x - .25;
+            /*double x = 1;
+            for (double i = 1; i > .01;)
+
             //i = i;
             LeftLaunch.setPower(x);
             RightLaunch.setPower(x);
             //wait(250);
-        }
+        }*/
         LeftLaunch.setPower(0);
         RightLaunch.setPower(0);
+        }
     }
 
 }
