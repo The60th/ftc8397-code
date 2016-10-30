@@ -32,10 +32,10 @@ public class autonomous extends LinearOpMode {
         two.setDirection(DcMotor.Direction.REVERSE);
         three.setDirection(DcMotor.Direction.REVERSE);
         waitForStart();
-        double angle = 60;
-        double power = .5;
-        //MoveAtAngle(angle);
 
+        MoveAtAngle(315,1000,false);
+
+        MoveStraight(.5,1000,false);
 
     }
     public void MoveAtAngle(double angle,int time, boolean FloatNotBreak)throws InterruptedException{ //angle is in degrees
