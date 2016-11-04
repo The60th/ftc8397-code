@@ -48,7 +48,7 @@ public class AutonomousOpMode1 extends LinearOpMode {
 
     /* Declare OpMode members. */
     OmniBot        robot   = new OmniBot();
-
+    allSensors sensors = new allSensors();
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -57,7 +57,7 @@ public class AutonomousOpMode1 extends LinearOpMode {
          * The init() method of the hardware class does all the work here
          */
         robot.init(hardwareMap);
-
+        //String test = sensors.colorSensor();
 
         waitForStart();
 

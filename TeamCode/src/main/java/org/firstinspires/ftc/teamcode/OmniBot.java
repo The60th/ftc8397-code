@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -24,6 +26,8 @@ public class OmniBot
     public DcMotor Grabber;
     public DcMotor LeftLaunch;
     public DcMotor RightLaunch;
+    public ColorSensor sensorRGB;
+    public ColorSensor sensorRGB2;
 
     /* local OpMode members. */
     HardwareMap hardwareMap          =  null;
@@ -38,6 +42,11 @@ public class OmniBot
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
        hardwareMap = ahwMap;
+
+        sensorRGB = hardwareMap.colorSensor.get("mr"); //Added color sensors for running the robot
+        sensorRGB2 = hardwareMap.colorSensor.get("mr2");
+        sensorRGB2.setI2cAddress(I2cAddr.create8bit(0x70)); //Swaping the second color sensor to a new ip, this is the sensor on top.
+
 
         one = hardwareMap.dcMotor.get("M1");
         two = hardwareMap.dcMotor.get("M2");

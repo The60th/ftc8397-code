@@ -80,7 +80,7 @@ public class ColorTest extends OpMode {
         double odsValueScaled = odsSensor.getLightDetected();
 
         int test;
-        float[] HSVTest = {0F, 1F, 1F};
+        float[] HSVTest = {0, 0, 0};
         float[] HSVTest2 = {0F, 0F, 0F};
         Color.RGBToHSV(sensorRGB.red(), sensorRGB.green(), sensorRGB.blue(), HSVTest);
         Color.RGBToHSV(sensorRGB2.red() * 8, sensorRGB2.green() * 8, sensorRGB2.blue() * 8, HSVTest2);

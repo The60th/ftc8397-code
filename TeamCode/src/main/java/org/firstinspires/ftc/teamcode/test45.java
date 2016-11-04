@@ -1,10 +1,15 @@
 package org.firstinspires.ftc.teamcode;
+import android.app.Activity;
+import android.graphics.Color;
+import android.view.View;
 import android.widget.Switch;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.hardware.configuration.MatrixConstants;
@@ -18,6 +23,7 @@ import org.firstinspires.ftc.teamcode.autonomous;
 
 public class test45  extends LinearOpMode {
     boolean turnMode = false;
+    allSensors sensors = new allSensors();
 
     DcMotor one;
     DcMotor two;
@@ -28,8 +34,14 @@ public class test45  extends LinearOpMode {
     DcMotor LeftLaunch;
     DcMotor RightLaunch;
 
+    ColorSensor sensorRGB;
+
     @Override
     public void runOpMode() throws InterruptedException {
+        final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(com.qualcomm.ftcrobotcontroller.R.id.RelativeLayout);
+        float hsvValues[] = {0F,0F,0F};
+        final float values[] = hsvValues;
+
         one = hardwareMap.dcMotor.get("M1");
         two = hardwareMap.dcMotor.get("M2");
         three = hardwareMap.dcMotor.get("M3");
@@ -40,6 +52,10 @@ public class test45  extends LinearOpMode {
         LeftLaunch = hardwareMap.dcMotor.get("LL");
         RightLaunch = hardwareMap.dcMotor.get("RL");
 
+        sensorRGB = hardwareMap.colorSensor.get("mr");
+        sensorRGB.setI2cAddress(I2cAddr.create8bit(0x70));
+
+
         LeftLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         RightLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
@@ -48,10 +64,25 @@ public class test45  extends LinearOpMode {
         three.setDirection(DcMotor.Direction.REVERSE);
         waitForStart();
         while (true){
-        double F_B_Drive = gamepad1.right_stick_y;
-        double L_R_Drive = gamepad1.right_stick_x;
-        double TurnDrive = gamepad1.left_stick_x;
-        boolean robotIsStopped = Math.abs(F_B_Drive) < .05 && Math.abs(L_R_Drive) < .05;
+            double F_B_Drive = gamepad1.right_stick_y;
+            double L_R_Drive = gamepad1.right_stick_x;
+            double TurnDrive = gamepad1.left_stick_x;
+            boolean robotIsStopped = Math.abs(F_B_Drive) < .05 && Math.abs(L_R_Drive) < .05;
+
+            //telemetry.addData("Color sensor alpha: ", sensors.colorSensorOneRawValues(sensorRGB,false)[0]);
+            //telemetry.addData("Color sensor red: ", sensors.colorSensorOneRawValues(sensorRGB,false)[1]);
+            //telemetry.addData("Color sensor green: ", sensors.colorSensorOneRawValues(sensorRGB,false)[2]);
+            //telemetry.addData("Color sensor blue: ", sensors.colorSensorOneRawValues(sensorRGB,false)[3]);
+            //telemetry.addData("Color sensor argb: ", sensors.colorSensorOneRawValues(sensorRGB,false)[4]);
+            Color.RGBToHSV(sensors.colorSensorOneRawValues(sensorRGB,false)[1] * 8, sensors.colorSensorOneRawValues(sensorRGB,false)[2] * 8, sensors.colorSensorOneRawValues(sensorRGB,false)[3] * 8, hsvValues);
+
+            telemetry.update();
+            
+            relativeLayout.post(new Runnable() {
+                public void run() {
+                    relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
+                }
+            });
 
         boolean changeMode = (turnMode && Math.abs(TurnDrive) < .05 && !robotIsStopped) || (!turnMode && Math.abs(TurnDrive) > .05 && robotIsStopped);
         if (changeMode) {
