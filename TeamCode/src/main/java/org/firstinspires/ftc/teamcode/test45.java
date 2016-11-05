@@ -69,10 +69,10 @@ public class test45  extends LinearOpMode {
             double TurnDrive = gamepad1.left_stick_x;
             boolean robotIsStopped = Math.abs(F_B_Drive) < .05 && Math.abs(L_R_Drive) < .05;
 
-            //telemetry.addData("Color sensor alpha: ", sensors.colorSensorOneRawValues(sensorRGB,false)[0]);
-            //telemetry.addData("Color sensor red: ", sensors.colorSensorOneRawValues(sensorRGB,false)[1]);
-            //telemetry.addData("Color sensor green: ", sensors.colorSensorOneRawValues(sensorRGB,false)[2]);
-            //telemetry.addData("Color sensor blue: ", sensors.colorSensorOneRawValues(sensorRGB,false)[3]);
+            telemetry.addData("Color sensor alpha: ", sensors.colorSensorOneRawValues(sensorRGB,false)[0]);
+            telemetry.addData("Color sensor red: ", sensors.colorSensorOneRawValues(sensorRGB,false)[1]);
+            telemetry.addData("Color sensor green: ", sensors.colorSensorOneRawValues(sensorRGB,false)[2]);
+            telemetry.addData("Color sensor blue: ", sensors.colorSensorOneRawValues(sensorRGB,false)[3]);
             //telemetry.addData("Color sensor argb: ", sensors.colorSensorOneRawValues(sensorRGB,false)[4]);
             Color.RGBToHSV(sensors.colorSensorOneRawValues(sensorRGB,false)[1] * 8, sensors.colorSensorOneRawValues(sensorRGB,false)[2] * 8, sensors.colorSensorOneRawValues(sensorRGB,false)[3] * 8, hsvValues);
 

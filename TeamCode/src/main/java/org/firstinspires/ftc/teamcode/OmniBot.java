@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class OmniBot
 {
     //Robot constants
-    public final double TICKS_PER_MOTOR_ROTATION =1440;
+    public final double TICKS_PER_MOTOR_ROTATION =1120; // With a 1 to 40 gearbox.
     public final double GEAR_RATIO = 1.0;  //Motor rotations per wheel rotation.
     public final double WHEEL_DIAMETER = 4.0*2.54;  //4in converted to cm.
     public final double TICKS_PER_CM = TICKS_PER_MOTOR_ROTATION*GEAR_RATIO/(Math.PI*WHEEL_DIAMETER);
@@ -26,8 +26,10 @@ public class OmniBot
     public DcMotor Grabber;
     public DcMotor LeftLaunch;
     public DcMotor RightLaunch;
+
     public ColorSensor sensorRGB;
-    public ColorSensor sensorRGB2;
+    //public ColorSensor sensorRGB2;
+
 
     /* local OpMode members. */
     HardwareMap hardwareMap          =  null;
@@ -44,8 +46,8 @@ public class OmniBot
        hardwareMap = ahwMap;
 
         sensorRGB = hardwareMap.colorSensor.get("mr"); //Added color sensors for running the robot
-        sensorRGB2 = hardwareMap.colorSensor.get("mr2");
-        sensorRGB2.setI2cAddress(I2cAddr.create8bit(0x70)); //Swaping the second color sensor to a new ip, this is the sensor on top.
+        //sensorRGB2 = hardwareMap.colorSensor.get("mr2");
+         sensorRGB.setI2cAddress(I2cAddr.create8bit(0x70)); //Swaping the second color sensor to a new ip, this is the sensor on top.
 
 
         one = hardwareMap.dcMotor.get("M1");
@@ -64,6 +66,8 @@ public class OmniBot
         RightLaunch.setDirection(DcMotor.Direction.REVERSE);
         four.setDirection(DcMotor.Direction.REVERSE);
         three.setDirection(DcMotor.Direction.REVERSE);
+
+        setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         setDrivePower(0,0,0);
 
@@ -98,6 +102,15 @@ public class OmniBot
         two.setMode(mode);
         three.setMode(mode);
         four.setMode(mode);
+    }
+    public void setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior beh){
+        one.setZeroPowerBehavior(beh);
+        two.setZeroPowerBehavior(beh);
+        three.setZeroPowerBehavior(beh);
+        four.setZeroPowerBehavior(beh);
+    }
+    public setStraightDriveSpeed(){
+
     }
 
 
