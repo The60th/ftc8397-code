@@ -63,15 +63,34 @@ public class TestEncoders extends LinearOpMode {
 
         robot = new OmniBot();
         robot.init(hardwareMap);
+        int [] maxSpeeds = robot.getMaxDriveTicksPerSec();
+        telemetry.addData("max1 ",maxSpeeds[0]);
+        telemetry.addData("max2 ",maxSpeeds[1]);
+        telemetry.addData("max3 ",maxSpeeds[2]);
+        telemetry.addData("max4 ",maxSpeeds[3]);
+        telemetry.update();
         waitForStart();
         robot.setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        telemetry.addData("one: ", robot.one.getCurrentPosition());
+        //robot.setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        //telemetry.addData("one: ", robot.one.getCurrentPosition());
+        //telemetry.update();
+
+        robot.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        ElapsedTime et = new ElapsedTime();
+        et.reset();
+        double scale = robot.setStraightDriveSpeed(0,20);
+        telemetry.addData("scale = ", scale);
+        telemetry.update();
+        while(opModeIsActive()&& et.seconds() <= 10.0) idle ();
+        robot.setDrivePower(0,0,0);
+        telemetry.addData("Ticks one ", robot.one.getCurrentPosition());
+        telemetry.addData("Ticks two ", robot.two.getCurrentPosition());
+        telemetry.addData("Ticks three ", robot.three.getCurrentPosition());
+        telemetry.addData("Ticks four ", robot.four.getCurrentPosition());
         telemetry.update();
 
-
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+        /*while (opModeIsActive()) {
 
             if (gamepad1.a)
                 break;
@@ -79,7 +98,7 @@ public class TestEncoders extends LinearOpMode {
             telemetry.update();
 
             idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
-        }
+        }*/
         while (opModeIsActive()) {
             idle();
         }

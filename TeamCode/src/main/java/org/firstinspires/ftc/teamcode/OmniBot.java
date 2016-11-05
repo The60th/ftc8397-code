@@ -69,6 +69,8 @@ public class OmniBot
 
         setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        setMaxDriveTicksPerSec(4000);
+
         setDrivePower(0,0,0);
 
 
@@ -109,9 +111,26 @@ public class OmniBot
         three.setZeroPowerBehavior(beh);
         four.setZeroPowerBehavior(beh);
     }
-    public setStraightDriveSpeed(){
+    public double setStraightDriveSpeed(double vx, double vy){
 
+        return setDrivePower(vx * TICKS_PER_CM / (Math.sqrt(2.0)*one.getMaxSpeed()), vy * TICKS_PER_CM /(Math.sqrt(2.0)*one.getMaxSpeed()),0.0);
     }
+    public void setMaxDriveTicksPerSec(int TicksPerSec){
+
+        one.setMaxSpeed(TicksPerSec);
+        two.setMaxSpeed(TicksPerSec);
+        three.setMaxSpeed(TicksPerSec);
+        four.setMaxSpeed(TicksPerSec);
+    }
+    public int[] getMaxDriveTicksPerSec (){
+
+        int[] returnVal = new int[4];
+        returnVal[0] = one.getMaxSpeed();
+        returnVal[1] = two.getMaxSpeed();
+        returnVal[2] = three.getMaxSpeed();
+        returnVal[3] = four.getMaxSpeed();
+        return returnVal;
+}
 
 
 }
