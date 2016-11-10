@@ -12,7 +12,7 @@ import java.lang.Math;
  * Created by CanAdirondack on 9/29/2016.
  */
 
-@TeleOp(name=" BallGun2 : Test ", group="Test")
+
 
 public class BallGun2  extends OpMode {
 
