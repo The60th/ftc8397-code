@@ -25,11 +25,9 @@ public class TestVuforiaNavClass extends LinearOpMode {
             if (et.milliseconds() > 500){
                 OpenGLMatrix robotPosition = vuforianav.getRobotLocationRelativeToTarget(3);
                 if ( robotPosition != null){
-                    float[] data = robotPosition.getData();
-                    float x = data[12];
-                    float z = data[14];
-                    float phi = (float)Math.atan2(data[4],data[6])*180.0f/(float)Math.PI;
-                    telemetry.addData("position ", "x = %.0f y = %.0f phi = %.0f",x,z,phi);
+                    float[] zxPhi = VuforiaNav.GetZXPH(robotPosition);
+                    float phiPrime = VuforiaNav.remapAngle((float)(zxPhi[2]-Math.PI));
+                    telemetry.addData("position ", "x = %.0f y = %.0f phi = %.0f",zxPhi[1],zxPhi[0],(phiPrime*180.0f)/(Math.PI));
                     telemetry.update();
                 }
                 et.reset();

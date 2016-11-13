@@ -39,43 +39,55 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
-
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 
 
 @Autonomous(name="AutonomousOpMode1", group="Pushbot")
 //@Disabled
 public class AutonomousOpMode1 extends LinearOpMode {
+    public final float C_PHI = .1f;
+    public final float C_X = .1f;
+    float[] zxPhi;
+    VuforiaNav vuforianav = null;
 
     /* Declare OpMode members. */
     OmniBot        robot   = new OmniBot();
     allSensors sensors = new allSensors();
     @Override
     public void runOpMode() throws InterruptedException {
-
-        /*
-         * Initialize the drive system variables.
-         * The init() method of the hardware class does all the work here
-         */
+        float v = 10;
         robot.init(hardwareMap);
-        //String test = sensors.colorSensor();
-
+        vuforianav = new VuforiaNav();
+        vuforianav.activate();
         waitForStart();
-
-        robot.setDrivePower(0,.2,0);
-        sleep(2000);
-        robot.setDrivePower(.2,0,0);
-        sleep(2000);
-        robot.setDrivePower(0,-.2,0);
-        sleep(2000);
-        robot.setDrivePower(-.2,0,0);
-        sleep(2000);
-        robot.setDrivePower(0,0,.2);
-        sleep(2000);
-        robot.setDrivePower(0,0,0);
-
+        OpenGLMatrix robotPosition = vuforianav.getRobotLocationRelativeToTarget(3);
+        while(opModeIsActive() && robotPosition == null){
+            robotPosition = vuforianav.getRobotLocationRelativeToTarget(3);
+            robot.setDrivePower(0, 0, 0);
+            idle();
+        }
+        if(robotPosition != null){
+            zxPhi = VuforiaNav.GetZXPH(robotPosition);
+        }
+        while (opModeIsActive() && zxPhi[0] >= 15) {
+            float[] newSpeeds = getCorrectedSpeeds(zxPhi[1], zxPhi[2], v);
+            robot.setDriveSpeed(newSpeeds[0], newSpeeds[1], newSpeeds[2]);
+            idle();
+            robotPosition = vuforianav.getRobotLocationRelativeToTarget(3);
+            if(robotPosition != null) {
+                zxPhi = VuforiaNav.GetZXPH(robotPosition);
+            }
+        }
+        robot.setDrivePower(0, 0, 0);
 
     }
 
-
+    public float[] getCorrectedSpeeds(float x,float phi,float v) {
+        float phiPrime = VuforiaNav.remapAngle(phi-(float)Math.PI);
+        float va = -phiPrime*v*C_PHI;
+        float vx = -C_X*v*x*(float)Math.cos(phiPrime);
+        float vy = v+v*C_X*x*(float)Math.sin(phiPrime);
+        return new float[]{vx,vy,va};
+    }
 }
 

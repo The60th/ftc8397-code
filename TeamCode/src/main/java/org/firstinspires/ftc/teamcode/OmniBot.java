@@ -11,12 +11,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class OmniBot
 {
     //Robot constants
-    public final double TICKS_PER_MOTOR_ROTATION =1120; // With a 1 to 40 gearbox.
+    public final double TICKS_PER_MOTOR_ROTATION = 1120; // With a 1 to 40 gearbox.
     public final double GEAR_RATIO = 1.0;  //Motor rotations per wheel rotation.
     public final double WHEEL_DIAMETER = 4.0*2.54;  //4in converted to cm.
     public final double TICKS_PER_CM = TICKS_PER_MOTOR_ROTATION*GEAR_RATIO/(Math.PI*WHEEL_DIAMETER);
     public final double LENGTH = 36.8; //cm
     public final double WIDTH = 30.5;  //cm
+    public final double TURN_RADIUS = .5*(Math.sqrt(LENGTH*LENGTH+WIDTH*WIDTH));
+    public final double COS_BETA = (WIDTH+LENGTH)/(2*Math.sqrt(2)*TURN_RADIUS);
     /* Public OpMode members. */
     public DcMotor one;
     public DcMotor two;
@@ -111,10 +113,11 @@ public class OmniBot
         three.setZeroPowerBehavior(beh);
         four.setZeroPowerBehavior(beh);
     }
-    public double setStraightDriveSpeed(double vx, double vy){
-
-        return setDrivePower(vx * TICKS_PER_CM / (Math.sqrt(2.0)*one.getMaxSpeed()), vy * TICKS_PER_CM /(Math.sqrt(2.0)*one.getMaxSpeed()),0.0);
+    public double setDriveSpeed(double vx, double vy,double va){
+        return setDrivePower(vx * TICKS_PER_CM / (Math.sqrt(2.0)*one.getMaxSpeed()), vy * TICKS_PER_CM /(Math.sqrt(2.0)*one.getMaxSpeed())
+                ,(va*TURN_RADIUS*COS_BETA*TICKS_PER_CM)/one.getMaxSpeed());
     }
+
     public void setMaxDriveTicksPerSec(int TicksPerSec){
 
         one.setMaxSpeed(TicksPerSec);

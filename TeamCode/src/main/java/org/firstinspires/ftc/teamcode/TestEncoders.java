@@ -78,7 +78,7 @@ public class TestEncoders extends LinearOpMode {
         robot.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
         ElapsedTime et = new ElapsedTime();
         et.reset();
-        double scale = robot.setStraightDriveSpeed(0,20);
+        double scale = robot.setDriveSpeed(0,20,0);
         telemetry.addData("scale = ", scale);
         telemetry.update();
         while(opModeIsActive()&& et.seconds() <= 10.0) idle ();

@@ -103,7 +103,20 @@ public class VuforiaNav  {
         if(relativeToCamera == null) return null;
         OpenGLMatrix relativeToRobot = phoneLocationOnRobot.multiplied(relativeToCamera);
         return relativeToRobot.inverted();
+    }
 
+    public static float[] GetZXPH(OpenGLMatrix relativeToTarget){
+        float[] zxPhi = relativeToTarget.getData();
+        float z = zxPhi[14]/10;
+        float x = zxPhi[12]/10;
+        float robotX = zxPhi[4];
+        float robotZ = zxPhi[6];
+        float phi = (float)Math.atan2(robotX,robotZ);
+        return new float[]{z,x,phi};
+    }
+    public static float remapAngle(float angle){
+        float temp = (float)((angle+Math.PI)/(2* Math.PI));
+        return (float)(temp -Math.floor(temp)-.5)*((float)(2*Math.PI));
     }
 }
 

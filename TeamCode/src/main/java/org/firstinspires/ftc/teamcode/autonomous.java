@@ -18,27 +18,37 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Autonomous(name=" Autonomous : Test ", group="Test")
 
 public class autonomous extends LinearOpMode {
-    DcMotor one;
+   /* DcMotor one;
     DcMotor two;
     DcMotor three;
-    DcMotor four;
+    DcMotor four;*/
+   OmniBot        robot   = new OmniBot();
 
     public void runOpMode() throws InterruptedException {
-        one = hardwareMap.dcMotor.get("M1");
+        robot.init(hardwareMap);
+
+       /* one = hardwareMap.dcMotor.get("M1");
         two = hardwareMap.dcMotor.get("M2");
         three = hardwareMap.dcMotor.get("M3");
         four = hardwareMap.dcMotor.get("M4");
 
         two.setDirection(DcMotor.Direction.REVERSE);
-        three.setDirection(DcMotor.Direction.REVERSE);
+        three.setDirection(DcMotor.Direction.REVERSE);*/
         waitForStart();
+        robot.setDriveSpeed(10,0,0);
+        sleep(5000);
+        robot.setDriveSpeed(0,10,0);
+        sleep(5000);
+        robot.setDriveSpeed(0,0,(10*Math.PI)/180);
+        sleep(5000);
+        robot.setDrivePower(0,0,0);
 
-        MoveAtAngle(315,1000,false);
+       // MoveAtAngle(315,1000,false);
 
-        MoveStraight(.5,1000,false);
+       // MoveStraight(.5,1000,false);
 
     }
-    public void MoveAtAngle(double angle,int time, boolean FloatNotBreak)throws InterruptedException{ //angle is in degrees
+    /*public void MoveAtAngle(double angle,int time, boolean FloatNotBreak)throws InterruptedException{ //angle is in degrees
         if(FloatNotBreak){
             one.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             two.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -90,7 +100,7 @@ public class autonomous extends LinearOpMode {
 
         y =(x-a)/(b-a)*(d-c)+c; //Y = (X-A)/(B-A) * (D-C) + C
         return y;
-    }
+    }*/
 }
 
 
