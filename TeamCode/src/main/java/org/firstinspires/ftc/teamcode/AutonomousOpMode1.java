@@ -55,7 +55,7 @@ public class AutonomousOpMode1 extends LinearOpMode {
     allSensors sensors = new allSensors();
     @Override
     public void runOpMode() throws InterruptedException {
-        float v = 10;
+        float v = 20;
         robot.init(hardwareMap);
         vuforianav = new VuforiaNav();
         vuforianav.activate();
@@ -69,7 +69,7 @@ public class AutonomousOpMode1 extends LinearOpMode {
         if(robotPosition != null){
             zxPhi = VuforiaNav.GetZXPH(robotPosition);
         }
-        while (opModeIsActive() && zxPhi[0] >= 15) {
+        while (opModeIsActive() && zxPhi[0] >= 21) { //Was 15 before changing to 21 for testing.
             float[] newSpeeds = getCorrectedSpeeds(zxPhi[1], zxPhi[2], v);
             robot.setDriveSpeed(newSpeeds[0], newSpeeds[1], newSpeeds[2]);
             idle();
@@ -79,6 +79,23 @@ public class AutonomousOpMode1 extends LinearOpMode {
             }
         }
         robot.setDrivePower(0, 0, 0);
+        if(robot.isRightBeaconRed()){
+            robot.RightPusher.setPosition(1);
+            sleep(1000);
+            telemetry.addData("Pushing right beacon","");
+            robot.RightPusher.setPosition(0);
+        }
+        else if(!(robot.isRightBeaconRed())){
+            robot.LeftPusher.setPosition(1);
+            sleep(1000);
+            robot.LeftPusher.setPosition(0);
+            telemetry.addData("Pushing left beacon","");
+        }
+        else{
+            telemetry.addData("Unsure what color it is.","");
+
+        }
+        telemetry.update();
 
     }
 

@@ -19,6 +19,10 @@ public class OmniBot
     public final double WIDTH = 30.5;  //cm
     public final double TURN_RADIUS = .5*(Math.sqrt(LENGTH*LENGTH+WIDTH*WIDTH));
     public final double COS_BETA = (WIDTH+LENGTH)/(2*Math.sqrt(2)*TURN_RADIUS);
+    public final double MIN_RED = 20;
+    public final double MIN_BLUE = 20;
+    public final double MAX_SENSOR_VALUES = 255;
+
     /* Public OpMode members. */
     public DcMotor one;
     public DcMotor two;
@@ -28,8 +32,9 @@ public class OmniBot
     public DcMotor Grabber;
     public DcMotor LeftLaunch;
     public DcMotor RightLaunch;
-
-    public ColorSensor sensorRGB;
+    public Servo LeftPusher;
+    public Servo RightPusher;
+    public ColorSensor sensorRGB_One;
     //public ColorSensor sensorRGB2;
 
 
@@ -47,10 +52,9 @@ public class OmniBot
         // Save reference to Hardware map
        hardwareMap = ahwMap;
 
-        sensorRGB = hardwareMap.colorSensor.get("mr"); //Added color sensors for running the robot
+        sensorRGB_One = hardwareMap.colorSensor.get("mr"); //Added color sensors for running the robot
         //sensorRGB2 = hardwareMap.colorSensor.get("mr2");
-         sensorRGB.setI2cAddress(I2cAddr.create8bit(0x70)); //Swaping the second color sensor to a new ip, this is the sensor on top.
-
+        sensorRGB_One.setI2cAddress(I2cAddr.create8bit(0x70)); //Swaping the second color sensor to a new ip, this is the sensor on top.
 
         one = hardwareMap.dcMotor.get("M1");
         two = hardwareMap.dcMotor.get("M2");
@@ -58,6 +62,8 @@ public class OmniBot
         four = hardwareMap.dcMotor.get("M4");
         Lift = hardwareMap.dcMotor.get("SL");
         Grabber = hardwareMap.dcMotor.get("SG");
+        LeftPusher = hardwareMap.servo.get("SSL");
+        RightPusher = hardwareMap.servo.get("SSR");
 
         LeftLaunch = hardwareMap.dcMotor.get("LL");
         RightLaunch = hardwareMap.dcMotor.get("RL");
@@ -77,7 +83,7 @@ public class OmniBot
 
 
         // Set all motors to zero power
-
+        sensorRGB_One.enableLed(false);
     }
 
     public double setDrivePower(double px, double py,double pa){
@@ -134,6 +140,15 @@ public class OmniBot
         returnVal[3] = four.getMaxSpeed();
         return returnVal;
 }
+    public boolean isRightBeaconRed(){
+        float red = sensorRGB_One.red();
+        float blue = sensorRGB_One.blue();
+        float alpha = sensorRGB_One.alpha();
+        float green = sensorRGB_One.green();
+        return(red >= MIN_RED && !(red == MAX_SENSOR_VALUES && blue == MAX_SENSOR_VALUES && alpha == MAX_SENSOR_VALUES && green == MAX_SENSOR_VALUES));
+
+
+    }
 
 
 }

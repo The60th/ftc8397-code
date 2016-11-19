@@ -28,7 +28,7 @@ public class VuforiaNav  {
 
 
         phoneLocationOnRobot = OpenGLMatrix
-                .translation(0,0,0)
+                .translation(50,0,0)
                 .multiplied(Orientation.getRotationMatrix(
                         AxesReference.EXTRINSIC, AxesOrder.XZX,
                         AngleUnit.DEGREES, 90, 0, 0));

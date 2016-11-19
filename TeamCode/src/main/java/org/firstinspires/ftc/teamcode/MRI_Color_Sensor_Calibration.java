@@ -45,7 +45,9 @@ public class MRI_Color_Sensor_Calibration extends LinearOpMode {
         telemetry.update();
 
         colorC = hardwareMap.i2cDevice.get("cc");
-        colorCreader = new I2cDeviceSynchImpl(colorC, I2cAddr.create8bit(0x3c), false);
+        colorCreader = new I2cDeviceSynchImpl(colorC, I2cAddr.create8bit(0x70), false);
+        //        sensorRGB.setI2cAddress(I2cAddr.create8bit(0x70));
+
         colorCreader.engage();
 
         colorCreader.write8(3, 0);    //Set the mode of the color sensor to Active

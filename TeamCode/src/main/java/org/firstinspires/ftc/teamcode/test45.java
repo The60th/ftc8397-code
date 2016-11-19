@@ -2,25 +2,19 @@ package org.firstinspires.ftc.teamcode;
 import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
-import android.widget.Switch;
 
 import com.qualcomm.robotcore.eventloop.opmode.*;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.ftccommon.DbgLog;
-import com.qualcomm.robotcore.hardware.configuration.MatrixConstants;
-
-import org.firstinspires.ftc.teamcode.autonomous;
 
 /**
  * Created by CanAdirondack on 9/30/2016.
  */
-@TeleOp(name=" Test45 : Test ", group="Test")
 
+@TeleOp(name=" Test45 : Test ", group="Test")
 public class test45  extends LinearOpMode {
     boolean turnMode = false;
     allSensors sensors = new allSensors();
@@ -33,6 +27,9 @@ public class test45  extends LinearOpMode {
     DcMotor Grabber;
     DcMotor LeftLaunch;
     DcMotor RightLaunch;
+
+    Servo right;
+    Servo left;
 
     ColorSensor sensorRGB;
 
@@ -48,6 +45,9 @@ public class test45  extends LinearOpMode {
         four = hardwareMap.dcMotor.get("M4");
         Lift = hardwareMap.dcMotor.get("SL");
         Grabber = hardwareMap.dcMotor.get("SG");
+        right = hardwareMap.servo.get("SSR");
+        left = hardwareMap.servo.get("SSL");
+
 
         LeftLaunch = hardwareMap.dcMotor.get("LL");
         RightLaunch = hardwareMap.dcMotor.get("RL");
@@ -62,7 +62,7 @@ public class test45  extends LinearOpMode {
         RightLaunch.setDirection(DcMotor.Direction.REVERSE);
         four.setDirection(DcMotor.Direction.REVERSE);
         three.setDirection(DcMotor.Direction.REVERSE);
-        sensorRGB.enableLed(true);
+        sensorRGB.enableLed(false);
         idle();
         waitForStart();
         while (opModeIsActive()){
@@ -76,6 +76,7 @@ public class test45  extends LinearOpMode {
             telemetry.addData("Color sensor green: ", sensorRGB.green());
             telemetry.addData("Color sensor blue: ", sensorRGB.blue());
             //telemetry.addData("Color sensor argb: ", sensors.colorSensorOneRawValues(sensorRGB,false)[4]);
+            //30-60ranges for blue and red.
             Color.RGBToHSV(sensorRGB.red() * 8, sensorRGB.green() * 8, sensorRGB.blue() * 8, hsvValues);
 
             telemetry.addData("value:" , hsvValues[2]);
@@ -123,6 +124,18 @@ public class test45  extends LinearOpMode {
         LeftLaunch.setPower(0);
         RightLaunch.setPower(0);
         }
+            if (gamepad1.x){
+                left.setPosition(1);
+            }
+            else if (gamepad1.b){
+                right.setPosition(1);
+
+            }
+            else{
+                left.setPosition(0);
+                right.setPosition(0);
+            }
+
             idle();
     }
 

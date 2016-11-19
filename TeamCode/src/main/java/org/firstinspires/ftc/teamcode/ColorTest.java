@@ -1,12 +1,9 @@
 
 
 package org.firstinspires.ftc.teamcode;
-        import android.content.Loader;
         import android.graphics.Color;
-        import android.media.AudioManager;
         import android.media.SoundPool;
 
-        import com.qualcomm.hardware.ams.AMSColorSensor;
         import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
         import com.qualcomm.robotcore.eventloop.opmode.*;
         import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -15,7 +12,6 @@ package org.firstinspires.ftc.teamcode;
         import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
         import com.qualcomm.robotcore.hardware.TouchSensor;
 
-import org.firstinspires.ftc.teamcode.autonomous.*;
 @TeleOp(name=" ColorTest : Double Sensor ", group="Test")
 public class ColorTest extends OpMode {
     OpticalDistanceSensor odsSensor;
