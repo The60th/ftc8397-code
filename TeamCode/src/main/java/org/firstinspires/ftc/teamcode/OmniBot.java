@@ -146,8 +146,17 @@ public class OmniBot
         float alpha = sensorRGB_One.alpha();
         float green = sensorRGB_One.green();
         return(red >= MIN_RED && !(red == MAX_SENSOR_VALUES && blue == MAX_SENSOR_VALUES && alpha == MAX_SENSOR_VALUES && green == MAX_SENSOR_VALUES));
-
-
+    }
+    public boolean isRightBeaconBlue(){
+        float red = sensorRGB_One.red();
+        float blue = sensorRGB_One.blue();
+        float alpha = sensorRGB_One.alpha();
+        float green = sensorRGB_One.green();
+        return(blue >= MIN_BLUE && !(red == MAX_SENSOR_VALUES && blue == MAX_SENSOR_VALUES && alpha == MAX_SENSOR_VALUES && green == MAX_SENSOR_VALUES));
+    }
+    public float[] getColorValues(){
+        float[] colorValues = {sensorRGB_One.red(),sensorRGB_One.green(),sensorRGB_One.blue()};
+       return colorValues;
     }
 
 

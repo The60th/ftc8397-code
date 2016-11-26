@@ -18,12 +18,16 @@ public class Lift  extends OpMode {
 
     DcMotor Lift;
     DcMotor Grabber;
+    DcMotor BallGunR;
+    DcMotor BallGunL;
 
     @Override
     public void init() {
         hardwareMap.logDevices();
         Lift = hardwareMap.dcMotor.get("SL");
         Grabber = hardwareMap.dcMotor.get("SG");
+        BallGunR = hardwareMap.dcMotor.get("BR");
+        BallGunL = hardwareMap.dcMotor.get("BL");
 
 
     }
@@ -44,6 +48,10 @@ public class Lift  extends OpMode {
     Grabber.setPower(0);
 
     }
+        if (gamepad1.a){
+            BallGunR.setPower(1);
+            BallGunL.setPower(-1);
+        }
 
 
 
