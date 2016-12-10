@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -35,6 +37,7 @@ public class OmniBot
     public Servo LeftPusher;
     public Servo RightPusher;
     public ColorSensor sensorRGB_One;
+    public ModernRoboticsI2cGyro sensorGyro;
     //public ColorSensor sensorRGB2;
 
 
@@ -55,6 +58,9 @@ public class OmniBot
         sensorRGB_One = hardwareMap.colorSensor.get("mr"); //Added color sensors for running the robot
         //sensorRGB2 = hardwareMap.colorSensor.get("mr2");
         sensorRGB_One.setI2cAddress(I2cAddr.create8bit(0x70)); //Swaping the second color sensor to a new ip, this is the sensor on top.
+        sensorGyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("G1");
+
+
 
         one = hardwareMap.dcMotor.get("M1");
         two = hardwareMap.dcMotor.get("M2");
@@ -68,6 +74,7 @@ public class OmniBot
         LeftLaunch = hardwareMap.dcMotor.get("LL");
         RightLaunch = hardwareMap.dcMotor.get("RL");
 
+        sensorGyro.setHeadingMode(ModernRoboticsI2cGyro.HeadingMode.HEADING_CARTESIAN);
         LeftLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         RightLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 

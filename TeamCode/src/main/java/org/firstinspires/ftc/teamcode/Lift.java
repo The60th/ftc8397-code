@@ -20,6 +20,7 @@ public class Lift  extends OpMode {
     DcMotor Grabber;
     DcMotor BallGunR;
     DcMotor BallGunL;
+    CRServo lifterServo;
 
     @Override
     public void init() {
@@ -28,6 +29,7 @@ public class Lift  extends OpMode {
         Grabber = hardwareMap.dcMotor.get("SG");
         BallGunR = hardwareMap.dcMotor.get("BR");
         BallGunL = hardwareMap.dcMotor.get("BL");
+        lifterServo = hardwareMap.crservo.get("S");
 
 
     }
@@ -51,6 +53,19 @@ public class Lift  extends OpMode {
         if (gamepad1.a){
             BallGunR.setPower(1);
             BallGunL.setPower(-1);
+        }
+        else{
+            BallGunL.setPower(0);
+            BallGunR.setPower(0);
+        }
+        if(gamepad1.b){
+            lifterServo.setPower(-1);
+        }
+        else if(gamepad1.x){
+                lifterServo.setPower(1);
+        }
+        else{
+            lifterServo.setPower(0);
         }
 
 

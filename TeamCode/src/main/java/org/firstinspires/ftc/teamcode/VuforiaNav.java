@@ -28,7 +28,7 @@ public class VuforiaNav  {
 
 
         phoneLocationOnRobot = OpenGLMatrix
-                .translation(50,0,0)
+                .translation(41,0,0) //Changed from 50 to -56 to test new files. -56 was over by about 1cm, changing to -41bit
                 .multiplied(Orientation.getRotationMatrix(
                         AxesReference.EXTRINSIC, AxesOrder.XZX,
                         AngleUnit.DEGREES, 90, 0, 0));

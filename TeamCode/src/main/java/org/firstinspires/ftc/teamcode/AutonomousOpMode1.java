@@ -32,6 +32,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -58,12 +59,44 @@ public class AutonomousOpMode1 extends LinearOpMode {
         float v = 20;
         robot.init(hardwareMap);
         vuforianav = new VuforiaNav();
+        robot.sensorGyro.calibrate();
+        while(opModeIsActive() && robot.sensorGyro.isCalibrating()){
+            telemetry.addData("Gyro Cali","");
+            telemetry.update();
+            idle();
+        }
+        telemetry.addData("About to activate Vuforia","");
+        ElapsedTime vufTime = new ElapsedTime();
+        telemetry.update();
         vuforianav.activate();
+        telemetry.addData("Vuforia activated. ","Took %f milliseconds. ",vufTime.milliseconds());
+        telemetry.update();
         waitForStart();
-        robot.setDriveSpeed(0,43.33,-Math.PI/9);
+        robot.setDriveSpeed(0,-50,0);
+        sleep(200);
+        robot.setDriveSpeed(0,0,0);
+        while(opModeIsActive()) {
+            float gyroHeading = robot.sensorGyro.getHeading();
+            while (opModeIsActive()&&(gyroHeading < 175 || gyroHeading > 185)) {
+                if (gyroHeading < 175) {
+                    //robot.setDriveSpeed(0, 0, 10 + (175 - gyroHeading));
+                } else {
+                   // robot.setDriveSpeed(0, 0, -10 - (gyroHeading - 185));
+
+                }
+                telemetry.addData("Gyro value:", gyroHeading);
+                DbgLog.msg("Robot Debug: Gyro Value: %f", gyroHeading);
+                gyroHeading = robot.sensorGyro.getHeading();
+                telemetry.update();
+                idle();
+            }
+            idle();
+        }
+        robot.setDriveSpeed(0,43.3,-Math.PI/9);
+        sleep(4000);
+        robot.setDrivePower(0,0,0);
         OpenGLMatrix robotPosition = vuforianav.getRobotLocationRelativeToTarget(3);
-        ElapsedTime driveTime = new ElapsedTime();
-        while ((robotPosition == null )&& driveTime.milliseconds() < 3000){
+        while ((robotPosition == null )&& opModeIsActive() ){
             idle();
             robotPosition = vuforianav.getRobotLocationRelativeToTarget(3);
             telemetry.addData("In Loop" ,"");
@@ -84,7 +117,7 @@ public class AutonomousOpMode1 extends LinearOpMode {
         zxPhi = VuforiaNav.GetZXPH(robotPosition);
         telemetry.addData("Starting Nav","");
         telemetry.update();
-        while (opModeIsActive() && zxPhi[0] >= 18) { //Was 15 before changing to 21 for testing.
+        while (opModeIsActive() && zxPhi[0] >= 19) { //Was 15 before changing to 21 for testing.
             float[] newSpeeds = getCorrectedSpeeds(zxPhi[1], zxPhi[2], v);
             robot.setDriveSpeed(newSpeeds[0], newSpeeds[1], newSpeeds[2]);
             idle();
@@ -100,16 +133,16 @@ public class AutonomousOpMode1 extends LinearOpMode {
                     colorValues[1], colorValues[2]);
             telemetry.update();
         }
-        sleep(3000);
-        if(robot.isRightBeaconRed()){
+
+        if(robot.isRightBeaconBlue()){
             robot.RightPusher.setPosition(1);
-            sleep(2000);
+            sleep(1000);
             telemetry.addData("Pushing right beacon","");
             robot.RightPusher.setPosition(0);
         }
-        else if(!(robot.isRightBeaconRed()) && robot.isRightBeaconBlue()){
+        else if((robot.isRightBeaconRed()) && !robot.isRightBeaconBlue()){
             robot.LeftPusher.setPosition(1);
-            sleep(2000);
+            sleep(1000);
             telemetry.addData("Pushing left beacon","");
             robot.LeftPusher.setPosition(0);
         }
@@ -117,28 +150,31 @@ public class AutonomousOpMode1 extends LinearOpMode {
             telemetry.addData("Unsure what color it is.","");
         }
         telemetry.update();
-        //sleep(3000);
-        robot.setDrivePower(-50,-40,0);
+
+        //Drive to second color beacon.
+        robot.setDrivePower(-50,-30,0); //was -50 -40
+
         OpenGLMatrix robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
         ElapsedTime driveTime2 = new ElapsedTime();
-        while ((robotPosition2 == null )&& driveTime2.milliseconds() < 2000){
+        while ((robotPosition2 == null )&& driveTime2.milliseconds() < 1000){ //was 1500
             idle();
             robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
         }
         //Once code is here it is now in front of the beacon and has tried to press the button.
         //Now to adjust in the -x to the left to get to the second beacon for a distance of 45.5 inches.
+        int counter = 0;
         while(robotPosition2 == null){
+            counter = counter+1;
             idle();
             robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
             robot.setDriveSpeed(0,0,Math.PI/12);
-            sleep(350);
-            robot.setDrivePower(0,0,0);
             telemetry.addData("Null pos2","");
+            DbgLog.msg("Robot Debug: Robot Pos2 Trigger: Number of while loop runs: < %d >", counter);
             telemetry.update();
             // Do a recovery here. WIP
         }
         zxPhi = VuforiaNav.GetZXPH(robotPosition2);
-        while (opModeIsActive() && zxPhi[0] >= 18) { //Was 15 before changing to 21 for testing.
+        while (opModeIsActive() && zxPhi[0] >= 19) { //Was 15 before changing to 21 for testing.
             float[] newSpeeds2 = getCorrectedSpeeds(zxPhi[1], zxPhi[2], v);
             robot.setDriveSpeed(newSpeeds2[0], newSpeeds2[1], newSpeeds2[2]);
             idle();
@@ -148,23 +184,21 @@ public class AutonomousOpMode1 extends LinearOpMode {
             }
         }
         robot.setDrivePower(0, 0, 0);
-        sleep(3000);
         colorValues = robot.getColorValues();
         if(colorValues != null) {
             telemetry.addData("Color Values: ", "Red: %.1f Green: %.1f Blue: %.0f", colorValues[0],
                     colorValues[1], colorValues[2]);
             telemetry.update();
         }
-        sleep(3000);
-        if(robot.isRightBeaconRed()){
+        if(robot.isRightBeaconBlue()){
             robot.RightPusher.setPosition(1);
-            sleep(2000);
+            sleep(1000);
             telemetry.addData("Pushing right beacon","");
             robot.RightPusher.setPosition(0);
         }
-        else if(!(robot.isRightBeaconRed()) && robot.isRightBeaconBlue()){
+        else if(robot.isRightBeaconRed() && !robot.isRightBeaconBlue()){
             robot.LeftPusher.setPosition(1);
-            sleep(2000);
+            sleep(1000);
             telemetry.addData("Pushing left beacon","");
             robot.LeftPusher.setPosition(0);
         }
