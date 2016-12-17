@@ -25,9 +25,16 @@ public class OmniBotDebugOpMode extends LinearOpMode {
         float va = 0;
         float totalTime = 4000;
 
-        while (opModeIsActive() && !gamepad1.start) {
+        while (!gamepad1.start) {
             if (awaitingButtonRelease){
-                if (!gamepad1.dpad_up && !gamepad1.a && !gamepad1.b && !gamepad1.x && !gamepad1.y) awaitingButtonRelease = false;
+                if (!gamepad1.dpad_up && !gamepad1.a && !gamepad1.b && !gamepad1.x && !gamepad1.y) {
+                    telemetry.addData("Max Speed", " %d", maxSpeed);
+                    telemetry.addData("Req Speed", " vx = %.0f vy = %.0f va = %.0f", vx, vy, va);
+                    telemetry.addData("Total Time", " %.0f", totalTime);
+                    telemetry.addData("Press Gamepad Start to Continue","");
+                    telemetry.update();
+                    awaitingButtonRelease = false;
+                }
             }
             else if (gamepad1.dpad_up){
                 if (maxSpeed == 4000) maxSpeed = 1000;
@@ -54,11 +61,7 @@ public class OmniBotDebugOpMode extends LinearOpMode {
                 else totalTime += 500;
                 awaitingButtonRelease = true;
             }
-            telemetry.addData("Max Speed", " %d", maxSpeed);
-            telemetry.addData("Req Speed", " vx = %.0f vy = %.0f va = %.0f", vx, vy, va);
-            telemetry.addData("Total Time", " %.0f", totalTime);
-            telemetry.addData("Press Gamepad Start to Continue","");
-            telemetry.update();
+
             idle();
         }
 
@@ -79,7 +82,6 @@ public class OmniBotDebugOpMode extends LinearOpMode {
         robot.setDriveSpeed(vx, vy, va * Math.PI/180.0);
 
         ElapsedTime totalTimer = new ElapsedTime();
-        ElapsedTime intervalTimer = new ElapsedTime();
 
         int oneTicks, twoTicks, threeTicks, fourTicks;
         double oneTicksPerSec, twoTicksPerSec, threeTicksPerSec, fourTicksPerSec;
@@ -92,30 +94,31 @@ public class OmniBotDebugOpMode extends LinearOpMode {
         double reqThreeTicksPerSec = threePower * (double)robot.three.getMaxSpeed();
         double reqFourTicksPerSec = fourPower * (double)robot.four.getMaxSpeed();
 
-        while (opModeIsActive() && totalTimer.milliseconds() < totalTime){
-            double intervalSec = intervalTimer.seconds();
-            if (intervalSec > 200){
-                oneTicks = robot.one.getCurrentPosition();
-                twoTicks = robot.two.getCurrentPosition();
-                threeTicks = robot.three.getCurrentPosition();
-                fourTicks = robot.four.getCurrentPosition();
-                oneTicksPerSec = (double)(oneTicks - oldOneTicks)/intervalSec;
-                twoTicksPerSec = (double)(twoTicks - oldTwoTicks)/intervalSec;
-                threeTicksPerSec = (double)(threeTicks - oldThreeTicks)/intervalSec;
-                fourTicksPerSec = (double)(fourTicks - oldFourTicks)/intervalSec;
-                oldOneTicks = oneTicks;
-                oldTwoTicks = twoTicks;
-                oldThreeTicks = threeTicks;
-                oldFourTicks = fourTicks;
-                DbgLog.msg("Motor Powers: %.2f %.2f %.2f %.2f", onePower, twoPower, threePower, fourPower);
-                DbgLog.msg("Requested Ticks/Sec: %.0f %.0f %.0f %.0f", reqOneTicksPerSec, reqTwoTicksPerSec,
-                        reqThreeTicksPerSec, reqFourTicksPerSec);
-                DbgLog.msg("Actual Ticks/Sec: %.0f %.0f %.0f %.0f", oneTicksPerSec, twoTicksPerSec,
-                        threeTicksPerSec, fourTicksPerSec);
-                intervalTimer.reset();
-            }
-        }
-
+//       while (opModeIsActive() && totalTimer.milliseconds() < totalTime){
+//            double intervalSec = intervalTimer.seconds();
+//            if (intervalSec > 200){
+//                oneTicks = robot.one.getCurrentPosition();
+//                twoTicks = robot.two.getCurrentPosition();
+//                threeTicks = robot.three.getCurrentPosition();
+//                fourTicks = robot.four.getCurrentPosition();
+//                oneTicksPerSec = (double)(oneTicks - oldOneTicks)/intervalSec;
+//                twoTicksPerSec = (double)(twoTicks - oldTwoTicks)/intervalSec;
+//                threeTicksPerSec = (double)(threeTicks - oldThreeTicks)/intervalSec;
+//                fourTicksPerSec = (double)(fourTicks - oldFourTicks)/intervalSec;
+//                oldOneTicks = oneTicks;
+//                oldTwoTicks = twoTicks;
+//                oldThreeTicks = threeTicks;
+//                oldFourTicks = fourTicks;
+//                DbgLog.msg("Motor Powers: %.2f %.2f %.2f %.2f", onePower, twoPower, threePower, fourPower);
+//                DbgLog.msg("Requested Ticks/Sec: %.0f %.0f %.0f %.0f", reqOneTicksPerSec, reqTwoTicksPerSec,
+//                        reqThreeTicksPerSec, reqFourTicksPerSec);
+//                DbgLog.msg("Actual Ticks/Sec: %.0f %.0f %.0f %.0f", oneTicksPerSec, twoTicksPerSec,
+//                        threeTicksPerSec, fourTicksPerSec);
+//                intervalTimer.reset();
+//            }
+//            idle();
+//        }
+        sleep((long)totalTime);
         double totalSec = totalTimer.seconds();
         oneTicks = robot.one.getCurrentPosition();
         twoTicks = robot.two.getCurrentPosition();
@@ -125,7 +128,8 @@ public class OmniBotDebugOpMode extends LinearOpMode {
         twoTicksPerSec = (double)(twoTicks - initialTwoTicks)/totalSec;
         threeTicksPerSec = (double)(threeTicks - initialThreeTicks)/totalSec;
         fourTicksPerSec = (double)(fourTicks - initialFourTicks)/totalSec;
-        DbgLog.msg("Final Ticks: %d %d %d %d", oneTicks, twoTicks, threeTicks, fourTicks);
+        DbgLog.msg("New debug data: Newer");
+        DbgLog.msg("Final Ticks: %d %d %d %d", oneTicks- initialOneTicks, twoTicks- initialTwoTicks, threeTicks- initialThreeTicks, fourTicks- initialFourTicks);
         DbgLog.msg("Avg Ticks/Sec: %.0f %.0f %.0f %.0f", oneTicksPerSec, twoTicksPerSec, threeTicksPerSec,
                 fourTicksPerSec);
 

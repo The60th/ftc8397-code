@@ -83,6 +83,7 @@ public class OmniBotDEBUG
         four.setDirection(DcMotor.Direction.REVERSE);
         three.setDirection(DcMotor.Direction.REVERSE);
 
+        setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         setMaxDriveTicksPerSec(4000);
@@ -119,7 +120,9 @@ public class OmniBotDEBUG
     }
 
     public void setDriveMode(DcMotor.RunMode mode){
-
+        if(mode == DcMotor.RunMode.STOP_AND_RESET_ENCODER){
+            DbgLog.msg("Debug data: Reseting Encoders");
+        }
         one.setMode(mode);
         two.setMode(mode);
         three.setMode(mode);

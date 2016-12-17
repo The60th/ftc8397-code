@@ -11,7 +11,6 @@ import org.firstinspires.ftc.robotcore.external.matrices.GeneralMatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.MatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 
-
 public class OmniBot
 {
     //Robot constants
@@ -29,15 +28,13 @@ public class OmniBot
     public final double MIN_BLUE = 20.0;
     public final double MAX_SENSOR_VALUES = 255.0;
     public final GeneralMatrixF ROBOT_WHEEL_TRANSFORM = new GeneralMatrixF(4,4,
-            new float[] {-ONE_ROOT_TWO, ONE_ROOT_TWO,-R_COS_BETA,1
-                    , ONE_ROOT_TWO, ONE_ROOT_TWO,-R_COS_BETA,-1
-                    ,-ONE_ROOT_TWO, ONE_ROOT_TWO,R_COS_BETA,-1
-                    , ONE_ROOT_TWO, ONE_ROOT_TWO,R_COS_BETA,1} );
+            new float[] {-ONE_ROOT_TWO, ONE_ROOT_TWO, -R_COS_BETA,  1
+                        , ONE_ROOT_TWO, ONE_ROOT_TWO, -R_COS_BETA, -1
+                        ,-ONE_ROOT_TWO, ONE_ROOT_TWO,  R_COS_BETA, -1
+                        , ONE_ROOT_TWO, ONE_ROOT_TWO,  R_COS_BETA,  1} );
     public final MatrixF WHEEL_ROBOT_TRANSFORM = ROBOT_WHEEL_TRANSFORM.inverted();
     public VectorF last_Wheel_Ticks = new VectorF(0,0,0,0);
     public float last_Gyro_Theta = 0;
-
-
 
     /* Public OpMode members. */
     public DcMotor one;
@@ -54,27 +51,22 @@ public class OmniBot
     public ModernRoboticsI2cGyro sensorGyro;
     //public ColorSensor sensorRGB2;
 
-
     /* local OpMode members. */
-    HardwareMap hardwareMap          =  null;
-
+    HardwareMap hardwareMap = null;
 
     /* Constructor */
     public OmniBot(){
-
     }
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
-       hardwareMap = ahwMap;
+        hardwareMap = ahwMap;
 
         sensorRGB_One = hardwareMap.colorSensor.get("mr"); //Added color sensors for running the robot
         //sensorRGB2 = hardwareMap.colorSensor.get("mr2");
         sensorRGB_One.setI2cAddress(I2cAddr.create8bit(0x70)); //Swaping the second color sensor to a new ip, this is the sensor on top.
-        sensorGyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("G1");
-
-
+        //sensorGyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("G1");
 
         one = hardwareMap.dcMotor.get("M1");
         two = hardwareMap.dcMotor.get("M2");
@@ -88,7 +80,7 @@ public class OmniBot
         LeftLaunch = hardwareMap.dcMotor.get("LL");
         RightLaunch = hardwareMap.dcMotor.get("RL");
 
-        sensorGyro.setHeadingMode(ModernRoboticsI2cGyro.HeadingMode.HEADING_CARTESIAN);
+        //sensorGyro.setHeadingMode(ModernRoboticsI2cGyro.HeadingMode.HEADING_CARTESIAN);
 
         LeftLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         RightLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -100,22 +92,20 @@ public class OmniBot
 
         setMaxDriveTicksPerSec(4000);
 
-        setDrivePower(0,0,0);
+        setDrivePower(0,0,0); // Set all motors to zero power
 
-
-        // Set all motors to zero power
         sensorRGB_One.enableLed(false);
     }
 
-    public double setDrivePower(double px, double py,double pa){
-        double w1 = -px + py -pa;
-        double w2 = px + py -pa;
-        double w3 = -px + py +pa;
-        double w4 = px + py + pa;
-        double max = Math.max(Math.abs(w1),Math.abs(w2));
-        max = Math.max(max,Math.abs(w3));
-        max = Math.max(max,Math.abs(w4));
-        max = Math.max(max,1.0);
+    public double setDrivePower(double px, double py, double pa){
+        double w1 = -px + py - pa;
+        double w2 =  px + py - pa;
+        double w3 = -px + py + pa;
+        double w4 =  px + py + pa;
+        double max = Math.max(Math.abs(w1), Math.abs(w2));
+        max = Math.max(max, Math.abs(w3));
+        max = Math.max(max, Math.abs(w4));
+        max = Math.max(max, 1.0);
         w1 = w1/max;
         w2 = w2/max;
         w3 = w3/max;
@@ -128,39 +118,41 @@ public class OmniBot
     }
 
     public void setDriveMode(DcMotor.RunMode mode){
-
         one.setMode(mode);
         two.setMode(mode);
         three.setMode(mode);
         four.setMode(mode);
     }
+
     public void setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior beh){
         one.setZeroPowerBehavior(beh);
         two.setZeroPowerBehavior(beh);
         three.setZeroPowerBehavior(beh);
         four.setZeroPowerBehavior(beh);
     }
+
     public double setDriveSpeed(double vx, double vy,double va){
-        return setDrivePower(vx * TICKS_PER_CM / (Math.sqrt(2.0)*one.getMaxSpeed()), vy * TICKS_PER_CM /(Math.sqrt(2.0)*one.getMaxSpeed())
-                ,(va*TURN_RADIUS*COS_BETA*TICKS_PER_CM)/one.getMaxSpeed());
+        return setDrivePower(vx * TICKS_PER_CM / (Math.sqrt(2.0)*one.getMaxSpeed()),
+                             vy * TICKS_PER_CM / (Math.sqrt(2.0)*one.getMaxSpeed()),
+                            (va * TURN_RADIUS*COS_BETA*TICKS_PER_CM)/one.getMaxSpeed());
     }
 
     public void setMaxDriveTicksPerSec(int TicksPerSec){
-
         one.setMaxSpeed(TicksPerSec);
         two.setMaxSpeed(TicksPerSec);
         three.setMaxSpeed(TicksPerSec);
         four.setMaxSpeed(TicksPerSec);
     }
-    public int[] getMaxDriveTicksPerSec (){
 
+    public int[] getMaxDriveTicksPerSec (){
         int[] returnVal = new int[4];
         returnVal[0] = one.getMaxSpeed();
         returnVal[1] = two.getMaxSpeed();
         returnVal[2] = three.getMaxSpeed();
         returnVal[3] = four.getMaxSpeed();
         return returnVal;
-}
+    }
+
     public boolean isRightBeaconRed(){
         float red = sensorRGB_One.red();
         float blue = sensorRGB_One.blue();
@@ -168,6 +160,7 @@ public class OmniBot
         float green = sensorRGB_One.green();
         return(red >= MIN_RED && !(red == MAX_SENSOR_VALUES && blue == MAX_SENSOR_VALUES && alpha == MAX_SENSOR_VALUES && green == MAX_SENSOR_VALUES));
     }
+
     public boolean isRightBeaconBlue(){
         float red = sensorRGB_One.red();
         float blue = sensorRGB_One.blue();
@@ -175,6 +168,7 @@ public class OmniBot
         float green = sensorRGB_One.green();
         return(blue >= MIN_BLUE && !(red == MAX_SENSOR_VALUES && blue == MAX_SENSOR_VALUES && alpha == MAX_SENSOR_VALUES && green == MAX_SENSOR_VALUES));
     }
+
     public float[] getColorValues(){
         float[] colorValues = {sensorRGB_One.red(),sensorRGB_One.green(),sensorRGB_One.blue()};
        return colorValues;
@@ -185,8 +179,7 @@ public class OmniBot
         last_Wheel_Ticks.put(1,two.getCurrentPosition());
         last_Wheel_Ticks.put(2,three.getCurrentPosition());
         last_Wheel_Ticks.put(3,four.getCurrentPosition());
-        last_Gyro_Theta = (float)((double)-sensorGyro.getIntegratedZValue()*(Math.PI/180.0));
-
+        //last_Gyro_Theta = (float)((double)-sensorGyro.getIntegratedZValue()*(Math.PI/180.0));
     }
 
     public float[] updateOdometry(float x, float y, float theta){
@@ -201,15 +194,16 @@ public class OmniBot
         float newX = x+deltaRobotPos.get(0)*sin +deltaRobotPos.get(1)*cosin;
         float newY = y+deltaRobotPos.get(1)*sin - deltaRobotPos.get(0)*cosin;
         float newTheta = theta+deltaRobotPos.get(2);
-        last_Wheel_Ticks = newTicks;
-        last_Gyro_Theta = (float)((double)-sensorGyro.getIntegratedZValue()*(Math.PI/180.0));
+        last_Wheel_Ticks = curTicks;
+       // last_Gyro_Theta = (float)((double)-sensorGyro.getIntegratedZValue()*(Math.PI/180.0));
         return new float[]{newX,newY,newTheta};
     }
-    public float[] updateOdometry(float x,float y,float theta,float newThetaGyro){
 
+    public float[] updateOdometry(float x,float y,float theta,float newThetaGyro){
         return null;
     }
-    public float[] updateOdometryGyro(float x,float y,float theta){
+
+    /*public float[] updateOdometryGyro(float x,float y,float theta){
         VectorF curTicks = new VectorF(one.getCurrentPosition(),two.getCurrentPosition(),three.getCurrentPosition(),four.getCurrentPosition());
         VectorF newTicks = curTicks.subtracted(last_Wheel_Ticks);
         VectorF deltaWheelCM = newTicks.multiplied((float)(1.0f/TICKS_PER_CM));
@@ -228,10 +222,7 @@ public class OmniBot
         last_Gyro_Theta = newGyroTheta;
 
         return new float[]{newX,newY,newTheta};
-
-
-    }
-
+    }*/
 
 }
 

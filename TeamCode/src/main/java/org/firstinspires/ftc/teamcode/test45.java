@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Created by CanAdirondack on 9/30/2016.
  */
 
-@TeleOp(name=" Test45 : Test ", group="Test")
+@TeleOp(name=" Main teleOp: ", group="TeleOp_Testing.")
 public class test45  extends LinearOpMode {
     boolean turnMode = false;
     allSensors sensors = new allSensors();
@@ -32,6 +32,9 @@ public class test45  extends LinearOpMode {
     Servo left;
 
     ColorSensor sensorRGB;
+    float posX=0;
+    float posY=0;
+    float posTheta =0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -82,12 +85,12 @@ public class test45  extends LinearOpMode {
             telemetry.addData("value:" , hsvValues[2]);
             telemetry.update();
             
-            relativeLayout.post(new Runnable() {
+           /* relativeLayout.post(new Runnable() {
                 public void run() {
                     relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
                 }
             });
-
+            */
         boolean changeMode = (turnMode && Math.abs(TurnDrive) < .05 && !robotIsStopped) || (!turnMode && Math.abs(TurnDrive) > .05 && robotIsStopped);
         if (changeMode) {
             turnMode = !turnMode;
