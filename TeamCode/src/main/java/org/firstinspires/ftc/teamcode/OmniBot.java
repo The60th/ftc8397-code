@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -42,11 +43,15 @@ public class OmniBot
     public DcMotor three;
     public DcMotor four;
     public DcMotor Lift;
-    public DcMotor Grabber;
     public DcMotor LeftLaunch;
     public DcMotor RightLaunch;
+
+    public CRServo Grabber;
+
     public Servo LeftPusher;
     public Servo RightPusher;
+    public Servo ShooterLift;
+
     public ColorSensor sensorRGB_One;
     public ModernRoboticsI2cGyro sensorGyro;
     //public ColorSensor sensorRGB2;
@@ -64,21 +69,23 @@ public class OmniBot
         hardwareMap = ahwMap;
 
         sensorRGB_One = hardwareMap.colorSensor.get("mr"); //Added color sensors for running the robot
-        //sensorRGB2 = hardwareMap.colorSensor.get("mr2");
         sensorRGB_One.setI2cAddress(I2cAddr.create8bit(0x70)); //Swaping the second color sensor to a new ip, this is the sensor on top.
-        //sensorGyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("G1");
 
         one = hardwareMap.dcMotor.get("M1");
         two = hardwareMap.dcMotor.get("M2");
         three = hardwareMap.dcMotor.get("M3");
         four = hardwareMap.dcMotor.get("M4");
-        Lift = hardwareMap.dcMotor.get("SL");
-        Grabber = hardwareMap.dcMotor.get("SG");
-        LeftPusher = hardwareMap.servo.get("SSL");
-        RightPusher = hardwareMap.servo.get("SSR");
-
         LeftLaunch = hardwareMap.dcMotor.get("LL");
         RightLaunch = hardwareMap.dcMotor.get("RL");
+        Lift = hardwareMap.dcMotor.get("SL");
+
+        Grabber = hardwareMap.crservo.get("SG");
+
+        LeftPusher = hardwareMap.servo.get("SSL");
+        RightPusher = hardwareMap.servo.get("SSR");
+        ShooterLift = hardwareMap.servo.get("SS");
+
+
 
         //sensorGyro.setHeadingMode(ModernRoboticsI2cGyro.HeadingMode.HEADING_CARTESIAN);
 
@@ -96,6 +103,40 @@ public class OmniBot
 
         sensorRGB_One.enableLed(false);
     }
+
+    public void setLaunchServo(String pos){
+        if(pos.equals("Up")){
+            ShooterLift.setPosition(0);
+        }
+        else if(pos.equals("Down")){
+            ShooterLift.setPosition(1);
+        }
+    }
+
+    public void setLift(Double p){
+        Lift.setPower(p);
+    }
+
+    public void setSweeper(Double p){
+        Grabber.setPower(p);
+    }
+
+    public void setShooter(Double p){
+        LeftLaunch.setPower(p);
+        RightLaunch.setPower(p);
+    }
+    public void setServos(String side){
+            if (side.equals("Left")) {
+                LeftPusher.setPosition(1);
+            }
+            else if (side.equals("Right")) {
+                RightPusher.setPosition(1);
+            }
+            else if(side.equals("Reset")){
+                LeftPusher.setPosition(0);
+                RightPusher.setPosition(0);
+            }
+        }
 
     public double setDrivePower(double px, double py, double pa){
         double w1 = -px + py - pa;
