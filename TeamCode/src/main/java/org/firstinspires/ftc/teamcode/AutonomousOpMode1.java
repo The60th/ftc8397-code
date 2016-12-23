@@ -75,7 +75,7 @@ public class AutonomousOpMode1 extends LinearOpMode {
         robot.setDriveSpeed(0,-50,0);
         sleep(200);
         robot.setDriveSpeed(0,0,0);
-        while(opModeIsActive()) {
+      /* *//* while(opModeIsActive()) {
             float gyroHeading = robot.sensorGyro.getHeading();
             while (opModeIsActive()&&(gyroHeading < 175 || gyroHeading > 185)) {
                 if (gyroHeading < 175) {
@@ -91,7 +91,7 @@ public class AutonomousOpMode1 extends LinearOpMode {
                 idle();
             }
             idle();
-        }
+        *//*}*/
         robot.setDriveSpeed(0,43.3,-Math.PI/9);
         sleep(4000);
         robot.setDrivePower(0,0,0);
@@ -118,7 +118,7 @@ public class AutonomousOpMode1 extends LinearOpMode {
         telemetry.addData("Starting Nav","");
         telemetry.update();
         while (opModeIsActive() && zxPhi[0] >= 19) { //Was 15 before changing to 21 for testing.
-            float[] newSpeeds = getCorrectedSpeeds(zxPhi[1], zxPhi[2], v);
+            float[] newSpeeds = getCorrectedSpeeds(zxPhi[1], zxPhi[2], v, 0);
             robot.setDriveSpeed(newSpeeds[0], newSpeeds[1], newSpeeds[2]);
             idle();
             robotPosition = vuforianav.getRobotLocationRelativeToTarget(3);
@@ -175,7 +175,7 @@ public class AutonomousOpMode1 extends LinearOpMode {
         }
         zxPhi = VuforiaNav.GetZXPH(robotPosition2);
         while (opModeIsActive() && zxPhi[0] >= 19) { //Was 15 before changing to 21 for testing.
-            float[] newSpeeds2 = getCorrectedSpeeds(zxPhi[1], zxPhi[2], v);
+            float[] newSpeeds2 = getCorrectedSpeeds(zxPhi[1], zxPhi[2], v, 0);
             robot.setDriveSpeed(newSpeeds2[0], newSpeeds2[1], newSpeeds2[2]);
             idle();
             robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
@@ -210,12 +210,36 @@ public class AutonomousOpMode1 extends LinearOpMode {
         telemetry.update();
     }
 
-    public float[] getCorrectedSpeeds(float x,float phi,float v) {
+    public float[] getCorrectedSpeeds(float x,float phi,float v, float x0) {
         float phiPrime = VuforiaNav.remapAngle(phi-(float)Math.PI);
-        float va = -phiPrime*v*C_PHI;
-        float vx = -C_X*v*x*(float)Math.cos(phiPrime);
-        float vy = v+v*C_X*x*(float)Math.sin(phiPrime);
+        float va = -phiPrime*Math.abs(v)*C_PHI;
+        float vx = -C_X*Math.abs(v)*(x-x0)*(float)Math.cos(phiPrime);
+        float vy = v+Math.abs(v)*C_X*(x-x0)*(float)Math.sin(phiPrime);
         return new float[]{vx,vy,va};
     }
+
+    public void turnToPosition (float angle, float tolerance, float latency){
+        //Tolerance in degrees latency seconds.
+
+        final float vaMin = 1.5f * tolerance / latency;
+        final float C = 0.75f / latency;
+        final float vaMax = 90;
+        float heading = -robot.sensorGyro.getIntegratedZValue();
+        float targetHeading = heading + angle;
+        float offset = targetHeading - heading;
+
+        while (opModeIsActive()&& Math.abs(offset) > tolerance){
+            float absAdjustedOffset = Math.abs(offset) - tolerance;
+            float absVa = vaMin + C * absAdjustedOffset;
+            absVa = Math.min(absVa, vaMax);
+            float va = absVa * Math.signum(offset);
+            robot.setDriveSpeed(0,0,va*Math.PI/180.0);
+            heading = -robot.sensorGyro.getIntegratedZValue();
+            offset = targetHeading - heading;
+        }
+        robot.setDrivePower(0,0,0);
+    }
+
+
 }
 

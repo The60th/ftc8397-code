@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+
 /**
  * Created by CanAdirondack on 12/16/2016.
  */
@@ -17,12 +19,17 @@ public class newTeleop extends LinearOpMode {
     float newX =0;
     float newY=0;
     float newTheta=0;
+    public final float C_PHI = .1f;
+    public final float C_X = .1f;
     boolean awaitingButtonReleaseServo = false;
     boolean awaitingButtonReleaseLift = false;
     boolean awaitingButtonReleasePickup = false;
+    VuforiaNav vuforia = new VuforiaNav();
     @Override
     public void runOpMode() throws InterruptedException {
+
         robot.init(hardwareMap);
+        vuforia.activate();
         waitForStart();
         robot.updateOdometry();
         ElapsedTime et = new ElapsedTime();
@@ -30,6 +37,7 @@ public class newTeleop extends LinearOpMode {
             px = Math.abs(gamepad1.left_stick_x) > 0.05 ? gamepad1.left_stick_x: 0;
             py = Math.abs(gamepad1.left_stick_y) > 0.05 ? -gamepad1.left_stick_y: 0;
             pTheta = Math.abs(gamepad1.right_stick_x) > 0.05 ? -gamepad1.right_stick_x: 0;
+            robot.setDrivePower(px,py,pTheta);
 
             if(gamepad2.right_trigger > .05){
                 robot.setLaunchServo("Up");
@@ -89,7 +97,11 @@ public class newTeleop extends LinearOpMode {
                 robot.setShooter(0.0);
             }
 
-            robot.setDrivePower(px,py,pTheta);
+            if(gamepad1.x){
+                teleopBeacon();
+                while(opModeIsActive() && gamepad1.x) idle();
+            }
+
             float pos[] = robot.updateOdometry(newX,newY,newTheta);
             newX = pos[0];
             newY = pos[1];
@@ -101,5 +113,45 @@ public class newTeleop extends LinearOpMode {
             }
             idle();
     }
+    }
+    public void teleopBeacon() throws InterruptedException{
+        float v = 20;
+        float[] zxPhi = null;
+        OpenGLMatrix robotPosition;
+        boolean targetFound = false;
+        int targetNumber = 21;
+        for(int i = 0;i < 4;i++) {
+            if(vuforia.isTargetVisible(i)){
+                targetFound = true;
+                targetNumber = i;
+                break;
+            }
+        }
+        if(!targetFound)return;
+        while (opModeIsActive() && gamepad1.x) { //Was 15 before changing to 21 for testing.
+            robotPosition = vuforia.getRobotLocationRelativeToTarget(targetNumber);
+            if (robotPosition != null) {
+                zxPhi = VuforiaNav.GetZXPH(robotPosition);
+            }
+            if (zxPhi != null) {
+                if (zxPhi[0] <= 19) {
+                    robot.setDriveSpeed(0, 0, 0);
+                    return;
+                } else {
+                    float[] newSpeeds = getCorrectedSpeeds(zxPhi[1], zxPhi[2], v, 0);
+                    robot.setDriveSpeed(newSpeeds[0], newSpeeds[1], newSpeeds[2]);
+                }
+            }
+            idle();
+        }
+        robot.setDriveSpeed(0,0,0);
+    }
+
+    public float[] getCorrectedSpeeds(float x,float phi,float v, float x0) {
+        float phiPrime = VuforiaNav.remapAngle(phi-(float)Math.PI);
+        float va = -phiPrime*Math.abs(v)*C_PHI;
+        float vx = -C_X*Math.abs(v)*(x-x0)*(float)Math.cos(phiPrime);
+        float vy = v+Math.abs(v)*C_X*(x-x0)*(float)Math.sin(phiPrime);
+        return new float[]{vx,vy,va};
     }
 }

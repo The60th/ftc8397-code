@@ -86,8 +86,8 @@ public class OmniBot
         ShooterLift = hardwareMap.servo.get("SS");
 
 
-
-        //sensorGyro.setHeadingMode(ModernRoboticsI2cGyro.HeadingMode.HEADING_CARTESIAN);
+        sensorGyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("gyro");
+        sensorGyro.setHeadingMode(ModernRoboticsI2cGyro.HeadingMode.HEADING_CARTESIAN);
 
         LeftLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         RightLaunch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);

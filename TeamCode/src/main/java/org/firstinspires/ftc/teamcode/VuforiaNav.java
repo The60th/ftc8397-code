@@ -104,6 +104,9 @@ public class VuforiaNav  {
         OpenGLMatrix relativeToRobot = phoneLocationOnRobot.multiplied(relativeToCamera);
         return relativeToRobot.inverted();
     }
+    public boolean isTargetVisible(int targetNumber){
+       return ((VuforiaTrackableDefaultListener)trackables.get(targetNumber).getListener()).isVisible();
+    }
 
     public static float[] GetZXPH(OpenGLMatrix relativeToTarget){
         float[] zxPhi = relativeToTarget.getData();
