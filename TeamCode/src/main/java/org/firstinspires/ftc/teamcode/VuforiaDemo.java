@@ -28,7 +28,7 @@ public class VuforiaDemo extends LinearOpMode {
         //Now to adjust in the -x to the left to get to the second beacon for a distance of 45.5 inches.
         while(robotPosition == null){
             idle();
-            robot.setDrivePower(0,0,0);
+            robot.setDrivePower(0,0,0,"");
             robotPosition = vuforianav.getRobotLocationRelativeToTarget(3);
             telemetry.addData("NullPos loop","");
             telemetry.update();
@@ -46,7 +46,7 @@ public class VuforiaDemo extends LinearOpMode {
                 zxPhi = VuforiaNav.GetZXPH(robotPosition);
             }
         }
-        robot.setDrivePower(0, 0, 0);
+        robot.setDrivePower(0, 0, 0,"");
 
     }
     public float[] getCorrectedSpeeds(float x,float phi,float v) {

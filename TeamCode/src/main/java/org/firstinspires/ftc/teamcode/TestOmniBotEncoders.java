@@ -55,7 +55,7 @@ public class TestOmniBotEncoders extends LinearOpMode {
             float px = Math.abs(gm1lx) < 0.05? 0 : (float)Math.signum(gm1lx) * gm1lx * gm1lx;
             float py = Math.abs(gm1ly) < 0.05? 0 : (float)Math.signum(gm1ly) * gm1ly * gm1ly;
             float pa = Math.abs(gm1rx) < 0.05? 0 : (float)Math.signum(gm1rx) * gm1rx * gm1rx;
-            robot.setDrivePower(px, py, pa);
+            robot.setDrivePower(px, py, pa,"");
         }
 
     }

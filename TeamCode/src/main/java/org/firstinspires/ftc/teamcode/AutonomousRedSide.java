@@ -60,7 +60,7 @@ public class AutonomousRedSide extends LinearOpMode{
             }*/
             robot.setDriveSpeed(0,43.3,Math.PI/9);
             sleep(4000);
-            robot.setDrivePower(0,0,0);
+            robot.setDrivePower(0,0,0,"");
             OpenGLMatrix robotPosition = vuforianav.getRobotLocationRelativeToTarget(0);
             while ((robotPosition == null )&& opModeIsActive() ){
                 idle();
@@ -74,7 +74,7 @@ public class AutonomousRedSide extends LinearOpMode{
             //Now to adjust in the -x to the left to get to the second beacon for a distance of 45.5 inches.
             while(robotPosition == null){
                 idle();
-                robot.setDrivePower(0,0,0);
+                robot.setDrivePower(0,0,0,"");
                 robotPosition = vuforianav.getRobotLocationRelativeToTarget(0);
                 telemetry.addData("NullPos loop","");
                 telemetry.update();
@@ -92,7 +92,7 @@ public class AutonomousRedSide extends LinearOpMode{
                     zxPhi = VuforiaNav.GetZXPH(robotPosition);
                 }
             }
-            robot.setDrivePower(0, 0, 0);
+            robot.setDrivePower(0, 0, 0,"");
             float[] colorValues = robot.getColorValues();
             if(colorValues != null) {
                 telemetry.addData("Color Values: ", "Red: %.1f Green: %.1f Blue: %.0f", colorValues[0],
@@ -120,7 +120,7 @@ public class AutonomousRedSide extends LinearOpMode{
             //Drive to second color beacon.
 
             // TODO: 12/15/2016  Should be setDriveSpeed? Look in to
-            robot.setDrivePower(-50,30,0); //was -50 -40
+            robot.setDrivePower(-50,30,0,""); //was -50 -40
 
             OpenGLMatrix robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(2);
             ElapsedTime driveTime2 = new ElapsedTime();
@@ -151,7 +151,7 @@ public class AutonomousRedSide extends LinearOpMode{
                     zxPhi = VuforiaNav.GetZXPH(robotPosition2);
                 }
             }
-            robot.setDrivePower(0, 0, 0);
+            robot.setDrivePower(0, 0, 0,"");
             colorValues = robot.getColorValues();
             if(colorValues != null) {
                 telemetry.addData("Color Values: ", "Red: %.1f Green: %.1f Blue: %.0f", colorValues[0],
@@ -173,7 +173,7 @@ public class AutonomousRedSide extends LinearOpMode{
             else{
                 telemetry.addData("Unsure what color it is.","");
             }
-            robot.setDrivePower(0,0,0);
+            robot.setDrivePower(0,0,0,"");
             telemetry.addData("","Program has been finished in %f seconds.",getRuntime());
             telemetry.update();
         }

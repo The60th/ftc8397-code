@@ -15,6 +15,11 @@ import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 public class OmniBot
 {
     //Robot constants
+    static public final String liftFront = "lift";
+    static public final String phoneFront = "phone";
+    static public final String sweepFront = "sweep";
+    static public final String shootFront = "shoot";
+
     public final  float ONE_ROOT_TWO = (float)(1/Math.sqrt(2));
     public final double TICKS_PER_MOTOR_ROTATION = 1120.0; // With a 1 to 40 gearbox.
     public final double GEAR_RATIO = 1.0;  //Motor rotations per wheel rotation.
@@ -34,6 +39,7 @@ public class OmniBot
                         ,-ONE_ROOT_TWO, ONE_ROOT_TWO,  R_COS_BETA, -1
                         , ONE_ROOT_TWO, ONE_ROOT_TWO,  R_COS_BETA,  1} );
     public final MatrixF WHEEL_ROBOT_TRANSFORM = ROBOT_WHEEL_TRANSFORM.inverted();
+
     public VectorF last_Wheel_Ticks = new VectorF(0,0,0,0);
     public float last_Gyro_Theta = 0;
 
@@ -46,7 +52,7 @@ public class OmniBot
     public DcMotor LeftLaunch;
     public DcMotor RightLaunch;
 
-    public CRServo Grabber;
+    public DcMotor PickupLift;
 
     public Servo LeftPusher;
     public Servo RightPusher;
@@ -79,7 +85,7 @@ public class OmniBot
         RightLaunch = hardwareMap.dcMotor.get("RL");
         Lift = hardwareMap.dcMotor.get("SL");
 
-        Grabber = hardwareMap.crservo.get("SG");
+        PickupLift = hardwareMap.dcMotor.get("SG");
 
         LeftPusher = hardwareMap.servo.get("SSL");
         RightPusher = hardwareMap.servo.get("SSR");
@@ -99,9 +105,13 @@ public class OmniBot
 
         setMaxDriveTicksPerSec(4000);
 
-        setDrivePower(0,0,0); // Set all motors to zero power
+        setDrivePower(0,0,0,liftFront); // Set all motors to zero power
 
         sensorRGB_One.enableLed(false);
+    }
+
+    public void setBigBallLift(double p){
+        Lift.setPower(p);
     }
 
     public void setLaunchServo(String pos){
@@ -113,12 +123,9 @@ public class OmniBot
         }
     }
 
-    public void setLift(Double p){
-        Lift.setPower(p);
-    }
 
     public void setSweeper(Double p){
-        Grabber.setPower(p);
+        PickupLift.setPower(p);
     }
 
     public void setShooter(Double p){
@@ -138,7 +145,31 @@ public class OmniBot
             }
         }
 
-    public double setDrivePower(double px, double py, double pa){
+    public double setDrivePower(double px, double py, double pa, String mode){
+        double tempHolder;
+        switch (mode){
+
+            //Updated
+
+            case liftFront:
+                //Lift front
+                tempHolder = py;
+                py = px;
+                px = tempHolder;
+                break;
+            case phoneFront:
+                //default
+                break;
+            case shootFront:
+                px = -px;
+                py = py;
+                break;
+            case sweepFront:
+                tempHolder = px;
+                py = -tempHolder;
+                px = -py;
+                break;
+        }
         double w1 = -px + py - pa;
         double w2 =  px + py - pa;
         double w3 = -px + py + pa;
@@ -175,7 +206,8 @@ public class OmniBot
     public double setDriveSpeed(double vx, double vy,double va){
         return setDrivePower(vx * TICKS_PER_CM / (Math.sqrt(2.0)*one.getMaxSpeed()),
                              vy * TICKS_PER_CM / (Math.sqrt(2.0)*one.getMaxSpeed()),
-                            (va * TURN_RADIUS*COS_BETA*TICKS_PER_CM)/one.getMaxSpeed());
+                            (va * TURN_RADIUS*COS_BETA*TICKS_PER_CM)/one.getMaxSpeed(),
+                            phoneFront);
     }
 
     public void setMaxDriveTicksPerSec(int TicksPerSec){

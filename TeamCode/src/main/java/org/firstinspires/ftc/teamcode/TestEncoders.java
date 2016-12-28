@@ -82,7 +82,7 @@ public class TestEncoders extends LinearOpMode {
         telemetry.addData("scale = ", scale);
         telemetry.update();
         while(opModeIsActive()&& et.seconds() <= 10.0) idle ();
-        robot.setDrivePower(0,0,0);
+        robot.setDrivePower(0,0,0,"");
         telemetry.addData("Ticks one ", robot.one.getCurrentPosition());
         telemetry.addData("Ticks two ", robot.two.getCurrentPosition());
         telemetry.addData("Ticks three ", robot.three.getCurrentPosition());
