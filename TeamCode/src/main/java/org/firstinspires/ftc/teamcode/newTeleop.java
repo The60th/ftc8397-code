@@ -12,10 +12,10 @@ import java.nio.channels.SelectableChannel;
 /**
  * Created by CanAdirondack on 12/16/2016.
  */
-@TeleOp(name=" TeleOp Testing: ", group="TeleOp_Testing.")
+@TeleOp(name=" TeleOp: ", group="TeleOp_Programs")
 public class newTeleop extends LinearOpMode {
     OmniBot        robot   = new OmniBot();
-    float px ;
+    float px;
     float py;
     float pTheta;
     float newX =0;
@@ -97,10 +97,10 @@ public class newTeleop extends LinearOpMode {
             }
 
 
-            if(gamepad2.dpad_up){
+            if(gamepad2.dpad_down){
                 robot.setBigBallLift(1);
             }
-            else if(gamepad2.dpad_down){
+            else if(gamepad2.dpad_up){
                 robot.setBigBallLift(-1);
             }
             else{
@@ -110,17 +110,27 @@ public class newTeleop extends LinearOpMode {
 
             if(gamepad1.dpad_up){
                 mode = robot.phoneFront;
+                //Works
             }
             else if (gamepad1.dpad_right)
             {
                 mode = robot.sweepFront;
+                //Seems to disable all forward drive??
             }
             else if(gamepad1.dpad_left){
                 mode = robot.liftFront;
+                //Works and does sweeper front currently??
             }
             else if(gamepad1.dpad_down){
                 mode = robot.shootFront;
+                //Reveres left and right drive but nothing else.
             }
+
+
+            if(gamepad2.start){
+                robot.setServoUp();
+            }
+
 
             float pos[] = robot.updateOdometry(newX,newY,newTheta);
             newX = pos[0];
@@ -148,13 +158,13 @@ public class newTeleop extends LinearOpMode {
             }
         }
         if(!targetFound)return;
-        while (opModeIsActive() && gamepad1.x) { //Was 15 before changing to 21 for testing.
+        while (opModeIsActive() && gamepad1.x) {
             robotPosition = vuforia.getRobotLocationRelativeToTarget(targetNumber);
             if (robotPosition != null) {
                 zxPhi = VuforiaNav.GetZXPH(robotPosition);
             }
             if (zxPhi != null) {
-                if (zxPhi[0] <= 19) {
+                if (zxPhi[0] <= robot.vuforiaZDistance) {
                     robot.setDriveSpeed(0, 0, 0);
                     return;
                 } else {

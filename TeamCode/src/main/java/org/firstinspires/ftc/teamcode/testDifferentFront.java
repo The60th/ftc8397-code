@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.transition.Slide;
-
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -14,11 +12,9 @@ import org.firstinspires.ftc.robotcore.external.matrices.GeneralMatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.MatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 
-public class OmniBot
+public class testDifferentFront
 {
     //Robot constants
-    public final double vuforiaZDistance = 5.08;
-
     static public final String liftFront = "lift";
     static public final String phoneFront = "phone";
     static public final String sweepFront = "sweep";
@@ -39,9 +35,9 @@ public class OmniBot
     public final double MAX_SENSOR_VALUES = 255.0;
     public final GeneralMatrixF ROBOT_WHEEL_TRANSFORM = new GeneralMatrixF(4,4,
             new float[] {-ONE_ROOT_TWO, ONE_ROOT_TWO, -R_COS_BETA,  1
-                        , ONE_ROOT_TWO, ONE_ROOT_TWO, -R_COS_BETA, -1
-                        ,-ONE_ROOT_TWO, ONE_ROOT_TWO,  R_COS_BETA, -1
-                        , ONE_ROOT_TWO, ONE_ROOT_TWO,  R_COS_BETA,  1} );
+                    , ONE_ROOT_TWO, ONE_ROOT_TWO, -R_COS_BETA, -1
+                    ,-ONE_ROOT_TWO, ONE_ROOT_TWO,  R_COS_BETA, -1
+                    , ONE_ROOT_TWO, ONE_ROOT_TWO,  R_COS_BETA,  1} );
     public final MatrixF WHEEL_ROBOT_TRANSFORM = ROBOT_WHEEL_TRANSFORM.inverted();
 
     public VectorF last_Wheel_Ticks = new VectorF(0,0,0,0);
@@ -61,7 +57,6 @@ public class OmniBot
     public Servo LeftPusher;
     public Servo RightPusher;
     public Servo ShooterLift;
-    public Servo SlideHolder;
 
     public ColorSensor sensorRGB_One;
     public ModernRoboticsI2cGyro sensorGyro;
@@ -71,7 +66,7 @@ public class OmniBot
     HardwareMap hardwareMap = null;
 
     /* Constructor */
-    public OmniBot(){
+    public testDifferentFront (){
     }
 
     /* Initialize standard Hardware interfaces */
@@ -89,9 +84,9 @@ public class OmniBot
         LeftLaunch = hardwareMap.dcMotor.get("LL");
         RightLaunch = hardwareMap.dcMotor.get("RL");
         Lift = hardwareMap.dcMotor.get("SL");
+
         PickupLift = hardwareMap.dcMotor.get("SG");
 
-        SlideHolder = hardwareMap.servo.get("SSH");
         LeftPusher = hardwareMap.servo.get("SSL");
         RightPusher = hardwareMap.servo.get("SSR");
         ShooterLift = hardwareMap.servo.get("SS");
@@ -112,14 +107,7 @@ public class OmniBot
 
         setDrivePower(0,0,0,liftFront); // Set all motors to zero power
 
-        SlideHolder.setPosition(0);
-        ShooterLift.setPosition(1);
-
         sensorRGB_One.enableLed(false);
-    }
-
-    public void setServoUp(){
-        SlideHolder.setPosition(1);
     }
 
     public void setBigBallLift(double p){
@@ -145,55 +133,45 @@ public class OmniBot
         RightLaunch.setPower(p);
     }
     public void setServos(String side){
-            if (side.equals("Left")) {
-                LeftPusher.setPosition(1);
-            }
-            else if (side.equals("Right")) {
-                RightPusher.setPosition(1);
-            }
-            else if(side.equals("Reset")){
-                LeftPusher.setPosition(0);
-                RightPusher.setPosition(0);
-            }
+        if (side.equals("Left")) {
+            LeftPusher.setPosition(1);
         }
+        else if (side.equals("Right")) {
+            RightPusher.setPosition(1);
+        }
+        else if(side.equals("Reset")){
+            LeftPusher.setPosition(0);
+            RightPusher.setPosition(0);
+        }
+    }
 
     public double setDrivePower(double px, double py, double pa, String mode){
-        //x = +
-        //y = -
-
         double tempHolder;
         switch (mode){
 
             //Updated
-            //Two versions working check other problems.
 
             case liftFront:    //Works and does sweeper front currently??
                 //Lift front
-
-                //x = y
-                //y = x
-                tempHolder = py;
-                py = px;
-                px = tempHolder;
+               // tempHolder = py; // I left this code the same because I did not know what to change.
+               // py = px;
+               // px = tempHolder;
                 break;
-            case phoneFront:
-                //+x
-                //-y
-
-                //y must be - by default?
-
+            case phoneFront: // This works the way we wanted it to. Left this the same.
                 //default
                 break;
-            case shootFront:  //Reveres left and right drive but nothing else.
-
+            case shootFront:  // Before I changed this code it reveres left and right drive but nothing else. now i hope it will work.
                 px = -px;
-                py = -1*py; //y defualt negtive times - makes it postive
-
+                py = -py;  // Changed from py = py; to what it is now.
                 break;
-            case sweepFront:  //Seems to disable all forward drive??
-                tempHolder = px;
-                py = -tempHolder;
-                px = -py;
+            case sweepFront:  // Before i changed this code seemed to disable all forward drive?? Now i hope it will make the front of the robot the sweeper.
+                tempHolder = py;
+                py = px;
+                px = tempHolder; // Copied the code from lift front so it would run in the right place.
+
+                //tempHolder = px;  // This is the orignal code for sweep front.
+               //py = -tempHolder;
+               //px = -py;
                 break;
         }
         double w1 = -px + py - pa;
@@ -231,9 +209,9 @@ public class OmniBot
 
     public double setDriveSpeed(double vx, double vy,double va){
         return setDrivePower(vx * TICKS_PER_CM / (Math.sqrt(2.0)*one.getMaxSpeed()),
-                             vy * TICKS_PER_CM / (Math.sqrt(2.0)*one.getMaxSpeed()),
-                            (va * TURN_RADIUS*COS_BETA*TICKS_PER_CM)/one.getMaxSpeed(),
-                            phoneFront);
+                vy * TICKS_PER_CM / (Math.sqrt(2.0)*one.getMaxSpeed()),
+                (va * TURN_RADIUS*COS_BETA*TICKS_PER_CM)/one.getMaxSpeed(),
+                phoneFront);
     }
 
     public void setMaxDriveTicksPerSec(int TicksPerSec){
@@ -270,7 +248,7 @@ public class OmniBot
 
     public float[] getColorValues(){
         float[] colorValues = {sensorRGB_One.red(),sensorRGB_One.green(),sensorRGB_One.blue()};
-       return colorValues;
+        return colorValues;
     }
 
     public void updateOdometry(){
@@ -294,7 +272,7 @@ public class OmniBot
         float newY = y+deltaRobotPos.get(1)*sin - deltaRobotPos.get(0)*cosin;
         float newTheta = theta+deltaRobotPos.get(2);
         last_Wheel_Ticks = curTicks;
-       // last_Gyro_Theta = (float)((double)-sensorGyro.getIntegratedZValue()*(Math.PI/180.0));
+        // last_Gyro_Theta = (float)((double)-sensorGyro.getIntegratedZValue()*(Math.PI/180.0));
         return new float[]{newX,newY,newTheta};
     }
 

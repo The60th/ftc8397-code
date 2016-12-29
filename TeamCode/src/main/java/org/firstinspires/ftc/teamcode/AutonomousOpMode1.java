@@ -117,7 +117,7 @@ public class AutonomousOpMode1 extends LinearOpMode {
         zxPhi = VuforiaNav.GetZXPH(robotPosition);
         telemetry.addData("Starting Nav","");
         telemetry.update();
-        while (opModeIsActive() && zxPhi[0] >= 19) { //Was 15 before changing to 21 for testing.
+        while (opModeIsActive() && zxPhi[0] >= robot.vuforiaZDistance) { //Was 15 before changing to 21 for testing.
             float[] newSpeeds = getCorrectedSpeeds(zxPhi[1], zxPhi[2], v, 0);
             robot.setDriveSpeed(newSpeeds[0], newSpeeds[1], newSpeeds[2]);
             idle();
@@ -174,7 +174,7 @@ public class AutonomousOpMode1 extends LinearOpMode {
             // Do a recovery here. WIP
         }
         zxPhi = VuforiaNav.GetZXPH(robotPosition2);
-        while (opModeIsActive() && zxPhi[0] >= 19) { //Was 15 before changing to 21 for testing.
+        while (opModeIsActive() && zxPhi[0] >= robot.vuforiaZDistance) { //Was 15 before changing to 21 for testing.
             float[] newSpeeds2 = getCorrectedSpeeds(zxPhi[1], zxPhi[2], v, 0);
             robot.setDriveSpeed(newSpeeds2[0], newSpeeds2[1], newSpeeds2[2]);
             idle();
