@@ -112,7 +112,7 @@ public class OmniBot
 
         setDrivePower(0,0,0,liftFront); // Set all motors to zero power
 
-        SlideHolder.setPosition(0);
+        SlideHolder.setPosition(.25);
         ShooterLift.setPosition(1);
 
         sensorRGB_One.enableLed(false);
