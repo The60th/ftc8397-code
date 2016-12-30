@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 public class OmniBot
 {
     //Robot constants
-    public final double vuforiaZDistance = 5.08;
+    public final double vuforiaZDistance = 10.16;
 
     static public final String liftFront = "lift";
     static public final String phoneFront = "phone";
@@ -117,6 +117,7 @@ public class OmniBot
 
         sensorRGB_One.enableLed(false);
     }
+
 
     public void setServoUp(){
         SlideHolder.setPosition(1);

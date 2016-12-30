@@ -64,6 +64,7 @@ public class AutonomousOpMode1 extends LinearOpMode {
             telemetry.addData("Gyro Cali","");
             telemetry.update();
             idle();
+
         }
         telemetry.addData("About to activate Vuforia","");
         ElapsedTime vufTime = new ElapsedTime();
