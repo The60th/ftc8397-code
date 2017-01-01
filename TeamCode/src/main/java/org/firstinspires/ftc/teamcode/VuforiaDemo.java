@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
  * Created by CanAdirondack on 12/5/2016.
  */
 @Autonomous(name="VuforiaDemo", group="Pushbot")
+@Disabled
 public class VuforiaDemo extends LinearOpMode {
     OmniBot        robot   = new OmniBot();
     VuforiaNav vuforianav = null;

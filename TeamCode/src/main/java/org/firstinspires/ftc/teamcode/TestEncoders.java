@@ -53,7 +53,7 @@ import org.firstinspires.ftc.teamcode.OmniBot;
  */
 
 @TeleOp(name="TestEncoders", group="Linear Opmode")  // @Autonomous(...) is the other common choice
-//@Disabled
+@Disabled
 public class TestEncoders extends LinearOpMode {
 
   OmniBot robot = null;

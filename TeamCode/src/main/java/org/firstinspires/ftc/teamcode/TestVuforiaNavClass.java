@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
  * Created by CanAdirondack on 11/9/2016.
  */
 @Autonomous(name=" TestVuforiaNavClass: Test ", group="Test")
+@Disabled
 
 public class TestVuforiaNavClass extends LinearOpMode {
     VuforiaNav vuforianav = null;

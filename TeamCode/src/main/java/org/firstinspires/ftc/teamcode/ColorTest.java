@@ -13,6 +13,7 @@ package org.firstinspires.ftc.teamcode;
         import com.qualcomm.robotcore.hardware.TouchSensor;
 
 @TeleOp(name=" ColorTest : Double Sensor ", group="Test")
+@Disabled
 public class ColorTest extends OpMode {
     OpticalDistanceSensor odsSensor;
     ColorSensor sensorRGB;

@@ -4,13 +4,9 @@ import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 
-/**
- * Created by CanAdirondack on 12/15/2016.
- */
+
 @Autonomous(name="Red_Side", group="Autonomous")
 public class AutonomousRedSide extends  LinearOpMode{
 
@@ -43,19 +39,21 @@ public class AutonomousRedSide extends  LinearOpMode{
         waitForStart();
 
 
-        robot.setDriveSpeed(0,40,0); //Drive forward.
+        robot.setDriveSpeed(0,-40,0); //Drive forward.
         sleep(850);
+
+        robot.setDriveSpeed(0,0,0);
 
         fireGun();
         sleep(100);
 
-        turnToPosition(180,3,.03f);
+        turnToPosition(180,3,.3f);
         //Run ball firing code.
         //null void
 
 
         //Drive to beacons
-        robot.setDriveSpeed(0,43.3,Math.PI/9);
+        robot.setDriveSpeed(0,43.3,Math.PI/12);
         sleep(4000);
 
 
@@ -64,15 +62,24 @@ public class AutonomousRedSide extends  LinearOpMode{
         //Fetch robotPos
         OpenGLMatrix robotPosition = vuforianav.getRobotLocationRelativeToTarget(0);
 
+        //Null Loop check.
+        while ((robotPosition == null) && opModeIsActive()) {
+            idle();
+            //Rotate ?
+            //Copy code from second null loop
+            robotPosition = vuforianav.getRobotLocationRelativeToTarget(0);
+            telemetry.update();
+        }
+
 
         //Once code is here it is now in front of the beacon and has tried to press the button.
         //Now to adjust in the -x to the left to get to the second beacon for a distance of 45.5 inches.
 
 
         //Null Loop check.
-        while(robotPosition == null){
+        while (robotPosition == null) {
             idle();
-            robot.setDrivePower(0,0,0,"");
+            robot.setDrivePower(0, 0, 0, "");
             robotPosition = vuforianav.getRobotLocationRelativeToTarget(0);
             telemetry.update();
             //Rotate ?
@@ -111,9 +118,6 @@ public class AutonomousRedSide extends  LinearOpMode{
             sleep(1000);
             robot.LeftPusher.setPosition(0);
         }
-        else{
-        }
-        telemetry.update();
 
         //Drive to second color beacon.
         robot.setDrivePower(50,-30,0,""); //was -50 -40
@@ -164,8 +168,6 @@ public class AutonomousRedSide extends  LinearOpMode{
             sleep(1000);
             robot.LeftPusher.setPosition(0);
         }
-        else{
-        }
         robot.setDrivePower(0,0,0,"");
         v = -30;
         while (opModeIsActive() && zxPhi[0] <= 100) {
@@ -177,6 +179,8 @@ public class AutonomousRedSide extends  LinearOpMode{
                 zxPhi = VuforiaNav.GetZXPH(robotPosition2);
             }
         }
+        telemetry.addData("", "Program has been finished in %f seconds.", getRuntime());
+        telemetry.update();
     }
 
     public float[] getCorrectedSpeeds(float x,float phi,float v, float x0) {

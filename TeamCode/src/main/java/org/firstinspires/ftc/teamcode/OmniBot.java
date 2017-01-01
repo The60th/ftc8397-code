@@ -112,7 +112,7 @@ public class OmniBot
 
         setDrivePower(0,0,0,liftFront); // Set all motors to zero power
 
-        SlideHolder.setPosition(.25);
+        SlideHolder.setPosition(1);
         ShooterLift.setPosition(1);
 
         sensorRGB_One.enableLed(false);
@@ -120,7 +120,7 @@ public class OmniBot
 
 
     public void setServoUp(){
-        SlideHolder.setPosition(1);
+        SlideHolder.setPosition(.25);
     }
 
     public void setBigBallLift(double p){
@@ -174,7 +174,7 @@ public class OmniBot
                 //x = y
                 //y = x
                 tempHolder = py;
-                py = px;
+                py = -px;
                 px = tempHolder;
                 break;
             case phoneFront:

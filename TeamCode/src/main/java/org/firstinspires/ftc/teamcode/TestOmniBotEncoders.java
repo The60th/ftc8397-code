@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
  * Created by JimLori on 12/22/2016.
  */
 @TeleOp(name="Omnibot Test Encoders", group="Pushbot")
+@Disabled
+
 public class TestOmniBotEncoders extends LinearOpMode {
 
     OmniBot robot = new OmniBot();

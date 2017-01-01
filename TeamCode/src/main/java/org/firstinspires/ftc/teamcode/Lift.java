@@ -13,6 +13,7 @@ import com.qualcomm.ftccommon.DbgLog;
  * Created by CanAdirondack on 9/30/2016.
  */
 @TeleOp(name=" Lift : Test ", group="Test")
+@Disabled
 
 public class Lift  extends OpMode {
 

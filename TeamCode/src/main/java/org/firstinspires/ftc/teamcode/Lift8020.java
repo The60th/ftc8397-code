@@ -15,6 +15,7 @@ import com.qualcomm.ftccommon.DbgLog;
  * Created by CanAdirondack on 9/30/2016.
  */
 @TeleOp(name=" Lift8020 : Test ", group="Test")
+@Disabled
 
 public class Lift8020 extends OpMode {
 

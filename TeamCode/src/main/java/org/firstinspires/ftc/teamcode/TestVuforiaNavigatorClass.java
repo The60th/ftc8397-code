@@ -24,7 +24,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
  */
 
 @Autonomous(name = "TestVuforiaNavigatorClass", group = "Test Opmodes")
-//@Disabled
+@Disabled
 public class TestVuforiaNavigatorClass extends LinearOpMode {
 
     final OpenGLMatrix CAMERA_LOCATION_ON_ROBOT =

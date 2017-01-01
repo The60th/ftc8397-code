@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -16,7 +17,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Created by CanAdirondack on 11/25/2016.
  */
 @TeleOp(name=" Test45Robot3 : Test ", group="Test")
-
+@Disabled
 public class test45Robot2 extends  LinearOpMode{
         boolean turnMode = false;
         allSensors sensors = new allSensors();

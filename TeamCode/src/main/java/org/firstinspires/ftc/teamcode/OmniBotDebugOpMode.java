@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -9,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Created by Jim on 11/11/2016.
  */
 @Autonomous(name="Test Omni Debug", group="Debug")
-//@Disabled
+@Disabled
 public class OmniBotDebugOpMode extends LinearOpMode {
 
     OmniBotDEBUG robot = new OmniBotDEBUG();
