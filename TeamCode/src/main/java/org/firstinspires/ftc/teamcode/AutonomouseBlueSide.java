@@ -45,7 +45,6 @@ public class AutonomouseBlueSide extends LinearOpMode {
             idle();
         }
         telemetry.addData("Gyro activated. ", "Took %f milliseconds. ", gyroTime.milliseconds());
-        telemetry.addData("About to activate Vuforia", "");
         ElapsedTime vufTime = new ElapsedTime();
         vuforianav.activate();
         telemetry.addData("Vuforia activated. ", "Took %f milliseconds. ", vufTime.milliseconds());
@@ -59,48 +58,61 @@ public class AutonomouseBlueSide extends LinearOpMode {
         robot.setDriveSpeed(0, -40, 0); //Drive forward.
         sleep(850);
 
+        /**
+         * Stop the robot before launching both balls with the fireGun function.
+         *
+         */
+
         robot.setDriveSpeed(0, 0, 0);
 
         fireGun();
         sleep(100);
 
-        turnToPosition(180, 3, .3f);
+        /**
+         * Call turnToPosition with args 180,3,.3f to spin the robot 180 degrees.
+         *
+         */
+
+        //TurntoPos Currently turn degrees
+        turnToPosition(90-robot.sensorGyro.getIntegratedZValue(), 3, .3f);
         //Run ball firing code.
         //null void
 
+        /**
+         *  Call robot.DriveSpeed with args 0.43/3.Pi/6 to slowly move the robot forward and a turn of 90 degrees turning to face the beacon and vuforia picture.
+         *
+         */
+        robot.setDriveSpeed(-30,0,0);
+        sleep(1000);
 
-        //Drive to beacons
-        robot.setDriveSpeed(0, 43.3, -Math.PI / 12);
-        sleep(4000);
+        //robot.setDriveSpeed(0, 43.3, -Math.PI/6);
+
+        robot.setDriveSpeed(-35,35,0);
+        sleep(2500);
+
+        /**
+         *  Drive Robot slowly on a angle to slide it in front of the vuforia picture and beacon.
+         *
+         */
 
 
+        /**
+         * Stop the robot before going to vuforia nav.
+         *
+         */
         robot.setDrivePower(0, 0, 0, "");
 
         //Fetch robotPos
         OpenGLMatrix robotPosition = vuforianav.getRobotLocationRelativeToTarget(3);
 
+        int counter = 0;
         //Null Loop check.
         while ((robotPosition == null) && opModeIsActive()) {
+            counter = counter + 1;
             idle();
-            //Rotate ?
-            //Copy code from second null loop
             robotPosition = vuforianav.getRobotLocationRelativeToTarget(3);
-            telemetry.update();
-        }
-
-
-        //Once code is here it is now in front of the beacon and has tried to press the button.
-        //Now to adjust in the -x to the left to get to the second beacon for a distance of 45.5 inches.
-
-
-        //Null Loop check.
-        while (robotPosition == null) {
-            idle();
-            robot.setDrivePower(0, 0, 0, "");
-            robotPosition = vuforianav.getRobotLocationRelativeToTarget(3);
-            telemetry.update();
-            //Rotate ?
-            //Copy code from second null loop
+            robot.setDriveSpeed(0, 0, Math.PI / 12);
+            DbgLog.msg("Robot Debug: Robot Pos2 Trigger: Number of while loop runs: < %d >", counter);
         }
 
         //Get zxPhi from robotPos
@@ -118,12 +130,16 @@ public class AutonomouseBlueSide extends LinearOpMode {
         }
 
         robot.setDrivePower(0, 0, 0, "");
-        float[] colorValues = robot.getColorValues();
+
+        /*float[] colorValues = robot.getColorValues();
+
+        Mo Longer In Use.
+
         if (colorValues != null) {
             telemetry.addData("Color Values: ", "Red: %.1f Green: %.1f Blue: %.0f", colorValues[0],
                     colorValues[1], colorValues[2]);
             telemetry.update();
-        }
+        }*/
 
         if (robot.isRightBeaconBlue()) {
             robot.RightPusher.setPosition(1);
@@ -136,27 +152,33 @@ public class AutonomouseBlueSide extends LinearOpMode {
         }
 
         //Drive to second color beacon.
-        robot.setDrivePower(-50, -30, 0, ""); //was -50 -40
+
+        /**
+         * Slide to secondary beacon.
+         *
+         */
+        robot.setDrivePower(-50, -50, 0, ""); //was -50 -40
 
         OpenGLMatrix robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
         ElapsedTime driveTime2 = new ElapsedTime();
-        while ((robotPosition2 == null) && driveTime2.milliseconds() < 1000) { //was 1500
+
+        while ((robotPosition2 == null) && driveTime2.milliseconds() < 1250) { //was 1000
             idle();
             robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
         }
+
         //Once code is here it is now in front of the beacon and has tried to press the button.
         //Now to adjust in the -x to the left to get to the second beacon for a distance of 45.5 inches.
-        int counter = 0;
-        while (robotPosition2 == null) {
+         counter = 0;
+        while (robotPosition2 == null && opModeIsActive()) {
             counter = counter + 1;
             idle();
             robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
             robot.setDriveSpeed(0, 0, Math.PI / 12);
-            telemetry.addData("Null pos2", "");
             DbgLog.msg("Robot Debug: Robot Pos2 Trigger: Number of while loop runs: < %d >", counter);
-            telemetry.update();
             // Do a recovery here. WIP
         }
+
         zxPhi = VuforiaNav.GetZXPH(robotPosition2);
         while (opModeIsActive() && zxPhi[0] >= robot.vuforiaZDistance) { //Was 15 before changing to 21 for testing.
             float[] newSpeeds2 = getCorrectedSpeeds(zxPhi[1], zxPhi[2], v, 0);
@@ -169,12 +191,17 @@ public class AutonomouseBlueSide extends LinearOpMode {
         }
 
         robot.setDrivePower(0, 0, 0, "");
-        colorValues = robot.getColorValues();
+
+        /*colorValues = robot.getColorValues();
+
+        No Longer In Use
+
         if (colorValues != null) {
             telemetry.addData("Color Values: ", "Red: %.1f Green: %.1f Blue: %.0f", colorValues[0],
                     colorValues[1], colorValues[2]);
             telemetry.update();
-        }
+        }*/
+
         if (robot.isRightBeaconBlue()) {
             robot.RightPusher.setPosition(1);
             sleep(1000);
@@ -184,8 +211,11 @@ public class AutonomouseBlueSide extends LinearOpMode {
             sleep(1000);
             robot.LeftPusher.setPosition(0);
         }
+
         robot.setDrivePower(0, 0, 0, "");
+
         v = -30;
+
         while (opModeIsActive() && zxPhi[0] <= 100) {
             float[] newSpeeds2 = getCorrectedSpeeds(zxPhi[0], zxPhi[1], zxPhi[2], v, 102, 127);
             robot.setDriveSpeed(newSpeeds2[0], newSpeeds2[1], newSpeeds2[2]);
@@ -195,10 +225,19 @@ public class AutonomouseBlueSide extends LinearOpMode {
                 zxPhi = VuforiaNav.GetZXPH(robotPosition2);
             }
         }
+
         telemetry.addData("", "Program has been finished in %f seconds.", getRuntime());
         telemetry.update();
     }
 
+    /**
+     *
+     * @param x x power
+     * @param phi angle
+     * @param v speed
+     * @param x0
+     * @return x-speed, y-speed, angle in float array
+     */
     public float[] getCorrectedSpeeds(float x, float phi, float v, float x0) {
         float phiPrime = VuforiaNav.remapAngle(phi - (float) Math.PI);
         float va = -phiPrime * Math.abs(v) * C_PHI;
@@ -234,7 +273,6 @@ public class AutonomouseBlueSide extends LinearOpMode {
         float vX = -CD * vABS * errorD * (float) Math.cos(errorPhiPrime);
         float vY = v + CD * vABS * errorD * (float) Math.sin(errorPhiPrime);
         float vA = -CPHI * Math.abs(v) * errorPhiPrime;
-        //if(z < 10 || z> 80) vA = -CPHI * Math.abs(v) * phiPrime;
         if (z > 80) vY -= 10;
 
         return new float[]{vX, vY, vA};
@@ -262,6 +300,12 @@ public class AutonomouseBlueSide extends LinearOpMode {
             offset = targetHeading - heading;
         }
         robot.setDrivePower(0, 0, 0, "");
+    }
+
+    public void findVuforiaTurn(){
+        for(int i = 90; i < 180; i = i + 10){
+            turnToPosition(i-robot.sensorGyro.getIntegratedZValue(),3,.3f);
+        }
     }
 }
 

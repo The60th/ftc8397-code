@@ -44,7 +44,7 @@ import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 
 
 @Autonomous(name="AutonomousOpMode1", group="Pushbot")
-//@Disabled
+@Disabled
 public class AutonomousOpMode1 extends LinearOpMode {
     public final float C_PHI = .1f;
     public final float C_X = .1f;

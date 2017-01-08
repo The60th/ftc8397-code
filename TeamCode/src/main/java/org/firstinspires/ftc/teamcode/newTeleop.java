@@ -1,12 +1,22 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 
-@TeleOp(name = "TeleOp: ", group = "TeleOp")
+/**
+ * Important Notice:
+ *
+ * No robot movement commands are to be used on the START, A or B Buttons on any gamepads.
+ * Use of said controls should be REMOVED from all programs, the use of said commands is considered to be unsafe.
+ *
+ */
+
+
+@TeleOp(name = "TeleOpDemo: ", group = "TeleOp")
 public class newTeleop extends LinearOpMode {
     private OmniBot robot = new OmniBot();
     private VuforiaNav vuforia = new VuforiaNav();
@@ -20,7 +30,9 @@ public class newTeleop extends LinearOpMode {
     private final float C_X = .1f;
     private String mode = robot.phoneFront;
     private boolean awaitingButtonReleaseServo = false;
-
+    private boolean slowToggle = false;
+    private boolean slowToggleControl = false;
+    private final float slowModeMod = 4;
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
@@ -44,15 +56,38 @@ public class newTeleop extends LinearOpMode {
 
             px = Math.abs(gamepad1.left_stick_x) > 0.05 ? gamepad1.left_stick_x : 0;
             py = Math.abs(gamepad1.left_stick_y) > 0.05 ? -gamepad1.left_stick_y : 0;
-
             pTheta = Math.abs(gamepad1.right_stick_x) > 0.05 ? -gamepad1.right_stick_x : 0;
-            robot.setDrivePower(px, py, pTheta, mode);
+
+            if(slowToggle) {
+                robot.setDrivePower(px / slowModeMod, py / slowModeMod, pTheta / slowModeMod, mode);
+            }
+            else {
+                robot.setDrivePower(px, py, pTheta, mode);
+            }
+
 
             /**
              *
              *  Gamepad One Controls
              *
              */
+
+
+            if(!gamepad1.guide && slowToggleControl){
+                slowToggleControl = !slowToggleControl;
+            }
+            else if(gamepad1.guide && !slowToggleControl){
+                slowToggleControl = true;
+                if(!slowToggle){
+                    slowToggle = true;
+                }
+                else if(slowToggle){
+                    slowToggle = false;
+                }
+            }
+
+            //Todo temp place holder testing for a custom turn controller
+
 
             if (gamepad1.right_bumper && !(gamepad1.right_trigger > .05)) {
                 robot.setSweeper(-1.0);
@@ -166,5 +201,45 @@ public class newTeleop extends LinearOpMode {
         float vy = v + Math.abs(v) * C_X * (x - x0) * (float) Math.sin(phiPrime);
         return new float[]{vx, vy, va};
     }
+
+
+    public void turnToPosition(float angle, float tolerance, float latency) {
+        //Tolerance in degrees latency seconds.
+
+        final float vaMin = 1.5f * tolerance / latency;
+        final float C = 0.75f / latency;
+        final float vaMax = 135;
+        float heading = robot.sensorGyro.getIntegratedZValue();
+        float targetHeading = heading + angle;
+        float offset = targetHeading - heading;
+
+        while (opModeIsActive() && Math.abs(offset) > tolerance) {
+            float absAdjustedOffset = Math.abs(offset) - tolerance;
+            float absVa = vaMin + C * absAdjustedOffset;
+            absVa = Math.min(absVa, vaMax);
+            float va = absVa * Math.signum(offset);
+            DbgLog.msg("Turning va = %.2f hd = %.0f, off = %.0f absAdjOff = %.0f", va, heading, offset, absAdjustedOffset);
+            robot.setDriveSpeed(0, 0, va * Math.PI / 180.0);
+            heading = robot.sensorGyro.getIntegratedZValue();
+            offset = targetHeading - heading;
+        }
+        robot.setDrivePower(0, 0, 0, "");
+    }
+
+   /* public void findVuforiaTurn(){
+        int j = 0;
+        for(int i = 90; i < 130; i = i + 5){
+            j = j + 1;
+            telemetry.addData("","Gyro current pos: %f : run number %f :",(float)(robot.sensorGyro.getIntegratedZValue()),(float)(i));
+            telemetry.update();
+            float robotPos = robot.sensorGyro.getIntegratedZValue();
+
+           // if(robotPos+i >= 180) break;
+
+            if(j % 2 == 0) turnToPosition(-(robotPos+((float)(i*2))),3,.3f); else turnToPosition(robotPos+i,3,.3f);
+        }
+        robot.setDriveSpeed(0,0,0);
+
+    }*/
 
 }

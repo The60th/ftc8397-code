@@ -47,14 +47,22 @@ public class AutonomousRedSide extends  LinearOpMode{
         fireGun();
         sleep(100);
 
-        turnToPosition(180,3,.3f);
+
+        turnToPosition(-90-robot.sensorGyro.getIntegratedZValue(), 3, .3f);
         //Run ball firing code.
         //null void
 
 
-        //Drive to beacons
-        robot.setDriveSpeed(0,43.3,Math.PI/12);
-        sleep(4000);
+        robot.setDriveSpeed(30,0,0);
+        sleep(1000);
+
+        //robot.setDriveSpeed(0, 43.3, -Math.PI/6);
+        //not - -
+        //not + -
+        //not - +
+        // + +
+        robot.setDriveSpeed(35,35,0);
+        sleep(2500);
 
 
         robot.setDrivePower(0,0,0,"");
@@ -62,13 +70,14 @@ public class AutonomousRedSide extends  LinearOpMode{
         //Fetch robotPos
         OpenGLMatrix robotPosition = vuforianav.getRobotLocationRelativeToTarget(0);
 
+        int counter = 0;
         //Null Loop check.
         while ((robotPosition == null) && opModeIsActive()) {
+            counter = counter + 1;
             idle();
-            //Rotate ?
-            //Copy code from second null loop
             robotPosition = vuforianav.getRobotLocationRelativeToTarget(0);
-            telemetry.update();
+            robot.setDriveSpeed(0, 0, -Math.PI / 12);//changed to -
+            DbgLog.msg("Robot Debug: Robot Pos2 Trigger: Number of while loop runs: < %d >", counter);
         }
 
 
@@ -77,14 +86,6 @@ public class AutonomousRedSide extends  LinearOpMode{
 
 
         //Null Loop check.
-        while (robotPosition == null) {
-            idle();
-            robot.setDrivePower(0, 0, 0, "");
-            robotPosition = vuforianav.getRobotLocationRelativeToTarget(0);
-            telemetry.update();
-            //Rotate ?
-            //Copy code from second null loop
-        }
 
         //Get zxPhi from robotPos
         zxPhi = VuforiaNav.GetZXPH(robotPosition);
@@ -101,12 +102,16 @@ public class AutonomousRedSide extends  LinearOpMode{
         }
 
         robot.setDrivePower(0, 0, 0,"");
-        float[] colorValues = robot.getColorValues();
+
+        /*float[] colorValues = robot.getColorValues();
+
+        No Longer In Use.
+
         if(colorValues != null) {
             telemetry.addData("Color Values: ", "Red: %.1f Green: %.1f Blue: %.0f", colorValues[0],
                     colorValues[1], colorValues[2]);
             telemetry.update();
-        }
+        }*/
 
         if(robot.isRightBeaconRed()){
             robot.RightPusher.setPosition(1);
@@ -120,27 +125,30 @@ public class AutonomousRedSide extends  LinearOpMode{
         }
 
         //Drive to second color beacon.
-        robot.setDrivePower(50,-30,0,""); //was -50 -40
+        //not - +
+        //not + +
+        // + -
+        robot.setDrivePower(50,-50,0,""); //was -50 -40
 
         OpenGLMatrix robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(2);
         ElapsedTime driveTime2 = new ElapsedTime();
-        while ((robotPosition2 == null )&& driveTime2.milliseconds() < 1000){ //was 1500
+
+        while ((robotPosition2 == null )&& driveTime2.milliseconds() < 1250){ //was 1500
             idle();
             robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(2);
         }
         //Once code is here it is now in front of the beacon and has tried to press the button.
         //Now to adjust in the -x to the left to get to the second beacon for a distance of 45.5 inches.
-        int counter = 0;
-        while(robotPosition2 == null){
+         counter = 0;
+        while(robotPosition2 == null&& opModeIsActive()){
             counter = counter+1;
             idle();
             robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(2);
-            robot.setDriveSpeed(0,0,Math.PI/12);
-            telemetry.addData("Null pos2","");
+            robot.setDriveSpeed(0,0,-Math.PI/12);//changed to -
             DbgLog.msg("Robot Debug: Robot Pos2 Trigger: Number of while loop runs: < %d >", counter);
-            telemetry.update();
             // Do a recovery here. WIP
         }
+
         zxPhi = VuforiaNav.GetZXPH(robotPosition2);
         while (opModeIsActive() && zxPhi[0] >= robot.vuforiaZDistance) { //Was 15 before changing to 21 for testing.
             float[] newSpeeds2 = getCorrectedSpeeds(zxPhi[1], zxPhi[2], v, 0);
@@ -151,13 +159,19 @@ public class AutonomousRedSide extends  LinearOpMode{
                 zxPhi = VuforiaNav.GetZXPH(robotPosition2);
             }
         }
+
         robot.setDrivePower(0, 0, 0,"");
-        colorValues = robot.getColorValues();
+
+        /*colorValues = robot.getColorValues();
+
+        No Longer In Use
+
         if(colorValues != null) {
             telemetry.addData("Color Values: ", "Red: %.1f Green: %.1f Blue: %.0f", colorValues[0],
                     colorValues[1], colorValues[2]);
             telemetry.update();
-        }
+        }*/
+
         if(robot.isRightBeaconRed()){
             robot.RightPusher.setPosition(1);
             sleep(1000);
@@ -168,17 +182,24 @@ public class AutonomousRedSide extends  LinearOpMode{
             sleep(1000);
             robot.LeftPusher.setPosition(0);
         }
+
         robot.setDrivePower(0,0,0,"");
+
         v = -30;
+
         while (opModeIsActive() && zxPhi[0] <= 100) {
             float[] newSpeeds2 = getCorrectedSpeeds(zxPhi[0], zxPhi[1], zxPhi[2], v, 102,127);
             robot.setDriveSpeed(newSpeeds2[0], newSpeeds2[1], newSpeeds2[2]);
             idle();
             robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
+            if(robotPosition == null) telemetry.addData("","Null Pos for backup:");
+            telemetry.addData("","vX = %f vY = %f vA = %f",-newSpeeds2[0],newSpeeds2[1],-newSpeeds2[2]);
+            telemetry.update();
             if(robotPosition2 != null) {
                 zxPhi = VuforiaNav.GetZXPH(robotPosition2);
             }
         }
+
         telemetry.addData("", "Program has been finished in %f seconds.", getRuntime());
         telemetry.update();
     }
@@ -193,17 +214,17 @@ public class AutonomousRedSide extends  LinearOpMode{
     public void fireGun() throws InterruptedException{
         robot.setShooter(1.0);
         sleep(250);
-        robot.ShooterLift.setPosition(0);
+        robot.setLaunchServo("Up");
         sleep(1000);
-        robot.ShooterLift.setPosition(1);
+        robot.setLaunchServo("Down");
         sleep(1250);
-        robot.ShooterLift.setPosition(0);
+        robot.setLaunchServo("Up");
         sleep(1000);
-        robot.ShooterLift.setPosition(1);
+        robot.setLaunchServo("Down");
         robot.setShooter(0.0);
         //wait for second ball
         //lift again.
-
+        //wax vjy
     }
 
     public float[] getCorrectedSpeeds(float z, float x, float phi, float v, float xT, float zT){
@@ -220,7 +241,11 @@ public class AutonomousRedSide extends  LinearOpMode{
         //if(z < 10 || z> 80) vA = -CPHI * Math.abs(v) * phiPrime;
         if(z > 80) vY-= 10;
 
-        return new float[] {vX, vY, vA};
+        return new float[] {-vX, vY, -vA};//added - to x and a
+        //Not +vX -Vy, vA
+        //Not -vX,vY,vA
+        // -vX,vY,-vA
+
     }
 
 
