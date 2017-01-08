@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.matrices.MatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 
 
-@SuppressWarnings("all")
+//@SuppressWarnings("all")
 
 
 public class OmniBot
