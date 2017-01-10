@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.matrices.MatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 
 
-//@SuppressWarnings("all")
+@SuppressWarnings("all")
 
 
 public class OmniBot
@@ -49,7 +49,7 @@ public class OmniBot
     /**
      * Final constant equal to current robot wheel diameter. Measurement is in inches then convented to centimeters with the value 2.54
      */
-    public final double WHEEL_DIAMETER = 4.0*2.54;  //4in converted to cm.
+    public final double WHEEL_DIAMETER = 4.0*2.54;
 
     /**
      * Final constant equal to our robots encoder ticks per centimeter. Found by taking ticks per motor rotations times gear ratio divided by wheel diameter.
@@ -320,7 +320,8 @@ public class OmniBot
     }
 
     /**
-     *
+     * Class based method to control slide holder servo.
+     * Calling function will move servo to up/open position causing the lift to drop.
      */
 
     public void setServoUp(){
@@ -330,6 +331,8 @@ public class OmniBot
     /**
      *
      * @param p Motor power that is passed to the function.
+     * Class based method to control the motor running the linear slide lift.
+     *
      */
 
     public void setBigBallLift(double p){
@@ -338,7 +341,7 @@ public class OmniBot
 
     /**
      *
-     * @param pos Position the servo will drive to
+     * @param pos Position the servo will drive to.
      *
      */
 
