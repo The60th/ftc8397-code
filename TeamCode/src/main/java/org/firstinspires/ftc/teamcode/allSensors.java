@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import java.lang.reflect.Array;
 
 /**
- * Created by Justi on 11/4/2016.
+ * Created by Justin on 11/4/2016.
  */
 
 public class allSensors {

@@ -124,9 +124,9 @@ public class newTeleop extends LinearOpMode {
                 robot.setShooter(0.0);
             }
             if (gamepad2.dpad_down) {
-                robot.setBigBallLift(-1);
-            } else if (gamepad2.dpad_up) {
                 robot.setBigBallLift(1);
+            } else if (gamepad2.dpad_up) {
+                robot.setBigBallLift(-1);
             } else {
                 robot.setBigBallLift(0);
             }

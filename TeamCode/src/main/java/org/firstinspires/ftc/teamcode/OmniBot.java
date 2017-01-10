@@ -372,7 +372,7 @@ public class OmniBot
 
     /**
      *
-     * @param side
+     * @param side chooses which servo to activate
      */
 
     public void setServos(String side){
@@ -389,12 +389,12 @@ public class OmniBot
         }
 
     /**
-     *
-     * @param px
-     * @param py
-     * @param pa
-     * @param mode
-     * @return
+     *Sets power for wheels
+     * @param px x velocity
+     * @param py y velocity
+     * @param pa angle
+     * @param mode side
+     * @return max
      */
     public double setDrivePower(double px, double py, double pa, String mode){
         //x = +
@@ -455,8 +455,8 @@ public class OmniBot
     }
 
     /**
-     *
-     * @param mode
+     *Sets DC Motor mode
+     * @param mode dc motor
      */
 
     public void setDriveMode(DcMotor.RunMode mode){
@@ -479,6 +479,13 @@ public class OmniBot
         four.setZeroPowerBehavior(beh);
     }
 
+    /**
+     * Converts coordinates to motor speed
+     * @param vx x velocity
+     * @param vy y velocity
+     * @param va angle
+     * @return wheel powers
+     */
     public double setDriveSpeed(double vx, double vy,double va){
         return setDrivePower(vx * TICKS_PER_CM / (Math.sqrt(2.0)*one.getMaxSpeed()),
                              vy * TICKS_PER_CM / (Math.sqrt(2.0)*one.getMaxSpeed()),
@@ -514,8 +521,8 @@ public class OmniBot
     }
 
     /**
-     *
-     * @return
+     *Determines if beacon is red
+     * @return true or false if beacon is red
      */
 
     public boolean isRightBeaconRed(){
@@ -527,8 +534,8 @@ public class OmniBot
     }
 
     /**
-     *
-     * @return
+     *Determines if beacon is blue
+     * @return true or false if beacon is blue
      */
 
     public boolean isRightBeaconBlue(){
@@ -540,8 +547,8 @@ public class OmniBot
     }
 
     /**
-     *
-     * @return
+     *Gets color values from color sensor
+     * @return float array of color values
      */
     public float[] getColorValues(){
         float[] colorValues = {sensorRGB_One.red(),sensorRGB_One.green(),sensorRGB_One.blue()};
