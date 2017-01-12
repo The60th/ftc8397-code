@@ -157,16 +157,22 @@ public class AutonomouseBlueSide extends LinearOpMode {
          * Slide to secondary beacon.
          *
          */
-        robot.setDrivePower(-50, -50, 0, ""); //was -50 -40
+
+        //ToDo updating from a 50* angle drive to a 45 backwards then slide right.
+        //ToDo changing from setDrivePower to setDriveSpeed only instance of power so replacing.
+        robot.setDriveSpeed(-40,-40,0);
+        //robot.setDrivePower(-50, -40, 0, ""); //was -50 -50 1/11/17 : -50,-40 to long
 
         OpenGLMatrix robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
         ElapsedTime driveTime2 = new ElapsedTime();
 
-        while ((robotPosition2 == null) && driveTime2.milliseconds() < 1250) { //was 1000
+        while ((robotPosition2 == null) && driveTime2.milliseconds() < 1500) { //was 1250 1/11/17
             idle();
             robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
         }
 
+        robot.setDriveSpeed(-40,0,0);
+        sleep(500);
         //Once code is here it is now in front of the beacon and has tried to press the button.
         //Now to adjust in the -x to the left to get to the second beacon for a distance of 45.5 inches.
          counter = 0;
