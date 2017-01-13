@@ -21,6 +21,14 @@ import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
  */
 
 
+/**
+ * Notice:
+ * This program should be considered locked and as such no changes made without valid reasons.
+ * Any changes made should be fully documented with former code left in a comment and reasons for such a change.
+ *
+ */
+
+@SuppressWarnings("all")
 @Autonomous(name = "Blue_Side", group = "Autonomous")
 public class AutonomouseBlueSide extends LinearOpMode {
     public final float C_PHI = .1f;
@@ -166,13 +174,13 @@ public class AutonomouseBlueSide extends LinearOpMode {
         OpenGLMatrix robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
         ElapsedTime driveTime2 = new ElapsedTime();
 
-        while ((robotPosition2 == null) && driveTime2.milliseconds() < 1500) { //was 1250 1/11/17
+        while ((robotPosition2 == null) && driveTime2.milliseconds() < 1250) { //was 1500 1/12/17
             idle();
             robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
         }
 
-        robot.setDriveSpeed(-40,0,0);
-        sleep(500);
+        robot.setDriveSpeed(-40,0,0); //was 500 1/12/17
+        sleep(1750);
         //Once code is here it is now in front of the beacon and has tried to press the button.
         //Now to adjust in the -x to the left to get to the second beacon for a distance of 45.5 inches.
          counter = 0;
@@ -221,15 +229,29 @@ public class AutonomouseBlueSide extends LinearOpMode {
         robot.setDrivePower(0, 0, 0, "");
 
         v = -30;
-
+        ElapsedTime nullTime = new ElapsedTime();
         while (opModeIsActive() && zxPhi[0] <= 100) {
             float[] newSpeeds2 = getCorrectedSpeeds(zxPhi[0], zxPhi[1], zxPhi[2], v, 102, 127);
             robot.setDriveSpeed(newSpeeds2[0], newSpeeds2[1], newSpeeds2[2]);
             idle();
             robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
+
+            /**
+             * Added ElaspedTime tracker to track total time the robot has gone before a vuforia check could be made, if the robot has gone 1000 ms without a vuforia lock, stop the robot.
+             */
+            if(robotPosition2 == null){
+                if(nullTime.milliseconds() > 1000){
+                    robot.setDriveSpeed(0,0,0);
+                    break;
+                }
+            }
+
             if (robotPosition2 != null) {
                 zxPhi = VuforiaNav.GetZXPH(robotPosition2);
+                nullTime.reset();
             }
+
+
         }
 
         telemetry.addData("", "Program has been finished in %f seconds.", getRuntime());

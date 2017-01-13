@@ -6,7 +6,28 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 
+/**
+ * Program notes:
+ * /** Should be used for final program comments, and code explaining.
+ * // or /* Should only be used for notes when working on code, or reversion notes.
+ * Current problems should be listed with a To-Do statement.
+ * <p>
+ * Final version Telemetry data should be ONLY used for important driver data.
+ * All current Telemetry data MUST be replaced with "DbgLog.msg()" to reduce run time lag.
+ * <p>
+ * <p>
+ * Program notes should be finished before final ship of code.
+ */
 
+
+/**
+ * Notice:
+ * This program should be considered locked and as such no changes made without valid reasons.
+ * Any changes made should be fully documented with former code left in a comment and reasons for such a change.
+ *
+ */
+
+@SuppressWarnings("all")
 @Autonomous(name="Red_Side", group="Autonomous")
 public class AutonomousRedSide extends  LinearOpMode{
 
@@ -53,8 +74,8 @@ public class AutonomousRedSide extends  LinearOpMode{
         //null void
 
 
-        robot.setDriveSpeed(30,0,0);
-        sleep(1000);
+       // robot.setDriveSpeed(30,0,0); This was moved to after 35,35,0.
+        // sleep(1000);
 
         //robot.setDriveSpeed(0, 43.3, -Math.PI/6);
         //not - -
@@ -63,6 +84,8 @@ public class AutonomousRedSide extends  LinearOpMode{
         // + +
         robot.setDriveSpeed(35,35,0);
         sleep(2500);
+        robot.setDriveSpeed(30,0,0);
+        sleep(1000);
 
 
         robot.setDrivePower(0,0,0,"");
@@ -187,6 +210,7 @@ public class AutonomousRedSide extends  LinearOpMode{
 
         v = -30;
 
+        ElapsedTime nullTime = new ElapsedTime();
         while (opModeIsActive() && zxPhi[0] <= 100) {
             float[] newSpeeds2 = getCorrectedSpeeds(zxPhi[0], zxPhi[1], zxPhi[2], v, 102,127);
             robot.setDriveSpeed(newSpeeds2[0], newSpeeds2[1], newSpeeds2[2]);
@@ -195,6 +219,15 @@ public class AutonomousRedSide extends  LinearOpMode{
             if(robotPosition == null) telemetry.addData("","Null Pos for backup:");
             telemetry.addData("","vX = %f vY = %f vA = %f",-newSpeeds2[0],newSpeeds2[1],-newSpeeds2[2]);
             telemetry.update();
+            /**
+             * Added ElaspedTime tracker to track total time the robot has gone before a vuforia check could be made, if the robot has gone 1000 ms without a vuforia lock, stop the robot.
+             */
+            if(robotPosition2 == null){
+                if(nullTime.milliseconds() > 1000){
+                    robot.setDriveSpeed(0,0,0);
+                    break;
+                }
+            }
             if(robotPosition2 != null) {
                 zxPhi = VuforiaNav.GetZXPH(robotPosition2);
             }
