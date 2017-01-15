@@ -91,14 +91,14 @@ public class AutonomousRedSide extends  LinearOpMode{
         robot.setDrivePower(0,0,0,"");
 
         //Fetch robotPos
-        OpenGLMatrix robotPosition = vuforianav.getRobotLocationRelativeToTarget(0);
+        OpenGLMatrix robotPosition = vuforianav.getRobotLocationRelativeToTarget(3);
 
         int counter = 0;
         //Null Loop check.
         while ((robotPosition == null) && opModeIsActive()) {
             counter = counter + 1;
             idle();
-            robotPosition = vuforianav.getRobotLocationRelativeToTarget(0);
+            robotPosition = vuforianav.getRobotLocationRelativeToTarget(3);
             robot.setDriveSpeed(0, 0, -Math.PI / 12);//changed to -
             DbgLog.msg("Robot Debug: Robot Pos2 Trigger: Number of while loop runs: < %d >", counter);
         }
@@ -118,7 +118,7 @@ public class AutonomousRedSide extends  LinearOpMode{
             float[] newSpeeds = getCorrectedSpeeds(zxPhi[1], zxPhi[2], v, 0);
             robot.setDriveSpeed(newSpeeds[0], newSpeeds[1], newSpeeds[2]);
             idle();
-            robotPosition = vuforianav.getRobotLocationRelativeToTarget(0);
+            robotPosition = vuforianav.getRobotLocationRelativeToTarget(3);
             if(robotPosition != null) {
                 zxPhi = VuforiaNav.GetZXPH(robotPosition);
             }
@@ -153,12 +153,12 @@ public class AutonomousRedSide extends  LinearOpMode{
         // + -
         robot.setDrivePower(50,-50,0,""); //was -50 -40
 
-        OpenGLMatrix robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(2);
+        OpenGLMatrix robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
         ElapsedTime driveTime2 = new ElapsedTime();
 
         while ((robotPosition2 == null )&& driveTime2.milliseconds() < 1250){ //was 1500
             idle();
-            robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(2);
+            robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
         }
         //Once code is here it is now in front of the beacon and has tried to press the button.
         //Now to adjust in the -x to the left to get to the second beacon for a distance of 45.5 inches.
@@ -166,7 +166,7 @@ public class AutonomousRedSide extends  LinearOpMode{
         while(robotPosition2 == null&& opModeIsActive()){
             counter = counter+1;
             idle();
-            robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(2);
+            robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
             robot.setDriveSpeed(0,0,-Math.PI/12);//changed to -
             DbgLog.msg("Robot Debug: Robot Pos2 Trigger: Number of while loop runs: < %d >", counter);
             // Do a recovery here. WIP
@@ -177,7 +177,7 @@ public class AutonomousRedSide extends  LinearOpMode{
             float[] newSpeeds2 = getCorrectedSpeeds(zxPhi[1], zxPhi[2], v, 0);
             robot.setDriveSpeed(newSpeeds2[0], newSpeeds2[1], newSpeeds2[2]);
             idle();
-            robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(2);
+            robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
             if(robotPosition2 != null) {
                 zxPhi = VuforiaNav.GetZXPH(robotPosition2);
             }

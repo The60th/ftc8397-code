@@ -111,14 +111,14 @@ public class AutonomouseBlueSide extends LinearOpMode {
         robot.setDrivePower(0, 0, 0, "");
 
         //Fetch robotPos
-        OpenGLMatrix robotPosition = vuforianav.getRobotLocationRelativeToTarget(3);
+        OpenGLMatrix robotPosition = vuforianav.getRobotLocationRelativeToTarget(0); //Was 3 change to 0
 
         int counter = 0;
         //Null Loop check.
         while ((robotPosition == null) && opModeIsActive()) {
             counter = counter + 1;
             idle();
-            robotPosition = vuforianav.getRobotLocationRelativeToTarget(3);
+            robotPosition = vuforianav.getRobotLocationRelativeToTarget(0); //Was 3 change to 0
             robot.setDriveSpeed(0, 0, Math.PI / 12);
             DbgLog.msg("Robot Debug: Robot Pos2 Trigger: Number of while loop runs: < %d >", counter);
         }
@@ -131,7 +131,7 @@ public class AutonomouseBlueSide extends LinearOpMode {
             float[] newSpeeds = getCorrectedSpeeds(zxPhi[1], zxPhi[2], v, 0);
             robot.setDriveSpeed(newSpeeds[0], newSpeeds[1], newSpeeds[2]);
             idle();
-            robotPosition = vuforianav.getRobotLocationRelativeToTarget(3);
+            robotPosition = vuforianav.getRobotLocationRelativeToTarget(0);
             if (robotPosition != null) {
                 zxPhi = VuforiaNav.GetZXPH(robotPosition);
             }
@@ -171,12 +171,12 @@ public class AutonomouseBlueSide extends LinearOpMode {
         robot.setDriveSpeed(-40,-40,0);
         //robot.setDrivePower(-50, -40, 0, ""); //was -50 -50 1/11/17 : -50,-40 to long
 
-        OpenGLMatrix robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
+        OpenGLMatrix robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(2);
         ElapsedTime driveTime2 = new ElapsedTime();
 
         while ((robotPosition2 == null) && driveTime2.milliseconds() < 1250) { //was 1500 1/12/17
             idle();
-            robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
+            robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(2);
         }
 
         robot.setDriveSpeed(-40,0,0); //was 500 1/12/17
@@ -187,7 +187,7 @@ public class AutonomouseBlueSide extends LinearOpMode {
         while (robotPosition2 == null && opModeIsActive()) {
             counter = counter + 1;
             idle();
-            robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
+            robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(2);
             robot.setDriveSpeed(0, 0, Math.PI / 12);
             DbgLog.msg("Robot Debug: Robot Pos2 Trigger: Number of while loop runs: < %d >", counter);
             // Do a recovery here. WIP
@@ -198,7 +198,7 @@ public class AutonomouseBlueSide extends LinearOpMode {
             float[] newSpeeds2 = getCorrectedSpeeds(zxPhi[1], zxPhi[2], v, 0);
             robot.setDriveSpeed(newSpeeds2[0], newSpeeds2[1], newSpeeds2[2]);
             idle();
-            robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
+            robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(2);
             if (robotPosition2 != null) {
                 zxPhi = VuforiaNav.GetZXPH(robotPosition2);
             }
@@ -234,7 +234,7 @@ public class AutonomouseBlueSide extends LinearOpMode {
             float[] newSpeeds2 = getCorrectedSpeeds(zxPhi[0], zxPhi[1], zxPhi[2], v, 102, 127);
             robot.setDriveSpeed(newSpeeds2[0], newSpeeds2[1], newSpeeds2[2]);
             idle();
-            robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(1);
+            robotPosition2 = vuforianav.getRobotLocationRelativeToTarget(2);
 
             /**
              * Added ElaspedTime tracker to track total time the robot has gone before a vuforia check could be made, if the robot has gone 1000 ms without a vuforia lock, stop the robot.
@@ -331,6 +331,7 @@ public class AutonomouseBlueSide extends LinearOpMode {
     }
 
     public void findVuforiaTurn(){
+        //Currently not working.
         for(int i = 90; i < 180; i = i + 10){
             turnToPosition(i-robot.sensorGyro.getIntegratedZValue(),3,.3f);
         }

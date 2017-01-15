@@ -384,7 +384,7 @@ public class newTeleop extends LinearOpMode {
      *
      * @param angle Angle to drive too.
      * @param tolerance Allowed tolerance in +- degrees
-     * @param latency Sensor feedback Latency in decimal seconds. 
+     * @param latency Sensor feedback Latency in decimal seconds.
      */
 
     public void turnToPosition(float angle, float tolerance, float latency) {
