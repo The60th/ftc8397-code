@@ -64,7 +64,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  */
 
 @Autonomous(name="Vuforia Navigation Test", group ="Concept")
-@Disabled
+//@Disabled
+//Enabling for vuforia demos.
 public class VuforiaNavigationTest extends LinearOpMode {
 
     public static final String TAG = "Vuforia Sample";

@@ -28,7 +28,7 @@ import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
  *
  */
 
-@SuppressWarnings("all")
+//@SuppressWarnings("all")
 @Autonomous(name = "Blue_Side", group = "Autonomous")
 public class AutonomouseBlueSide extends LinearOpMode {
     public final float C_PHI = .1f;
@@ -42,22 +42,41 @@ public class AutonomouseBlueSide extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        long initStartTime = System.currentTimeMillis(); //Start of debuging info.
+        ElapsedTime runTime = new ElapsedTime();
+        DbgLog.msg("<Debug> Program started at: "+ initStartTime);
+
         float v = 20;
+
         robot.init(hardwareMap);
+        DbgLog.msg("<Debug> Hardware map successfully initialized at " + System.currentTimeMillis());
+
         vuforianav = new VuforiaNav();
-        robot.sensorGyro.calibrate();
+
         ElapsedTime gyroTime = new ElapsedTime();
+        DbgLog.msg("<Debug> Gyro calibration started at " + System.currentTimeMillis());
+        long gyroCaliTime = System.currentTimeMillis();
+        robot.sensorGyro.calibrate();
         while (opModeIsActive() && robot.sensorGyro.isCalibrating()) {
             telemetry.addData("Gyro Cali", "");
             telemetry.update();
             idle();
         }
+        DbgLog.msg("<Debug> Gyro calibration finished at " + System.currentTimeMillis() + "Calibration took " + (System.currentTimeMillis()-gyroCaliTime));
         telemetry.addData("Gyro activated. ", "Took %f milliseconds. ", gyroTime.milliseconds());
+
+        long vuforiaTime = System.currentTimeMillis();
+        DbgLog.msg("<Debug> Vuforia activation started at " + vuforiaTime);
         ElapsedTime vufTime = new ElapsedTime();
         vuforianav.activate();
+        DbgLog.msg("<Debug> Vuforia activated at " + System.currentTimeMillis() + "Activation took " + (System.currentTimeMillis()-vuforiaTime));
         telemetry.addData("Vuforia activated. ", "Took %f milliseconds. ", vufTime.milliseconds());
+
         telemetry.update();
+
+        DbgLog.msg("<Debug> Program reached wait for start at " + System.currentTimeMillis());
         waitForStart();
+        DbgLog.msg("<Debug> Program started at " + System.currentTimeMillis());
 
         /** Robot drives forward get closer to the middle goal.
          *  Robot stops after driving for 850 Milliseconds.
@@ -84,7 +103,7 @@ public class AutonomouseBlueSide extends LinearOpMode {
         //TurntoPos Currently turn degrees
         turnToPosition(90-robot.sensorGyro.getIntegratedZValue(), 3, .3f);
         //Run ball firing code.
-        //null void
+        //null  void
 
         /**
          *  Call robot.DriveSpeed with args 0.43/3.Pi/6 to slowly move the robot forward and a turn of 90 degrees turning to face the beacon and vuforia picture.
@@ -336,6 +355,48 @@ public class AutonomouseBlueSide extends LinearOpMode {
             turnToPosition(i-robot.sensorGyro.getIntegratedZValue(),3,.3f);
         }
     }
+
+    public void pressBeacon() throws InterruptedException{
+
+        //Check and push the beacon as normal.
+
+        if (robot.isRightBeaconBlue()) { //ToDo isRightBeacon rewrite for double sensor.
+            robot.RightPusher.setPosition(1);
+            sleep(1000);
+            robot.RightPusher.setPosition(0);
+        } else if (robot.isRightBeaconRed() && !robot.isRightBeaconBlue()) {
+            robot.LeftPusher.setPosition(1);
+            sleep(1000);
+            robot.LeftPusher.setPosition(0);
+        }
+        sleep(500);
+
+        //Sleep 500ms if beacon is red push it again
+
+        if(robot.isRightBeaconRed() && !robot.isRightBeaconBlue()){
+            sleep(5500);
+            robot.RightPusher.setPosition(1);
+            sleep(1000);
+            robot.RightPusher.setPosition(0);
+        }
+        else{
+            return;
+        }
+
+        sleep(500);
+
+        if(robot.isRightBeaconRed() && !robot.isRightBeaconBlue()){
+            robot.LeftPusher.setPosition(1);
+            sleep(1000);
+            robot.LeftPusher.setPosition(0);
+        }
+        else{
+            return;
+        }
+
+
+    }
+
 }
 
 

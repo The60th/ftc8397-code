@@ -15,9 +15,13 @@ public class AutonomousBlueSideBackup extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        long startTime = System.currentTimeMillis(); //Start of debuging info.
+        DbgLog.msg("<Debug> Program started at: "+ startTime);
         robot.init(hardwareMap);
         waitForStart();
+        DbgLog.msg("<Debug> Starting 10 second delay.");
         sleep(10000);
+        DbgLog.msg("<Debug> Starting main program,.");
         //start
 
         robot.setDriveSpeed(0,-40,0);
@@ -30,6 +34,8 @@ public class AutonomousBlueSideBackup extends LinearOpMode {
         sleep(100);
         robot.setDriveSpeed(0,-40,0);
         sleep(3000);
+
+        DbgLog.msg("<Debug> Program end at: " + System.currentTimeMillis() + ". Total run time was: " + (System.currentTimeMillis()-startTime));
 
 
 

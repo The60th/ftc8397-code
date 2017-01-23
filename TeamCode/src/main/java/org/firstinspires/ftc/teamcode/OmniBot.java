@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsUsbDcMotorController;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.configuration.ModernRoboticsConstants;
+
 import org.firstinspires.ftc.robotcore.external.matrices.GeneralMatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.MatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -166,10 +169,19 @@ public class OmniBot
      */
     public ColorSensor sensorRGB_One;
 
+    //ToDO addition of secondary color sensor, on left side of the robot.
+
+    public ColorSensor sensorPlaceHolder;
+
     /**
      * Modern Robotics I2c Gyro Sensor used for getting correct rotational readings to control rotation and correct in-correct movements.
      */
     public ModernRoboticsI2cGyro sensorGyro;
+
+    /**
+     * Declaring a public ModernRoboticsMotorController so we can use the .getVoltage() methods later on.
+     */
+    public ModernRoboticsUsbDcMotorController voltage;
 
     /**
      * Default Constructor hardwareMap for the class.
@@ -205,6 +217,8 @@ public class OmniBot
          */
         sensorRGB_One = hardwareMap.colorSensor.get("mr");
 
+        //TODO Placeholder addon for secondary sensor
+        sensorPlaceHolder = hardwareMap.colorSensor.get("mr2");
         /**
          * After saving the color sensor to a new object we rewrite I2c address to a custom value.
          */
@@ -317,6 +331,15 @@ public class OmniBot
          * With the LED in active mode the sensor will emmit light and use this light to reflect any colors on object back at it and detect its color.
          */
         sensorRGB_One.enableLed(false);
+    }
+
+
+    /**
+     * Function to check battery voltage level.
+     * @return battery voltage level.
+     */
+    public double getVoltage(){
+        return voltage.getVoltage();
     }
 
     /**
@@ -528,12 +551,13 @@ public class OmniBot
      * @return true or false if beacon is red
      */
 
+    //ToDo add data for left side of beacon.
     public boolean isRightBeaconRed(){
-        float red = sensorRGB_One.red();
-        float blue = sensorRGB_One.blue();
-        float alpha = sensorRGB_One.alpha();
-        float green = sensorRGB_One.green();
-        return(red >= MIN_RED && !(red == MAX_SENSOR_VALUES && blue == MAX_SENSOR_VALUES && alpha == MAX_SENSOR_VALUES && green == MAX_SENSOR_VALUES));
+        float redRight = sensorRGB_One.red();
+        float blueRight = sensorRGB_One.blue();
+        float alphaRight = sensorRGB_One.alpha();
+        float greenRight = sensorRGB_One.green();
+        return(redRight >= MIN_RED && !(redRight == MAX_SENSOR_VALUES && blueRight == MAX_SENSOR_VALUES && alphaRight == MAX_SENSOR_VALUES && greenRight == MAX_SENSOR_VALUES));
     }
 
     /**
@@ -542,11 +566,64 @@ public class OmniBot
      */
 
     public boolean isRightBeaconBlue(){
-        float red = sensorRGB_One.red();
-        float blue = sensorRGB_One.blue();
-        float alpha = sensorRGB_One.alpha();
-        float green = sensorRGB_One.green();
-        return(blue >= MIN_BLUE && !(red == MAX_SENSOR_VALUES && blue == MAX_SENSOR_VALUES && alpha == MAX_SENSOR_VALUES && green == MAX_SENSOR_VALUES));
+        float redRight = sensorRGB_One.red();
+        float blueRight = sensorRGB_One.blue();
+        float alphaRight = sensorRGB_One.alpha();
+        float greenRight = sensorRGB_One.green();
+        return(blueRight >= MIN_BLUE && !(redRight == MAX_SENSOR_VALUES && blueRight == MAX_SENSOR_VALUES && alphaRight == MAX_SENSOR_VALUES && greenRight == MAX_SENSOR_VALUES));
+    }
+
+    //ToDo Wip
+    /**
+     *
+     * @return
+     */
+    public boolean isLeftBeaconBlue(){
+        float redLeft = sensorPlaceHolder.red();
+        float blueLeft = sensorPlaceHolder.blue();
+        float alphaLeft = sensorPlaceHolder.alpha();
+        float greenLeft = sensorPlaceHolder.green();
+        return(blueLeft >= MIN_BLUE && !(redLeft == MAX_SENSOR_VALUES && blueLeft == MAX_SENSOR_VALUES && alphaLeft == MAX_SENSOR_VALUES && greenLeft == MAX_SENSOR_VALUES));
+    }
+
+    //ToDo Wip
+    /**
+     *
+     * @return
+     */
+    public boolean isLeftBeaconRed(){
+        float redLeft = sensorPlaceHolder.red();
+        float blueLeft = sensorPlaceHolder.blue();
+        float alphaLeft = sensorPlaceHolder.alpha();
+        float greenLeft = sensorPlaceHolder.green();
+        return(redLeft >= MIN_RED && !(redLeft == MAX_SENSOR_VALUES && blueLeft == MAX_SENSOR_VALUES && alphaLeft == MAX_SENSOR_VALUES && greenLeft == MAX_SENSOR_VALUES));
+    }
+
+    //ToDo wip: Function for double beacon color check.
+    public String findColor(String color) {
+        //Colors inside the float in RGB order
+        float[] colorsRight = {sensorRGB_One.red(),sensorRGB_One.green(),sensorRGB_One.blue()};
+        float[] colorsLeft = {sensorPlaceHolder.red(),sensorPlaceHolder.green(),sensorPlaceHolder.blue()};
+        switch (color) {
+            case "Red":
+                if((colorsRight[0] > MIN_RED && colorsRight[2] < MIN_BLUE) && !(colorsRight[0] == MAX_SENSOR_VALUES&&colorsRight[1] == MAX_SENSOR_VALUES&&colorsRight[2] == MAX_SENSOR_VALUES)){
+                    return "Right";
+                }
+                else if((colorsLeft[0] > MIN_RED && colorsLeft[2] < MIN_BLUE) && !(colorsRight[0] == MAX_SENSOR_VALUES&&colorsRight[1] == MAX_SENSOR_VALUES&&colorsRight[2] == MAX_SENSOR_VALUES)){
+                    return "Left";
+                }
+                break;
+            case "Blue":
+                if((colorsRight[0] > MIN_BLUE && colorsRight[2] < MIN_RED)&&!(colorsLeft[0] == MAX_SENSOR_VALUES&&colorsLeft[1] == MAX_SENSOR_VALUES&&colorsLeft[2] == MAX_SENSOR_VALUES)){
+                    return "Right";
+                }
+                else if((colorsLeft[0] > MIN_BLUE && colorsLeft[2] < MIN_RED)&&!(colorsLeft[0] == MAX_SENSOR_VALUES&&colorsLeft[1] == MAX_SENSOR_VALUES&&colorsLeft[2] == MAX_SENSOR_VALUES)){
+                    return "Left";
+                }
+                break;
+        }
+        return "";
+
     }
 
     /**
