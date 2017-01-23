@@ -12,7 +12,7 @@ import java.lang.reflect.Array;
 
 public class allSensors {
     public String colorSensorOne(ColorSensor yourSensor, boolean enabled){
-        //Should return a color in a string or color variable
+        //Should  return a color in a string or color variable
         if(enabled){
             yourSensor.enableLed(true);
         }
