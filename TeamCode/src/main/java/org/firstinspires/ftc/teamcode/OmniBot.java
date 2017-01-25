@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.ModernRoboticsConstants;
 
 import org.firstinspires.ftc.robotcore.external.matrices.GeneralMatrixF;
@@ -169,7 +170,7 @@ public class OmniBot
      */
     public ColorSensor sensorRGB_One;
 
-    //ToDO addition of secondary color sensor, on left side of the robot.
+    //ToDO addition of secondary color sensor, on left side of the robot..
 
     public ColorSensor sensorPlaceHolder;
 
@@ -177,11 +178,6 @@ public class OmniBot
      * Modern Robotics I2c Gyro Sensor used for getting correct rotational readings to control rotation and correct in-correct movements.
      */
     public ModernRoboticsI2cGyro sensorGyro;
-
-    /**
-     * Declaring a public ModernRoboticsMotorController so we can use the .getVoltage() methods later on.
-     */
-    public ModernRoboticsUsbDcMotorController voltage;
 
     /**
      * Default Constructor hardwareMap for the class.
@@ -331,6 +327,7 @@ public class OmniBot
          * With the LED in active mode the sensor will emmit light and use this light to reflect any colors on object back at it and detect its color.
          */
         sensorRGB_One.enableLed(false);
+        sensorPlaceHolder.enableLed(false);
     }
 
 
@@ -339,7 +336,7 @@ public class OmniBot
      * @return battery voltage level.
      */
     public double getVoltage(){
-        return voltage.getVoltage();
+        return this.hardwareMap.voltageSensor.iterator().next().getVoltage();
     }
 
     /**

@@ -356,6 +356,7 @@ public class AutonomouseBlueSide extends LinearOpMode {
         }
     }
 
+    //Updated versions of pressBeacon
     public void pressBeacon() throws InterruptedException{
 
         //Check and push the beacon as normal.

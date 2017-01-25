@@ -289,11 +289,23 @@ public class newTeleop extends LinearOpMode {
              * Controls for the servo linear actuator used for lifting the ball in to the launcher.
              * Waits for the right trigger to be pressed then moves the servo in to a position to move the ball upwards.
              */
-            if (gamepad2.right_trigger > .05) {
+            if(gamepad2.dpad_right){
+                robot.setShooter(1.0);
+                sleep(750);
+                robot.setLaunchServo("Up");
+                sleep(1250);
+                robot.setLaunchServo("Down");
+                sleep(250);
+                robot.setShooter(0.0);
+            }
+
+
+           if (gamepad2.right_trigger > .05) {
                 robot.setLaunchServo("Up");
             } else {
                 robot.setLaunchServo("Down");
             }
+
 
             /**
              * Positional data based off of robot Odometry info, compared vs old Data to get change in movement.
@@ -312,6 +324,7 @@ public class newTeleop extends LinearOpMode {
                 et.reset();
                 telemetry.addData("Gyro Z:", robot.sensorGyro.getIntegratedZValue());
                 telemetry.addData("Pos:", "X = %.0f Y = %.0f Theta = %.0f", newX, newY, newTheta * 180.0 / Math.PI);
+                telemetry.addData("Normal Voltage: ", robot.getVoltage());
                 telemetry.update();
             }
             idle();
