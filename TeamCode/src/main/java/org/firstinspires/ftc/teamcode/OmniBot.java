@@ -311,7 +311,7 @@ public class OmniBot
          * Call the servo SliderHolder and set it to its default Position of .75.
          * The servo will then be held here by the program under stress.
          */
-        SlideHolder.setPosition(.75);
+        SlideHolder.setPosition(1);
 
         /**
          * Call the servo ShooterLift and set it to its default Position of 1.0.
