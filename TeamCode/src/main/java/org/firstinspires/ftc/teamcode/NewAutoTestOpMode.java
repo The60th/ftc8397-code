@@ -13,8 +13,8 @@ public class NewAutoTestOpMode extends OmniBotAutonomous {
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
-        vuforiaNav = new VuforiaNav();
-        vuforiaNav.activate();
+       // vuforiaNav = new VuforiaNav();
+       // vuforiaNav.activate();
         robot.sensorGyro.calibrate();
 
         while (robot.sensorGyro.isCalibrating()) {
@@ -22,12 +22,14 @@ public class NewAutoTestOpMode extends OmniBotAutonomous {
         }
 
         waitForStart();
-        OpenGLMatrix robotPos = searchForVuforia(0);
+        //OpenGLMatrix robotPos = searchForVuforia(0);
 
-        if(robotPos == null)return;
+        //if(robotPos == null)return;
 
-        float[] zxPhi = VuforiaNav.GetZXPH(robotPos);
+       // float[] zxPhi = VuforiaNav.GetZXPH(robotPos);
 
-        boolean success = vuforiaNavigateToTarget(0, zxPhi, 20, 14, -3);
+        driveStraightGyroTime(30,0,10000); //105 inchs //10.5 inches per second.
+       // boolean success = vuforiaNavigateToTarget(0, zxPhi, 20, 14, -3);
+
     }
 }

@@ -115,12 +115,15 @@ public abstract class OmniBotAutonomous extends LinearOpMode {
 	//Initial slide in the +/- X direction (using Vuforia) to obtain better navigation toward target
     protected boolean vuforiaNavigateToTarget(int targetIndex, float[] zxPhi, float vNominal,
                                               float zTarget, float xTarget){
-        final float C_PHI = 0.1f;
-        final float C_X = 0.1f;
+        final float C_PHI = 0.05f;
+        final float C_X = 0.05f;
         float[] zxPhiLocal = new float[]{zxPhi[0],zxPhi[1],zxPhi[2]};
-        //final float maxInitialX = 0.5f * (float)Math.exp(C_X * (zxPhiLocal[0] - zTarget));
+        robot.updateOdometry();
 
-        /*
+        //final float maxInitialX = 0.5f * (float)Math.exp(C_X * (zxPhiLocal[0] - zTarget));
+        final float maxInitialX = 10;
+
+
         while(opModeIsActive() && Math.abs(zxPhiLocal[1]) > maxInitialX){
             OpenGLMatrix robotPos = vuforiaNav.getRobotLocationRelativeToTarget(targetIndex);
             if(robotPos != null){
@@ -136,11 +139,11 @@ public abstract class OmniBotAutonomous extends LinearOpMode {
             float phiPrime = VuforiaNav.remapAngle(zxPhiLocal[2] - (float) Math.PI);
             float va = -phiPrime * vNominal * C_PHI;
             float vx = -Math.signum(zxPhiLocal[1] - xTarget) * vNominal * (float)Math.cos(phiPrime);
-            float vy = Math.signum(zxPhiLocal[0] - zTarget) * vNominal * (float)Math.sin(phiPrime);
+            float vy = Math.signum(zxPhiLocal[1] - xTarget) * vNominal * (float)Math.sin(phiPrime);
             robot.setDriveSpeed(vx, vy, va);
 
         }
-        */
+
 
         while(opModeIsActive() && zxPhiLocal[0] > zTarget){
             OpenGLMatrix robotPos = vuforiaNav.getRobotLocationRelativeToTarget(targetIndex);
@@ -185,7 +188,7 @@ public abstract class OmniBotAutonomous extends LinearOpMode {
         final float SCAN_DEGREES = 20f;
         final float SCAN_TOLERANCE = 3f;
         final float SCAN_LATENCY = 0.4f; //0.3 to low, measured around .27 //.6 works
-        final float SCAN_DURATION = 300.0f;
+        final float SCAN_DURATION = 800.0f;
         final float SHIFT_SPEED = 50.0f;
         final float X_SHIFT_DURATION = 1200.0f;
         final float Z_SHIFT_DURATION = 1000.0f;
@@ -247,7 +250,7 @@ public abstract class OmniBotAutonomous extends LinearOpMode {
         if(robotpos != null) return  robotpos;
 
         turnToHeadingGyro(initialHeading, scanTolerance, scanLatency);
-        robotpos = checkForVuforia(targetIndex, duration);
+        //robotpos = checkForVuforia(targetIndex, duration); Removed because of longer wait time.
         return robotpos;
     }
 
@@ -260,7 +263,7 @@ public abstract class OmniBotAutonomous extends LinearOpMode {
     //after the specified number of milliseconds; if vx and vy are not possible
     //within the constraint of motor power <=1, adjust time up.
     protected void driveStraightGyroTime(float vx, float vy, float duration) {
-        final float C_ANGLE = 5.0f * (float)Math.PI / 180.0f;
+        final float C_ANGLE = 2.0f * (float)Math.PI / 180.0f;
         final float initialHeading = robot.sensorGyro.getIntegratedZValue();
         ElapsedTime et = new ElapsedTime();
         double scale = robot.setDriveSpeed(vx, vy, 0);
@@ -291,6 +294,20 @@ public abstract class OmniBotAutonomous extends LinearOpMode {
     protected void driveStraightGyroDistance(float vx, float vy, float distance, float[] xyTheta) {
     }
     */
+
+    //Added to launch the balls from the launcher.
+    protected  void launchBall(){
+        robot.setShooter(.92);
+        sleep(250);
+        robot.setLaunchServo("Up");
+        sleep(1000);
+        robot.setLaunchServo("Down");
+        sleep(1250);
+        robot.setLaunchServo("Up");
+        sleep(1000);
+        robot.setLaunchServo("Down");
+        robot.setShooter(0.0);
+    }
 
 
 
