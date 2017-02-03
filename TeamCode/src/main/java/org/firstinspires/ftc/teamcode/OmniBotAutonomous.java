@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -16,6 +17,19 @@ import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 
 public abstract class OmniBotAutonomous extends LinearOpMode {
 
+    /**
+     *
+     *
+     */
+    public enum BeaconColor{Blue,Red,Unknown};
+
+    /**
+     *
+     *
+     */
+    public enum  ButtonSide{Left,Right};
+
+
     //The robot
     protected OmniBot robot = new OmniBot();
 
@@ -25,7 +39,7 @@ public abstract class OmniBotAutonomous extends LinearOpMode {
 
     //Variable to indicate whether Debug Logging is turn on. This can be set in the constructor
     //or runOpMode method of the inheriting concrete class.
-    protected boolean DEBUG = true;
+    static public boolean DEBUG = true;
 
     //Distance from target for Vuforia Navigation, in cm
     protected final float Z_TARGET = 20.0f;
@@ -309,6 +323,145 @@ public abstract class OmniBotAutonomous extends LinearOpMode {
         robot.setShooter(0.0);
     }
 
+    protected boolean pushButton(ButtonSide pushSide, BeaconColor intiLeftColor,BeaconColor intiRightColor){
+        boolean colorChange = false;
+        if(pushSide == ButtonSide.Right) robot.RightPusher.setPosition(1);
+        else robot.LeftPusher.setPosition(1);
+        sleep(500);
+
+        ElapsedTime et = new ElapsedTime();
+
+        robot.setDriveSpeed(0,10,0);
+
+        while (opModeIsActive() && et.milliseconds() < 1000){
+            BeaconColor leftColor = robot.getLeftColor();
+            BeaconColor rightColor = robot.getRightColor();
+
+            if(leftColor != intiLeftColor && intiLeftColor != BeaconColor.Unknown && leftColor != BeaconColor.Unknown) {colorChange =true; break;} //Boolean to see if we trigger early from a swap.
+            if(rightColor != intiRightColor && intiRightColor != BeaconColor.Unknown && rightColor != BeaconColor.Unknown) {colorChange =true;  break;}
+        }
+
+        robot.setDriveSpeed(0,-10,0);
+        sleep(200);
+        robot.setDriveSpeed(0,0,0);
+        return colorChange; //Not sure about the returns here.
+    }
+
+    public void handleBeacon(BeaconColor teamColor, int targetIndex){
+        if(teamColor == BeaconColor.Unknown) return;
+        BeaconColor wrongColor = teamColor == BeaconColor.Blue ? BeaconColor.Red : BeaconColor.Blue;
+        int counter=0;
+        int pushCount = 0;
+        final int maxCounts = 2;
+
+        BeaconColor leftColor = robot.getLeftColor();
+        BeaconColor rightColor = robot.getRightColor();
+        while (opModeIsActive() && counter < maxCounts){ //override if both wc
+            if(leftColor == teamColor && rightColor == teamColor) break;
+            else if(leftColor == wrongColor && rightColor == wrongColor){
+                if(pushCount % 2 == 0)pushButton(ButtonSide.Right,leftColor,rightColor);
+                else pushButton(ButtonSide.Left,leftColor,rightColor);
+                pushCount +=1;
+            }
+            else if(leftColor == wrongColor){
+                pushButton(ButtonSide.Right,leftColor,rightColor);
+                pushCount+=1;
+            }
+            else if(rightColor == wrongColor){
+                pushButton(ButtonSide.Left,leftColor,rightColor);
+                pushCount+=1;
+            }
+            else if(leftColor == teamColor && rightColor == BeaconColor.Unknown && pushCount == 0){
+                pushButton(ButtonSide.Left,leftColor,rightColor);
+                pushCount+=1;
+            }
+            else if(rightColor == teamColor && leftColor == BeaconColor.Unknown && pushCount == 0){
+                pushButton(ButtonSide.Right,leftColor,rightColor);
+                pushCount+=1;
+            }
+            else if(leftColor == BeaconColor.Unknown && rightColor == BeaconColor.Unknown){
+                //Drive around?
+            }
+
+            BeaconColor initLeftColor = leftColor;
+            BeaconColor initRightColor = rightColor;
+
+            leftColor = robot.getLeftColor();
+            rightColor = robot.getRightColor();
+
+            if((leftColor == teamColor && rightColor == teamColor) || (leftColor == teamColor && initLeftColor == wrongColor)
+                    || (rightColor == teamColor && initRightColor == wrongColor)) break;
+
+            if(leftColor != initLeftColor || rightColor != initRightColor){
+                sleep(5000);
+            }
+
+            if(leftColor != wrongColor || rightColor != wrongColor){
+                //move
+                reposRobot(targetIndex);
+            }
+
+            counter +=1;
+
+        }
+
+    }
+
+    public void reposRobot(int targetIndex) {
+        final float X_TOL = 1;
+        final float Z_TOL = 1;
+        final float PHI_TOL = .05f;
+        final float zTarget = 13.5f;
+        final float vNominal = 10;
+        final float C_X = 10.0f;
+        final float C_Z = 10.0f;
+        final float C_PHI = 10.0f;
+        final float xTarget = 0;
+        final float phiTarget = 0;
+
+        OpenGLMatrix robotPos = vuforiaNav.getRobotLocationRelativeToTarget(targetIndex);
+        if (robotPos == null) return;
+
+        driveStraightGyroTime(0, -10, 500);
+        robotPos = vuforiaNav.getRobotLocationRelativeToTarget(targetIndex);
+        if (robotPos == null) {
+            driveStraightGyroTime(0, 10, 500);
+            return;
+        }
+
+        float[] zxPhi = VuforiaNav.GetZXPH(robotPos);
+
+        while (opModeIsActive()){
+            robotPos = vuforiaNav.getRobotLocationRelativeToTarget(targetIndex);
+            if (robotPos != null) {
+                if (DEBUG) DbgLog.msg("<Debug> Vuforia Repos Loop Worked");
+                zxPhi = VuforiaNav.GetZXPH(robotPos);
+            } else {
+                if (DEBUG) DbgLog.msg("<Debug> Vuforia Repos loop Failed");
+                break;
+            }
+
+
+            float phiPrime = VuforiaNav.remapAngle(zxPhi[2] - (float) Math.PI);
+            if((Math.abs(zxPhi[0] - zTarget) < Z_TOL) && (Math.abs(zxPhi[1] - xTarget) < X_TOL) && (Math.abs(zxPhi[2]-phiTarget) < PHI_TOL))break;
+            float va = -phiPrime * C_PHI;
+            float vx =  C_Z* (zxPhi[0]-zTarget) * (float) Math.sin(phiPrime) - C_X  * (zxPhi[1] - xTarget) * (float) Math.cos(phiPrime);
+            float vy =   C_Z* (zxPhi[0]-zTarget) * (float) Math.cos(phiPrime) + C_X *  (zxPhi[1] - xTarget) * (float) Math.sin(phiPrime);
+            if (DEBUG)
+                DbgLog.msg("<Debug> Vuforia Main Repos zxPhiLocal = %.1f %.1f %.1f", zxPhi[0], zxPhi[1], zxPhi[2] * 180.0 / Math.PI);
+            if (DEBUG)
+                DbgLog.msg("<Debug> Vuforia Main Repos phiPrime = %.1f", phiPrime * 180.0 / Math.PI);
+            if (DEBUG)
+                DbgLog.msg("<Debug> Vuforia Main Repos vx = %.1f, vy = %.1f, va = %.1f", vx, vy, va * 180.0 / Math.PI);
+
+
+            robot.setDriveSpeed(vx, vy, va);
+        }
+        robot.setDriveSpeed(0,0,0);
+
+
+
+    }
 
 
 }

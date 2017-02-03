@@ -70,11 +70,12 @@ public class newTeleop extends LinearOpMode {
     private boolean awaitingButtonReleaseServo = false;
     private boolean slowToggle = false;
     private boolean slowToggleControl = false;
+    private boolean liftActive = false;
 
     /**
      * Global Constant used for dividing speed by when in slow mode.
      */
-    private final float slowModeMod = 4;
+    private final float slowModeMod = 8;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -242,6 +243,7 @@ public class newTeleop extends LinearOpMode {
              */
             if (gamepad2.guide) {
                 robot.setServoUp();
+                liftActive = true;
             }
 
             /**
@@ -262,9 +264,9 @@ public class newTeleop extends LinearOpMode {
              * On dpad up drive the lift upwards when pressed down drive lift downwards.
              *
              */
-            if (gamepad2.dpad_down) {
+            if (gamepad2.dpad_down && liftActive) {
                 robot.setBigBallLift(1);
-            } else if (gamepad2.dpad_up) {
+            } else if (gamepad2.dpad_up && liftActive) {
                 robot.setBigBallLift(-1);
             } else {
                 robot.setBigBallLift(0);

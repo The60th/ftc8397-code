@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsUsbDcMotorController;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 
 public class OmniBot
 {
+
     /**
      * Final variable for Vuforia stop distance.
      */
@@ -168,11 +170,11 @@ public class OmniBot
     /**
      * Modern Robotics Color Sensor used to read the color of the field beacons to tell which color it is.
      */
-    public ColorSensor sensorRGB_One;
+    public ColorSensor sensorRGB_One; //Right Side
 
     //ToDO addition of secondary color sensor, on left side of the robot..
 
-    public ColorSensor sensorPlaceHolder;
+    public ColorSensor sensorRGB_TWO; //Left side
 
     /**
      * Modern Robotics I2c Gyro Sensor used for getting correct rotational readings to control rotation and correct in-correct movements.
@@ -214,7 +216,7 @@ public class OmniBot
         sensorRGB_One = hardwareMap.colorSensor.get("mr");
 
         //TODO Placeholder addon for secondary sensor
-        sensorPlaceHolder = hardwareMap.colorSensor.get("mr2");
+        sensorRGB_TWO = hardwareMap.colorSensor.get("mr2");
         /**
          * After saving the color sensor to a new object we rewrite I2c address to a custom value.
          */
@@ -327,7 +329,7 @@ public class OmniBot
          * With the LED in active mode the sensor will emmit light and use this light to reflect any colors on object back at it and detect its color.
          */
         sensorRGB_One.enableLed(false);
-        sensorPlaceHolder.enableLed(false);
+        sensorRGB_TWO.enableLed(false);
     }
 
 
@@ -576,10 +578,10 @@ public class OmniBot
      * @return
      */
     public boolean isLeftBeaconBlue(){
-        float redLeft = sensorPlaceHolder.red();
-        float blueLeft = sensorPlaceHolder.blue();
-        float alphaLeft = sensorPlaceHolder.alpha();
-        float greenLeft = sensorPlaceHolder.green();
+        float redLeft = sensorRGB_TWO.red();
+        float blueLeft = sensorRGB_TWO.blue();
+        float alphaLeft = sensorRGB_TWO.alpha();
+        float greenLeft = sensorRGB_TWO.green();
         return(blueLeft >= MIN_BLUE && !(redLeft == MAX_SENSOR_VALUES && blueLeft == MAX_SENSOR_VALUES && alphaLeft == MAX_SENSOR_VALUES && greenLeft == MAX_SENSOR_VALUES));
     }
 
@@ -589,10 +591,10 @@ public class OmniBot
      * @return
      */
     public boolean isLeftBeaconRed(){
-        float redLeft = sensorPlaceHolder.red();
-        float blueLeft = sensorPlaceHolder.blue();
-        float alphaLeft = sensorPlaceHolder.alpha();
-        float greenLeft = sensorPlaceHolder.green();
+        float redLeft = sensorRGB_TWO.red();
+        float blueLeft = sensorRGB_TWO.blue();
+        float alphaLeft = sensorRGB_TWO.alpha();
+        float greenLeft = sensorRGB_TWO.green();
         return(redLeft >= MIN_RED && !(redLeft == MAX_SENSOR_VALUES && blueLeft == MAX_SENSOR_VALUES && alphaLeft == MAX_SENSOR_VALUES && greenLeft == MAX_SENSOR_VALUES));
     }
 
@@ -600,7 +602,7 @@ public class OmniBot
     public String findColor(String color) {
         //Colors inside the float in RGB order
         float[] colorsRight = {sensorRGB_One.red(),sensorRGB_One.green(),sensorRGB_One.blue()};
-        float[] colorsLeft = {sensorPlaceHolder.red(),sensorPlaceHolder.green(),sensorPlaceHolder.blue()};
+        float[] colorsLeft = {sensorRGB_TWO.red(),sensorRGB_TWO.green(),sensorRGB_TWO.blue()};
         switch (color) {
             case "Red":
                 if((colorsRight[0] > MIN_RED && colorsRight[2] < MIN_BLUE) && !(colorsRight[0] == MAX_SENSOR_VALUES&&colorsRight[1] == MAX_SENSOR_VALUES&&colorsRight[2] == MAX_SENSOR_VALUES)){
@@ -705,5 +707,25 @@ public class OmniBot
         return new float[]{newX,newY,newTheta};
     }*/
 
+    public OmniBotAutonomous.BeaconColor getLeftColor(){
+        //sensorRGB_TWO
+        float red = sensorRGB_TWO.red();
+        float blue = sensorRGB_TWO.blue();
+        if(OmniBotAutonomous.DEBUG) DbgLog.msg("<Debug-Color> getLeftColor-Color values red %.1f blue %.1f",red,blue);
+        if(red == MAX_SENSOR_VALUES || blue == MAX_SENSOR_VALUES) return OmniBotAutonomous.BeaconColor.Unknown;
+        else if(red>MIN_RED && red > (blue*1.5)) return OmniBotAutonomous.BeaconColor.Red;
+        else if(blue>MIN_BLUE && blue > (red*1.5)) return OmniBotAutonomous.BeaconColor.Blue;
+        else return OmniBotAutonomous.BeaconColor.Unknown;
+    }
+    public OmniBotAutonomous.BeaconColor getRightColor(){
+        //sensorRGB_One
+        float red = sensorRGB_One.red();
+        float blue = sensorRGB_One.blue();
+        if(OmniBotAutonomous.DEBUG) DbgLog.msg("<Debug-Color> getRightColor-Color values red %.1f blue %.1f",red,blue);
+        if(red == MAX_SENSOR_VALUES || blue == MAX_SENSOR_VALUES) return OmniBotAutonomous.BeaconColor.Unknown;
+        else if(red>MIN_RED && red > (blue*1.5)) return OmniBotAutonomous.BeaconColor.Red;
+        else if(blue>MIN_BLUE && blue > (red*1.5)) return OmniBotAutonomous.BeaconColor.Blue;
+        else return OmniBotAutonomous.BeaconColor.Unknown;
+    }
 }
 
