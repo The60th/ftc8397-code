@@ -118,7 +118,7 @@ public class newTeleop extends LinearOpMode {
          * Pause at this point till start opMode command is given from the app.
          */
         waitForStart();
-
+        if(OmniBotAutonomous.DEBUG) DbgLog.msg("<Debug> Voltage: voltage = ", robot.getVoltage());
         /**
          * Call OmniBot updateOdometry to get starting wheel and other Odemetry values.
          */
@@ -296,9 +296,9 @@ public class newTeleop extends LinearOpMode {
                 sleep(750);
                 robot.setLaunchServo("Up");
                 sleep(1250);
+                robot.setShooter(0.0);
                 robot.setLaunchServo("Down");
                 sleep(250);
-                robot.setShooter(0.0);
             }
 
 
@@ -324,6 +324,8 @@ public class newTeleop extends LinearOpMode {
              */
             if (et.milliseconds() > 500) {
                 et.reset();
+                DbgLog.msg("<Debug> Voltage: voltage = ", robot.getVoltage());
+                telemetry.addData("<Debug> Voltage: voltage = ", robot.getVoltage());
                 telemetry.addData("Gyro Z:", robot.sensorGyro.getIntegratedZValue());
                 telemetry.addData("Pos:", "X = %.0f Y = %.0f Theta = %.0f", newX, newY, newTheta * 180.0 / Math.PI);
                 telemetry.addData("Normal Voltage: ", robot.getVoltage());

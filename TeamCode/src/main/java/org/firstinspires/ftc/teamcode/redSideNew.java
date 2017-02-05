@@ -6,11 +6,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 
 /**
- * Created by CanAdirondack on 1/31/2017.
+ * Created by CanAdirondack on 2/4/2017.
  */
-@Autonomous(name = "Blue_Side_New", group = "Autonomous")
 
-public class blueSideNew extends OmniBotAutonomous {
+@Autonomous(name = "Red_Side_New", group = "Autonomous")
+
+public class redSideNew extends OmniBotAutonomous {
     @Override
     public void runOpMode() throws InterruptedException {
         final int blueOne = OmniBot.blueTargets[0];
@@ -38,11 +39,11 @@ public class blueSideNew extends OmniBotAutonomous {
 
         driveStraightGyroTime(0.0f,-30.0f,1200.0f); //Drive forward for about 10.5 inches with shooters front. //105 inchs //10.5 inches per second. //not 30,0,1 not -30,0,1: maybe 0,30,1?
 
-        turnToHeadingGyro(90.0f,3.0f,.5f); //Turn so phone is facing wall and vuforia target.
+        turnToHeadingGyro(-90.0f,3.0f,.5f); //Turn so phone is facing wall and vuforia target.
 
-        driveStraightGyroTime(0.0f,30.0f,2500.0f); //Drive forward towards the wall. Was 2300.0f
+        driveStraightGyroTime(0.0f,30.0f,2500.0f); //Drive forward towards the wall.
 
-        driveStraightGyroTime(-30.0f,0,3200.0f); //Slide to the left in front of the robot.
+        driveStraightGyroTime(30.0f,0,3200.0f); //Slide to the right in front of the robot.
 
         /*
         *
@@ -52,20 +53,19 @@ public class blueSideNew extends OmniBotAutonomous {
         *
          */
         if(DEBUG) DbgLog.msg("<Debug> Start of section two. Drive to first Beacon.");
-        OpenGLMatrix robotPos = searchForVuforia(blueOne);
-        float[] zxPhi;
+        OpenGLMatrix robotPos = searchForVuforia(redOne);
+
         if(robotPos == null){
             if(DEBUG)DbgLog.msg("<Debug> !! <Fail> Robot Vuforia critical error, force exited the program. <Fail>");
             robot.setDriveSpeed(0,0,0);
             return;
         }
 
-            zxPhi = VuforiaNav.GetZXPH(robotPos);
+        float[] zxPhi = VuforiaNav.GetZXPH(robotPos);
 
-            vuforiaNavigateToTarget(blueOne, zxPhi, 25.0f, 13.5f, -5.0f); //OmniBot.bluetargets[0] = first blue target
+        vuforiaNavigateToTarget(redOne,zxPhi,25.0f,13.5f,-5.0f); //OmniBot.bluetargets[0] = first blue target
 
-            handleBeacon(BeaconColor.Blue, blueOne);
-
+        handleBeacon(OmniBotAutonomous.BeaconColor.Red,redOne);
 
         /*
         *
@@ -76,26 +76,24 @@ public class blueSideNew extends OmniBotAutonomous {
 
         if(DEBUG) DbgLog.msg("<Debug> Start of section three. Drive to second Beacon.");
 
-        robotPos = checkForVuforia(blueOne,500);
+        robotPos = checkForVuforia(redOne,500);
         if(robotPos != null){
             zxPhi = VuforiaNav.GetZXPH(robotPos);
-            vuforiaBackWardsDemo(blueOne,zxPhi,25.0f,40.0f,-5.0f); //Fixed?
-            telemetry.addData("<Debug> Vuforia drive for back up.","");
+            vuforiaBackWardsDemo(redOne,zxPhi,25.0f,40.0f,-5.0f);
         }
         else{
             //Drive backwords with gyro drive.
-            telemetry.addData("<Debug> Gyro drive for back up.","");
             driveStraightGyroTime(0.0f,-30.0f,3000.0f); //Backward 20cm
             //Side ways 40cm.
         }
-        telemetry.update();
-        //Start of using blueTwo.
 
-        driveStraightGyroTime(-40.0f,0,3000.0f); //Sideways 40cm Works at -30 4000 but to slow, gives u like .5 seconds.
+        //Start of using redTwo.
+
+        driveStraightGyroTime(30.0f,0,4000.0f); //Sideways 40cm
 
         //At second vuforia target?
 
-        robotPos = searchForVuforia(blueTwo);
+        robotPos = searchForVuforia(redTwo);
 
         if(robotPos == null){
             if(DEBUG)DbgLog.msg("<Debug> !! <Fail> Robot Vuforia critical error, force exited the program. <Fail>");
@@ -105,9 +103,10 @@ public class blueSideNew extends OmniBotAutonomous {
 
         zxPhi = VuforiaNav.GetZXPH(robotPos);
 
-        vuforiaNavigateToTarget(blueTwo,zxPhi,25.0f,13.5f,-5.0f);
+        vuforiaNavigateToTarget(redTwo,zxPhi,25.0f,13.5f,-5.0f);
 
-        handleBeacon(BeaconColor.Blue,blueTwo);
+        handleBeacon(OmniBotAutonomous.BeaconColor.Red,redTwo);
 
     }
 }
+

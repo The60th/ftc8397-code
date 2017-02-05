@@ -127,7 +127,7 @@ public abstract class OmniBotAutonomous extends LinearOpMode {
 	//CONSIDER THE FOLLOWING ENHANCEMENTS:
 	//Incorporate odometry in case of transient Vuforia failure.
 	//Initial slide in the +/- X direction (using Vuforia) to obtain better navigation toward target
-    protected boolean vuforiaNavigateToTarget(int targetIndex, float[] zxPhi, float vNominal,
+    protected boolean vuforiaNavigateToTarget(int targetIndex, float[] zxPhi, float vNominal, /** Note for jim, make a reverse function here as well? You should be able to use the same code but give it a negtivie for x and drive backwards?*/
                                               float zTarget, float xTarget){
         final float C_PHI = 0.05f;
         final float C_X = 0.05f;
@@ -311,7 +311,7 @@ public abstract class OmniBotAutonomous extends LinearOpMode {
 
     //Added to launch the balls from the launcher.
     protected  void launchBall(){
-        robot.setShooter(.92);
+        robot.setShooter(.70); //Not yet tested at .80 only run at .92 and over shot
         sleep(250);
         robot.setLaunchServo("Up");
         sleep(1000);
@@ -325,8 +325,9 @@ public abstract class OmniBotAutonomous extends LinearOpMode {
 
     protected boolean pushButton(ButtonSide pushSide, BeaconColor intiLeftColor,BeaconColor intiRightColor){
         boolean colorChange = false;
-        if(pushSide == ButtonSide.Right) robot.RightPusher.setPosition(1);
-        else robot.LeftPusher.setPosition(1);
+        boolean leftPusher = false;
+        if(pushSide == ButtonSide.Right){robot.RightPusher.setPosition(1); leftPusher = false;}
+        else{robot.LeftPusher.setPosition(1);leftPusher = true;}
         sleep(500);
 
         ElapsedTime et = new ElapsedTime();
@@ -341,7 +342,11 @@ public abstract class OmniBotAutonomous extends LinearOpMode {
             if(rightColor != intiRightColor && intiRightColor != BeaconColor.Unknown && rightColor != BeaconColor.Unknown) {colorChange =true;  break;}
         }
 
+        if(leftPusher)robot.LeftPusher.setPosition(0);
+        else{robot.RightPusher.setPosition(0);}
+
         robot.setDriveSpeed(0,-10,0);
+
         sleep(200);
         robot.setDriveSpeed(0,0,0);
         return colorChange; //Not sure about the returns here.
@@ -425,11 +430,12 @@ public abstract class OmniBotAutonomous extends LinearOpMode {
         driveStraightGyroTime(0, -10, 500);
         robotPos = vuforiaNav.getRobotLocationRelativeToTarget(targetIndex);
         if (robotPos == null) {
+            if (DEBUG) DbgLog.msg("<Debug> Repos function failed to find vuforia after backup");
             driveStraightGyroTime(0, 10, 500);
             return;
         }
 
-        float[] zxPhi = VuforiaNav.GetZXPH(robotPos);
+        float[] zxPhi;
 
         while (opModeIsActive()){
             robotPos = vuforiaNav.getRobotLocationRelativeToTarget(targetIndex);
@@ -441,12 +447,17 @@ public abstract class OmniBotAutonomous extends LinearOpMode {
                 break;
             }
 
-
+            float va;
+            float vx;
+            float vy;
             float phiPrime = VuforiaNav.remapAngle(zxPhi[2] - (float) Math.PI);
-            if((Math.abs(zxPhi[0] - zTarget) < Z_TOL) && (Math.abs(zxPhi[1] - xTarget) < X_TOL) && (Math.abs(zxPhi[2]-phiTarget) < PHI_TOL))break;
-            float va = -phiPrime * C_PHI;
-            float vx =  C_Z* (zxPhi[0]-zTarget) * (float) Math.sin(phiPrime) - C_X  * (zxPhi[1] - xTarget) * (float) Math.cos(phiPrime);
-            float vy =   C_Z* (zxPhi[0]-zTarget) * (float) Math.cos(phiPrime) + C_X *  (zxPhi[1] - xTarget) * (float) Math.sin(phiPrime);
+            if((Math.abs(zxPhi[0] - zTarget) < Z_TOL) && (Math.abs(zxPhi[1] - xTarget) < X_TOL) && (Math.abs(phiPrime-phiTarget) < PHI_TOL)) break;
+            if(Math.abs(phiPrime) >= PHI_TOL)va = -.3f*Math.signum(phiPrime); else va=0;
+            float vxF = Math.abs(zxPhi[1] - xTarget) >= X_TOL ? -5*Math.signum(zxPhi[1]-xTarget) : 0;
+            float vzF = Math.abs(zxPhi[0] - zTarget) >= Z_TOL ? -5*Math.signum(zxPhi[0]-zTarget) : 0;
+
+             vx =  -vzF * (float) Math.sin(phiPrime) + vxF * (float) Math.cos(phiPrime);
+             vy =   -vzF * (float) Math.cos(phiPrime) - vxF* (float) Math.sin(phiPrime);
             if (DEBUG)
                 DbgLog.msg("<Debug> Vuforia Main Repos zxPhiLocal = %.1f %.1f %.1f", zxPhi[0], zxPhi[1], zxPhi[2] * 180.0 / Math.PI);
             if (DEBUG)
@@ -461,6 +472,44 @@ public abstract class OmniBotAutonomous extends LinearOpMode {
 
 
 
+    }
+
+    protected boolean vuforiaBackWardsDemo(int targetIndex, float[] zxPhi, float vNominal, /** Note for jim, make a reverse function here as well? You should be able to use the same code but give it a negtivie for x and drive backwards?*/
+                                           float zTarget, float xTarget){
+        final float C_PHI = 0.05f;
+        final float C_X = 0.05f;
+        float[] zxPhiLocal = new float[]{zxPhi[0],zxPhi[1],zxPhi[2]};
+        robot.updateOdometry();
+
+        while(opModeIsActive() && zxPhiLocal[0] < zTarget){
+            OpenGLMatrix robotPos = vuforiaNav.getRobotLocationRelativeToTarget(targetIndex);
+            if(robotPos != null){
+                robot.updateOdometry();
+                if(DEBUG) DbgLog.msg("<Debug> Vuforia main loop Successful");
+                zxPhiLocal = VuforiaNav.GetZXPH(robotPos);
+            }else{
+                if(DEBUG) DbgLog.msg("<Debug> Vuforia main loop Failed");
+                //Odem
+                //zxPhiLocal = robot.updateOdometry(zxPhiLocal[0], zxPhiLocal[1], zxPhiLocal[2]);
+            }
+
+
+            float phiPrime = VuforiaNav.remapAngle(zxPhiLocal[2] - (float) Math.PI);
+            float va = -phiPrime * vNominal * C_PHI;
+            float vx = -vNominal * (float) Math.sin(phiPrime) - C_X * vNominal * (zxPhiLocal[1] - xTarget) * (float) Math.cos(phiPrime);
+            float vy = -vNominal * (float) Math.cos(phiPrime) + C_X * vNominal * (zxPhiLocal[1] - xTarget) * (float) Math.sin(phiPrime);
+            if(DEBUG) DbgLog.msg("<Debug> Vuforia Main Loop zxPhiLocal = %.1f %.1f %.1f", zxPhiLocal[0], zxPhiLocal[1], zxPhiLocal[2] * 180.0/Math.PI);
+            if(DEBUG) DbgLog.msg("<Debug> Vuforia Main Loop phiPrime = %.1f", phiPrime * 180.0/Math.PI);
+            if(DEBUG) DbgLog.msg("<Debug> Vuforia Main Loop vx = %.1f, vy = %.1f, va = %.1f", vx, vy, va * 180.0/Math.PI);
+
+            robot.setDriveSpeed(vx,vy,va);
+        }
+
+        zxPhi[0] = zxPhiLocal[0];
+        zxPhi[1] = zxPhiLocal[1];
+        zxPhi[2] = zxPhiLocal[2];
+        robot.setDriveSpeed(0, 0, 0);
+        return (zxPhiLocal[0] < zTarget);
     }
 
 

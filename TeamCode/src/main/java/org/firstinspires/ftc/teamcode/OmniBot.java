@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Color;
+
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsUsbDcMotorController;
@@ -21,6 +23,19 @@ import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 
 public class OmniBot
 {
+    /**
+     * Temp enum for color sides
+     *
+     */
+    public static enum TARGET_INDEX{Wheels,Tools,Legos,Gears};
+
+    /**
+     * Temp array for target sides.
+     *
+     */
+    public static final int[] blueTargets = {0,2};
+
+    public static final int[] redTargets = {3,1};
 
     /**
      * Final variable for Vuforia stop distance.
@@ -90,17 +105,17 @@ public class OmniBot
     /**
      * Final constant equal to the minimum acceptable value of red.
      */
-    public final double MIN_RED = 20.0;
+    public final int MIN_RED = 15;
 
     /**
      * Final constant equal to the minimum acceptable value of blue.
      */
-    public final double MIN_BLUE = 20.0;
+    public final int MIN_BLUE = 15;
 
     /**
      * Final constant equal to the max value the color sensor can return. This value is returned with extreme colors, or incorrect cable connections and is normally a warning sign.
      */
-    public final double MAX_SENSOR_VALUES = 255.0;
+    public final int MAX_SENSOR_VALUES = 255;
 
     /**
      * Final Matrix to hold the Robot Wheels Transform.
@@ -330,6 +345,8 @@ public class OmniBot
          */
         sensorRGB_One.enableLed(false);
         sensorRGB_TWO.enableLed(false);
+
+        if(OmniBotAutonomous.DEBUG) DbgLog.msg("<Debug> Voltage: voltage = ", getVoltage());
     }
 
 
@@ -709,9 +726,10 @@ public class OmniBot
 
     public OmniBotAutonomous.BeaconColor getLeftColor(){
         //sensorRGB_TWO
-        float red = sensorRGB_TWO.red();
-        float blue = sensorRGB_TWO.blue();
-        if(OmniBotAutonomous.DEBUG) DbgLog.msg("<Debug-Color> getLeftColor-Color values red %.1f blue %.1f",red,blue);
+        int red = sensorRGB_TWO.red();
+        int blue = sensorRGB_TWO.blue();
+
+        if(OmniBotAutonomous.DEBUG) DbgLog.msg("<Debug-Color> getLeftColor-Color values red %d blue %d",red,blue);
         if(red == MAX_SENSOR_VALUES || blue == MAX_SENSOR_VALUES) return OmniBotAutonomous.BeaconColor.Unknown;
         else if(red>MIN_RED && red > (blue*1.5)) return OmniBotAutonomous.BeaconColor.Red;
         else if(blue>MIN_BLUE && blue > (red*1.5)) return OmniBotAutonomous.BeaconColor.Blue;
@@ -719,9 +737,10 @@ public class OmniBot
     }
     public OmniBotAutonomous.BeaconColor getRightColor(){
         //sensorRGB_One
-        float red = sensorRGB_One.red();
-        float blue = sensorRGB_One.blue();
-        if(OmniBotAutonomous.DEBUG) DbgLog.msg("<Debug-Color> getRightColor-Color values red %.1f blue %.1f",red,blue);
+        int red = sensorRGB_One.red();
+        int blue = sensorRGB_One.blue();
+
+        if(OmniBotAutonomous.DEBUG) DbgLog.msg("<Debug-Color> getRightColor-Color values red %d blue %d",red,blue);
         if(red == MAX_SENSOR_VALUES || blue == MAX_SENSOR_VALUES) return OmniBotAutonomous.BeaconColor.Unknown;
         else if(red>MIN_RED && red > (blue*1.5)) return OmniBotAutonomous.BeaconColor.Red;
         else if(blue>MIN_BLUE && blue > (red*1.5)) return OmniBotAutonomous.BeaconColor.Blue;

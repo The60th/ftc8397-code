@@ -15,7 +15,7 @@ public class TeleOpTestColor extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             telemetry.addData("", "Colors 1: Red %f Green %f Blue %f", robot.sensorRGB_One.red(), robot.sensorRGB_One.green(), robot.sensorRGB_One.blue());
-            telemetry.addData("", "Colors 2: Red %f Green %f Blue %f", robot.sensorPlaceHolder.red(), robot.sensorPlaceHolder.green(), robot.sensorPlaceHolder.blue());
+            telemetry.addData("", "Colors 2: Red %f Green %f Blue %f", robot.sensorRGB_TWO.red(), robot.sensorRGB_TWO.green(), robot.sensorRGB_TWO.blue());
             telemetry.update();
         }
     }
