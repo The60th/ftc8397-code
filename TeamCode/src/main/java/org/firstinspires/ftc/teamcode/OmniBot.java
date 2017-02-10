@@ -23,6 +23,8 @@ import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 
 public class OmniBot
 {
+    //TODO add version control water mark on robot controler phone andor drive station phone.
+
     /**
      * Temp enum for color sides
      *
