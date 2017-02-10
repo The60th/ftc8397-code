@@ -254,7 +254,7 @@ public class newTeleop extends LinearOpMode {
              * While not shown in the code it can take around 500ms for the wheels to reach full speed.
              */
             if (gamepad2.left_trigger > .05) {
-                robot.setShooter(1.0);
+                robot.setShooter(.60); //make /85? 2/9/17 //TODO Changes here
             } else {
                 robot.setShooter(0.0);
             }
@@ -292,7 +292,7 @@ public class newTeleop extends LinearOpMode {
              * Waits for the right trigger to be pressed then moves the servo in to a position to move the ball upwards.
              */
             if(gamepad2.dpad_right){
-                robot.setShooter(1.0);
+                robot.setShooter(.60); //Make .85 2/9/17 //TODO Changes here.
                 sleep(750);
                 robot.setLaunchServo("Up");
                 sleep(1250);

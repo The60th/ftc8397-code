@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 /**
  * Created by CanAdirondack on 2/4/2017.
  */
+@Disabled
 @Autonomous(name = "RobotReposDemo", group = "Autonomous")
 public class testRepos extends OmniBotAutonomous {
     @Override

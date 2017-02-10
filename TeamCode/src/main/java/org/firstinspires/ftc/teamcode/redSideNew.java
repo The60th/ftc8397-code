@@ -43,7 +43,7 @@ public class redSideNew extends OmniBotAutonomous {
 
         driveStraightGyroTime(0.0f,30.0f,2500.0f); //Drive forward towards the wall.
 
-        driveStraightGyroTime(30.0f,0,3200.0f); //Slide to the right in front of the robot.
+        driveStraightGyroTime(34.0f,0,3200.0f); //Slide to the right in front of the robot. 2/6/17 changed to 34 from 3-
 
         /*
         *
@@ -80,16 +80,18 @@ public class redSideNew extends OmniBotAutonomous {
         if(robotPos != null){
             zxPhi = VuforiaNav.GetZXPH(robotPos);
             vuforiaBackWardsDemo(redOne,zxPhi,25.0f,40.0f,-5.0f);
+            telemetry.addData("<Debug> Vuforia drive for back up.","");
         }
         else{
             //Drive backwords with gyro drive.
             driveStraightGyroTime(0.0f,-30.0f,3000.0f); //Backward 20cm
+            telemetry.addData("<Debug> Gyro drive for back up.","");
             //Side ways 40cm.
         }
-
+        telemetry.update();
         //Start of using redTwo.
 
-        driveStraightGyroTime(30.0f,0,4000.0f); //Sideways 40cm
+        driveStraightGyroTime(44.0f,0,3000.0f); //Sideways 40cm
 
         //At second vuforia target?
 
@@ -106,6 +108,20 @@ public class redSideNew extends OmniBotAutonomous {
         vuforiaNavigateToTarget(redTwo,zxPhi,25.0f,13.5f,-5.0f);
 
         handleBeacon(OmniBotAutonomous.BeaconColor.Red,redTwo);
+
+        robotPos = checkForVuforia(redTwo,100);
+        if(robotPos != null){
+            zxPhi = VuforiaNav.GetZXPH(robotPos);
+            vuforiaBackWardsDemo(redTwo,zxPhi,25.0f,20.0f,-5.0f); //Fixed?
+            telemetry.addData("<Debug> Vuforia drive for back up.","");
+        }
+        else{
+            //Drive backwords with gyro drive.
+            telemetry.addData("<Debug> Gyro drive for back up.","");
+            driveStraightGyroTime(0.0f,-10.0f,500.0f); //Backward 20cm
+            //Side ways 40cm.
+        }
+        telemetry.update();
 
     }
 }

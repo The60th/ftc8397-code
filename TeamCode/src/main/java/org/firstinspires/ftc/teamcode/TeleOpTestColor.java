@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 /**
  * Created by CanAdirondack on 1/24/2017.
  */
+@Disabled
 @TeleOp(name = "TeleOP Colors: ", group = "TeleOp_Programs")
 
 public class TeleOpTestColor extends LinearOpMode {

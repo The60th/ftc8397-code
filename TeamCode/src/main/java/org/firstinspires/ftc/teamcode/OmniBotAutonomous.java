@@ -311,7 +311,7 @@ public abstract class OmniBotAutonomous extends LinearOpMode {
 
     //Added to launch the balls from the launcher.
     protected  void launchBall(){
-        robot.setShooter(.70); //Not yet tested at .80 only run at .92 and over shot
+        robot.setShooter(.60); //70 over shots at 2/9/17
         sleep(250);
         robot.setLaunchServo("Up");
         sleep(1000);
@@ -403,7 +403,7 @@ public abstract class OmniBotAutonomous extends LinearOpMode {
 
             if(leftColor != wrongColor || rightColor != wrongColor){
                 //move
-                reposRobot(targetIndex);
+               // reposRobot(targetIndex);
             }
 
             counter +=1;

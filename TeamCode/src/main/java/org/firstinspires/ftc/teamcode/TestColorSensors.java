@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import android.graphics.Color;
@@ -11,7 +12,7 @@ import android.graphics.Color;
  *
  * Repeatedly read both color sensors; report RGB, hue, and RED/BLUE/UNKNOWN
  */
-
+@Disabled
 @Autonomous(name = "Test Color Sensors", group = "Test Op Modes")
 public class TestColorSensors extends OmniBotAutonomous {
 

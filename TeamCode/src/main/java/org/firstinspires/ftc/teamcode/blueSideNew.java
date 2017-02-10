@@ -42,7 +42,7 @@ public class blueSideNew extends OmniBotAutonomous {
 
         driveStraightGyroTime(0.0f,30.0f,2500.0f); //Drive forward towards the wall. Was 2300.0f
 
-        driveStraightGyroTime(-30.0f,0,3200.0f); //Slide to the left in front of the robot.
+        driveStraightGyroTime(-34.0f,0,3200.0f); //Slide to the left in front of the robot. 2/6/17 changed to 34 from 3-
 
         /*
         *
@@ -108,6 +108,20 @@ public class blueSideNew extends OmniBotAutonomous {
         vuforiaNavigateToTarget(blueTwo,zxPhi,25.0f,13.5f,-5.0f);
 
         handleBeacon(BeaconColor.Blue,blueTwo);
+
+        robotPos = checkForVuforia(blueTwo,100);
+        if(robotPos != null){
+            zxPhi = VuforiaNav.GetZXPH(robotPos);
+            vuforiaBackWardsDemo(blueTwo,zxPhi,25.0f,20.0f,-5.0f); //Fixed?
+            telemetry.addData("<Debug> Vuforia drive for back up.","");
+        }
+        else{
+            //Drive backwords with gyro drive.
+            telemetry.addData("<Debug> Gyro drive for back up.","");
+            driveStraightGyroTime(0.0f,-10.0f,500.0f); //Backward 20cm
+            //Side ways 40cm.
+        }
+        telemetry.update();
 
     }
 }

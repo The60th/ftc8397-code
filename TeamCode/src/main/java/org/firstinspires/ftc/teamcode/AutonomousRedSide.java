@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -26,7 +27,7 @@ import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
  * Any changes made should be fully documented with former code left in a comment and reasons for such a change.
  *
  */
-
+@Disabled
 @SuppressWarnings("all")
 @Autonomous(name="Red_Side", group="Autonomous")
 public class AutonomousRedSide extends  LinearOpMode{

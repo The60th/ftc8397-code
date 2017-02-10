@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Autonomous(name = "TestLinearMotion", group = "Test Opmodes")
-//@Disabled
+@Disabled
 public class TestLinearMotionOpMode extends LinearOpMode {
 
     OmniBot robot = new OmniBot();

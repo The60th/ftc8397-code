@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /**
  * Created by CanAdirondack on 2/4/2017.
  */
+@Disabled
 @Autonomous(name = "Auto Color testing", group = "Auto")
 
 public class colorSensorTest extends OmniBotAutonomous {
