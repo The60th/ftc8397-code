@@ -1,7 +1,5 @@
-Git fork of my previous work to be updated for use in ISEF.
-
-Software refactoring and cleanup coming soon, ETA 3/20/17 -- Finished. 4/6/2017
-
-Software and updates for driver control and auto drive mode -- Finished. 4/6/2017
-
-Software and updates for Vuforia scaning and usage. ETA 4/27/2017.
+ FTC Team Beta8397's github repository.  
+  
+    You can contact us at FTC8397@gmail.com
+ +
+ +  Webstie http://ftcteam8397.github.io/ftc8397-code/
