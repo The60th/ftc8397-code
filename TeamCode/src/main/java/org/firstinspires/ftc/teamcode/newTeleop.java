@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.ftccommon.DbgLog;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -28,7 +29,7 @@ import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
  * Any changes made should be fully documented with former code left in a comment and reasons for such a change.
  *
  */
-
+//@Disabled
 @TeleOp(name = "Competition_TeleOp: ", group = "TeleOp_Programs")
 public class newTeleop extends LinearOpMode {
 

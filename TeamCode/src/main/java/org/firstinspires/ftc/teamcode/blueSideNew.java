@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 
@@ -9,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
  * Created by CanAdirondack on 1/31/2017.
  */
 @Autonomous(name = "Blue_Side_New", group = "Autonomous")
-
+//@Disabled
 public class blueSideNew extends OmniBotAutonomous {
     @Override
     public void runOpMode() throws InterruptedException {

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 
@@ -10,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
  * Created by CanAdirondack on 1/31/2017.
  */
 @Autonomous(name = "Shoot then Cap", group = "Autonomous")
-
+// @Disabled
 public class BackUp_Blue extends OmniBotAutonomous {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -20,7 +21,7 @@ public class BackUp_Blue extends OmniBotAutonomous {
         while (robot.sensorGyro.isCalibrating()) {
             idle();
         }
-        telemetry.addData("","All systems ready!");
+        telemetry.addData("", "All systems ready!");
         telemetry.update();
         waitForStart(); //Wait for start
         //Actions
