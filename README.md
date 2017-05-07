@@ -2,4 +2,4 @@
   
     You can contact us at FTC8397@gmail.com
  +
- +  Webstie http://ftcteam8397.github.io/ftc8397-code/
+ +  Website http://ftcteam8397.github.io/ftc8397-code/
