@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 /**
  * Created by FTC Team 8397 on 8/27/2017.
  */
-@TeleOp(name="Rev Robotics Demos", group="Rev")
+//@TeleOp(name="Rev Robotics Demos", group="Rev")
 public class RevRoboticsDemo extends OpMode{
     DcMotor motor;
     Servo servo;
