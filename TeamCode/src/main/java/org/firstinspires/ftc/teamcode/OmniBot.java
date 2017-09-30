@@ -102,7 +102,7 @@
 //    /**
 //     * Final Matrix to hold the Robot Wheels Transform.
 //     */
-//    public final GeneralMatrixF ROBOT_WHEEL_TRANSFORM = new GeneralMatrixF(4,4,
+//public final GeneralMatrixF ROBOT_WHEEL_TRANSFORM = new GeneralMatrixF(4,4,
 //            new float[] {-ONE_ROOT_TWO, ONE_ROOT_TWO, -R_COS_BETA,  1
 //                        , ONE_ROOT_TWO, ONE_ROOT_TWO, -R_COS_BETA, -1
 //                        ,-ONE_ROOT_TWO, ONE_ROOT_TWO,  R_COS_BETA, -1

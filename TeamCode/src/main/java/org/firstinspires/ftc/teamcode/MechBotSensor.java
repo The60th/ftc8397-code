@@ -1,23 +1,33 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsUsbDcMotorController;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorMRColor;
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorREVColorDistance;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.GeneralMatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.MatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
+import java.util.Locale;
 
 
 @SuppressWarnings("all")
 
 
-public class MechBot
+public class MechBotSensor
 {
 
     /**
@@ -69,10 +79,11 @@ public class MechBot
      * Final Matrix to hold the Robot Wheels Transform.
      */
     public final GeneralMatrixF ROBOT_WHEEL_TRANSFORM = new GeneralMatrixF(4,4,
-            new float[] {-1, 1, -R_ROOT_TWO,  1
-                        , 1, 1, -R_ROOT_TWO, -1
-                        ,-1, 1, R_ROOT_TWO, -1
-                        , 1, 1, R_ROOT_TWO,  1} );
+            new float[] {
+                    -1, 1, -R_ROOT_TWO,  1
+                    , 1, 1, -R_ROOT_TWO, -1
+                    ,-1, 1, R_ROOT_TWO, -1
+                    , 1, 1, R_ROOT_TWO,  1} );
     public final MatrixF WHEEL_ROBOT_TRANSFORM = ROBOT_WHEEL_TRANSFORM.inverted();
 
     /**
@@ -97,11 +108,22 @@ public class MechBot
     public DcMotor two;
     public DcMotor three;
     public DcMotor four;
+    public ColorSensor sensorMRColor;
+    public ColorSensor sensorREVColor;
+    public DistanceSensor sensorRevDistance;
 
     /**
      * Modern Robotics I2c Gyro Sensor used for getting correct rotational readings to control rotation and correct in-correct movements.
      */
-    //public ModernRoboticsI2cGyro sensorGyro;
+    public ModernRoboticsI2cGyro sensorGyro;
+
+    BNO055IMU imu;
+
+
+
+    // State used for updating telemetry
+    Orientation angles;
+    Acceleration gravity;
 
     /**
      * Default Constructor hardwareMap for the class.
@@ -113,7 +135,7 @@ public class MechBot
     /**
      * Default Constructor OmniBot for the class.
      */
-    public MechBot(Telemetry telemetry){
+    public MechBotSensor(Telemetry telemetry){
         this.telemetry = telemetry;
     }
 
@@ -154,12 +176,31 @@ public class MechBot
         three = hardwareMap.dcMotor.get("M3");
         four = hardwareMap.dcMotor.get("M4");
 
+        sensorMRColor = hardwareMap.get(ColorSensor.class, "sensor_color");
+        sensorREVColor = hardwareMap.get(ColorSensor.class, "sensor_color_distance");
+        sensorRevDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
+        sensorGyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("sensorGyro");
+
+
+
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BN055Cali.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu.initialize(parameters);
+
         /**
          * Saves the Modern Robotics Gyro Sensor to a string value inside the hardwareMap
          * Then sets the Gyro default heading to the Cartesian mode for data reading.
          */
-        //sensorGyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("gyro");
-        //sensorGyro.setHeadingMode(ModernRoboticsI2cGyro.HeadingMode.HEADING_CARTESIAN);
+        sensorGyro.setHeadingMode(ModernRoboticsI2cGyro.HeadingMode.HEADING_CARTESIAN);
 
         one.setDirection(DcMotor.Direction.REVERSE);
         two.setDirection(DcMotor.Direction.REVERSE);
@@ -170,8 +211,8 @@ public class MechBot
          * More documentation on the setDriveMode function can be found within it.
          */
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         /**
          * Call setDrivePower function and pass it the values 0,0,0 and the constant liftFront to set all motor powers to zero, and set default drive mode.
@@ -248,17 +289,17 @@ public class MechBot
      */
     public double setDriveSpeed(double vx, double vy,double va){
         return setDrivePower(vx * TICKS_PER_CM / MAX_TICKS_PER_SEC,
-                             vy * TICKS_PER_CM / MAX_TICKS_PER_SEC,
-                            va * TICKS_PER_CM * R_ROOT_TWO /MAX_TICKS_PER_SEC);
+                vy * TICKS_PER_CM / MAX_TICKS_PER_SEC,
+                va * TICKS_PER_CM * R_ROOT_TWO /MAX_TICKS_PER_SEC);
     }
 
-   /*
-    public float[] getColorValues(){
-        float[] colorValues = {sensorRGB_One.red(),sensorRGB_One.green(),sensorRGB_One.blue()};
-       return colorValues;
-    }
+    /*
+     public float[] getColorValues(){
+         float[] colorValues = {sensorRGB_One.red(),sensorRGB_One.green(),sensorRGB_One.blue()};
+        return colorValues;
+     }
 
-     */
+      */
     public void updateOdometry(){
         last_Wheel_Ticks.put(0,one.getCurrentPosition());
         last_Wheel_Ticks.put(1,two.getCurrentPosition());
@@ -291,7 +332,7 @@ public class MechBot
         float newY = y+deltaRobotPos.get(1)*sin - deltaRobotPos.get(0)*cosin;
         float newTheta = theta+deltaRobotPos.get(2);
         last_Wheel_Ticks = curTicks;
-       // last_Gyro_Theta = (float)((double)-sensorGyro.getIntegratedZValue()*(Math.PI/180.0));
+        // last_Gyro_Theta = (float)((double)-sensorGyro.getIntegratedZValue()*(Math.PI/180.0));
         return new float[]{newX,newY,newTheta};
     }
 
@@ -303,6 +344,13 @@ public class MechBot
      * @param newThetaGyro
      * @return
      */
+    String formatAngle(AngleUnit angleUnit, double angle) {
+        return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
+    }
+
+    String formatDegrees(double degrees){
+        return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
+    }
     public float[] updateOdometry(float x,float y,float theta,float newThetaGyro){
         return null;
     }
