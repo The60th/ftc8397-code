@@ -27,7 +27,7 @@ import java.util.Locale;
 @SuppressWarnings("all")
 
 
-public class MechBotSensor
+public class MechBotSensor extends MechBot
 {
 
     /**
@@ -136,6 +136,7 @@ public class MechBotSensor
      * Default Constructor OmniBot for the class.
      */
     public MechBotSensor(Telemetry telemetry){
+        super(telemetry);
         this.telemetry = telemetry;
     }
 
@@ -204,6 +205,10 @@ public class MechBotSensor
 
         one.setDirection(DcMotor.Direction.REVERSE);
         two.setDirection(DcMotor.Direction.REVERSE);
+        one.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        two.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        three.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        four.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         /**
          * Call our setDriveMode function and pass it the constant DcMotor.RunMode.Run_Using_Encoder so it sets all drive train motors to use encoders.
