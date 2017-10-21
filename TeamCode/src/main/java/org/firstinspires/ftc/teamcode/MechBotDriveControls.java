@@ -15,7 +15,7 @@ public class MechBotDriveControls {
     private boolean gamepadRefreshed = false;
     public static enum XYZ {plusX,plusY,plusZ,negX,negY,negZ};
 
-    public MechBotDriveControls(Gamepad gamepad1, Gamepad gamepad2, MechBotSensor mechBot){
+    public MechBotDriveControls(Gamepad gamepad1, Gamepad gamepad2, MechBot mechBot){
         this.gamepad1 = gamepad1;
         this.gamepad2 = gamepad2;
         this.mechBot = mechBot;
@@ -64,7 +64,7 @@ public class MechBotDriveControls {
                 a = gamepad1.right_trigger;
             }
         }
-        mechBot.setDrivePower((x/speedScaler), (y/speedScaler), (a/speedScaler));
+        mechBot.setDrivePower((-x/speedScaler), (-y/speedScaler), (a/speedScaler));
         return true;
     }
     public boolean driveDirectonByPower(XYZ xyz, double speed){

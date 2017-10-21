@@ -8,6 +8,7 @@ package org.firstinspires.ftc.teamcode;
 import android.graphics.Bitmap;
 
 import com.qualcomm.ftcrobotcontroller.R;
+import com.vuforia.CameraDevice;
 import com.vuforia.Image;
 import com.vuforia.PIXEL_FORMAT;
 import com.vuforia.Vuforia;
@@ -67,6 +68,7 @@ public class VuMarkNavigator {
 
     }
 
+    //Return the RelicRecoveryVuMark code of the visualized target (RIGHT, CENTER, LEFT); UNKNOWN if no target found.
     public static RelicRecoveryVuMark getRelicRecoveryVumark(){
         return RelicRecoveryVuMark.from(target);
     }
@@ -85,6 +87,14 @@ public class VuMarkNavigator {
         return (PHONE_LOCATION_ON_ROBOT.multiplied(targetPoseRelativeToCamera)).inverted();
     }
 
+    public static void setTargetLocation(OpenGLMatrix targetLocation){
+        target.setLocation(targetLocation);
+    }
+
+    public static OpenGLMatrix getRobotLocation(){
+        return ((VuforiaTrackableDefaultListener)target.getListener()).getRobotLocation();
+    }
+
 
     //return: Z,X position and Phi, the angle between the Z axis of the coordinate system
     //being transformed to and the projection of the robot Y-axis into the ZX plane of the
@@ -99,25 +109,25 @@ public class VuMarkNavigator {
         return returnValue;
     }
 
+
+
     public static double NormalizeAngle(double angle){
         double temp = (angle + Math.PI)/(2.0 * Math.PI);
         return (temp - Math.floor(temp) - 0.5) * 2.0 * Math.PI;
     }
 
-    public static VuforiaLocalizer.CloseableFrame getFrame(){
-        VuforiaLocalizer.CloseableFrame frame = null;
-        try{
-            frame = vuforia.getFrameQueue().take();
-            return frame;
-        }
-        catch(InterruptedException exc){
-            if (frame != null) frame.close();
-            return null;
-        }
-    }
 
     public static BlockingQueue<VuforiaLocalizer.CloseableFrame> getFrameQueue(){
         return vuforia.getFrameQueue();
+    }
+
+    public static void clearFrameQueue(BlockingQueue<VuforiaLocalizer.CloseableFrame> frameQueue){
+        VuforiaLocalizer.CloseableFrame tempFrame = null;
+        while (true) {
+            tempFrame = frameQueue.poll();
+            if (tempFrame == null) break;
+            tempFrame.close();
+        }
     }
 
     public static boolean getRGB565Array(BlockingQueue<VuforiaLocalizer.CloseableFrame> frameQueue, int width, int height, byte[] dst) {
@@ -126,6 +136,7 @@ public class VuMarkNavigator {
         VuforiaLocalizer.CloseableFrame tempFrame = null;
         Image img = null;
         try{
+            //We want the most recent available frame, which necessitates this while loop. If no frame is available, return false.
             while (true){
                 tempFrame = frameQueue.poll();
                 if (tempFrame == null) break;
@@ -133,14 +144,12 @@ public class VuMarkNavigator {
                 frame = tempFrame;
             }
             if (frame == null) return false;
+
+            //Iterate through the images in the frame to find one that satisfies the width, height, and pixel format requirements
             long numImages = frame.getNumImages();
             for (int i = 0; i < numImages; i++){
                 img = frame.getImage(i);
-                int w,h,p;
-                w=img.getWidth();
-                h=img.getHeight();
-                p=img.getFormat();
-                if (img.getFormat() == 1 && img.getWidth() == width && img.getHeight() == height){
+                if (img.getFormat() == PIXEL_FORMAT.RGB565 && img.getWidth() == width && img.getHeight() == height){
                     ByteBuffer byteBuf = img.getPixels();
                     byteBuf.get(dst);
                     return true;
@@ -154,43 +163,50 @@ public class VuMarkNavigator {
         }
     }
 
-
-    public static int[] getRGBfromByteArray(int row, int col, int width, byte[] src){
-        int index = 2 * (row * width + col);
-        byte b1 = src[index];
-        byte b2 = src[index+1];
-        int blue = (b1 & 0x1F) << 3;
-        int red = (b2 & 0xF8);
-        int green = ((b1 & 0xE0) >> 3) + ((b2 & 0x7) << 5);
-        return new int[] {red, green, blue};
+    //Turn camera flashlight on or off
+    public static boolean setFlashTorchMode(boolean on){
+        return CameraDevice.getInstance().setFlashTorchMode(on);
     }
 
 
-    public static Bitmap getBitmap(BlockingQueue<VuforiaLocalizer.CloseableFrame> frameQueue)
-            throws InterruptedException{
-        VuforiaLocalizer.CloseableFrame frame = null;
-        try{
-            frame = frameQueue.poll(10, TimeUnit.MICROSECONDS);
-            if (frame == null) return null;
-            long numImages = frame.getNumImages();
-            Image rgbImage = null;
-            for (int i = 0; i < numImages; i++)
-                if (frame.getImage(i).getFormat() == PIXEL_FORMAT.RGB565) {
-                    rgbImage = frame.getImage(i);
-                    break;
-                }
-            if (rgbImage == null) return null;
-            Bitmap bm = Bitmap.createBitmap(rgbImage.getWidth(), rgbImage.getHeight(), Bitmap.Config.RGB_565);
-            bm.copyPixelsFromBuffer(rgbImage.getPixels());
-            return bm;
-        }
-        catch(InterruptedException exc){
-            throw exc;
-        }
-        finally{
-            if (frame != null) frame.close();
-        }
-    }
 
+//
+//    public static int[] getRGBfromByteArray(int row, int col, int width, byte[] src){
+//        int index = 2 * (row * width + col);
+//        byte b1 = src[index];
+//        byte b2 = src[index+1];
+//        int blue = (b1 & 0x1F) << 3;
+//        int red = (b2 & 0xF8);
+//        int green = ((b1 & 0xE0) >> 3) + ((b2 & 0x7) << 5);
+//        return new int[] {red, green, blue};
+//    }
+//
+//
+//    public static Bitmap getBitmap(BlockingQueue<VuforiaLocalizer.CloseableFrame> frameQueue)
+//            throws InterruptedException{
+//        VuforiaLocalizer.CloseableFrame frame = null;
+//        try{
+//            frame = frameQueue.poll(10, TimeUnit.MICROSECONDS);
+//            if (frame == null) return null;
+//            long numImages = frame.getNumImages();
+//            Image rgbImage = null;
+//            for (int i = 0; i < numImages; i++)
+//                if (frame.getImage(i).getFormat() == PIXEL_FORMAT.RGB565) {
+//                    rgbImage = frame.getImage(i);
+//                    break;
+//                }
+//            if (rgbImage == null) return null;
+//            Bitmap bm = Bitmap.createBitmap(rgbImage.getWidth(), rgbImage.getHeight(), Bitmap.Config.RGB_565);
+//            bm.copyPixelsFromBuffer(rgbImage.getPixels());
+//            return bm;
+//        }
+//        catch(InterruptedException exc){
+//            throw exc;
+//        }
+//        finally{
+//            if (frame != null) frame.close();
+//        }
+//    }
+//
 
 }

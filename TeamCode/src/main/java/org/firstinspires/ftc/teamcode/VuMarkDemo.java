@@ -19,7 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 /**
  * Created by FTC Team 8397 on 9/15/2017.
  */
-@TeleOp(name="VuMarkDemoMine", group="Rev")
+//@TeleOp(name="VuMarkDemoMine", group="Rev")
 public class VuMarkDemo extends LinearOpMode {
     public static final String TAG = "Vuforia VuMark Sample";
     OpenGLMatrix lastLocation = null;
