@@ -73,14 +73,14 @@ public class TestCryptoBoxNavigation extends LinearOpMode {
      */
 
     private int sampleRatio = 4;
-    private int rawImgWidth = 640; //use 1280 for G4
-    private int rawImgHeight = 480; //use 720 for G4
-    private int rangeX0 = 0; //Consider using 40 for G4
-    private int rangeY0 = 0; //Consider using 240 for G4
-    private int rangeWidth = 640; //Consider using 1200 for G4
-    private int rangeHeight = 480; //Consider using 240 for G4
+    private int rawImgWidth = 1280; //use 1280 for G4 //640
+    private int rawImgHeight = 720; //use 720 for G4 //480
+    private int rangeX0 = 40; //Consider using 40 for G4 //0
+    private int rangeY0 = 240; //Consider using 240 for G4 //0
+    private int rangeWidth = 1200; //Consider using 1200 for G4 //640
+    private int rangeHeight = 240; //Consider using 240 for G4 //480
     private float rawFocalLength = 548f; //Don't know what this will be for G4-Run GetCameraParameters to find out
-    private float rawPrincipalX = 320f;  //Should be roughly 640 for G4
+    private float rawPrincipalX = 640f;  //Should be roughly 640 for G4 //320f
 
     //This array of bytes will hold each new raw RGB565 image
     private byte[] imageBytes = new byte[2 * rawImgWidth * rawImgHeight];

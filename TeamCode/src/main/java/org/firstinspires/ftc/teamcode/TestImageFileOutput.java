@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.vuforia.CameraDevice;
 
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
@@ -17,42 +18,60 @@ import java.util.concurrent.BlockingQueue;
 
 @Autonomous(name = "TestImageFileOutput", group = "Test")
 public class TestImageFileOutput extends LinearOpMode {
-    private int width = 1280;
-    private int height = 720;
-    private boolean gotImage;
+
     @Override
     public void runOpMode() {
 
         VuMarkNavigator.activate();
 
+        //Automatically determine the resolution of the camera
+        float size[] = CameraDevice.getInstance().getCameraCalibration().getSize().getData();
+        int imgWidth = Math.round(size[0]);
+        int imgHeight = Math.round(size[1]);
+
+        //Need frame queue to capture images
         BlockingQueue<VuforiaLocalizer.CloseableFrame> frameQueue = VuMarkNavigator.getFrameQueue();
 
-        byte[] imageBytesInitial = new byte[2* width * height];
-
-        byte[] imageBytes = new byte[2 * width * height];
+        //Array of bytes to hold the RGB565 image
+        byte[] imageBytes = new byte[2 * imgWidth * imgHeight];
 
         telemetry.addData("Press start when ready to save image...","");
         telemetry.update();
 
+        CameraDevice.getInstance().setFlashTorchMode(true);
+
         waitForStart();
 
-        VuMarkNavigator.getRGB565Array(frameQueue, width, height,imageBytesInitial);
+        //Clear the frame queue so we get a brand new image, rather than one that has been
+        //waiting in the queue.
+        VuMarkNavigator.clearFrameQueue(frameQueue);
 
-        sleep(500);
+        boolean gotImage = false;
 
-        if(VuMarkNavigator.getRGB565Array(frameQueue, width, height, imageBytes)) {
+        //After clearing frame queue, it may take a while (maybe 50 millisec) for a new image to become
+        //available. Loop until a new image is available, then save it.
+        while (opModeIsActive() && !gotImage)
+            gotImage = VuMarkNavigator.getRGB565Array(frameQueue, imgWidth, imgHeight, imageBytes);
 
-            byte[] widthHeight = new byte[]{(byte) (width % 256), (byte) (width / 256), (byte) (height % 256), (byte) (height / 256)};
+        if (gotImage){
 
+            //The application context is available through the hardware map and is needed for file operations.
             Context context = hardwareMap.appContext;
 
             FileOutputStream fos = null;
 
+            //This awkward nested try/catch/finally block is needed because fos.close() can itself throw an exception
+
             try {
 
                 try {
-                    fos = new FileOutputStream("/sdcard/DCIM/ImageBytes.dat", true);
-                    fos.write(widthHeight);
+                    fos = new FileOutputStream("/sdcard/DCIM/ImageBytes.dat", true); //"true" means to append if file already exists
+
+                    //this array just holds the image dimensions for writing to the file
+                    byte[] bytes = new byte[]{(byte)(imgWidth&0xFF), (byte)(imgWidth>>8), (byte)(imgHeight&0xFF), (byte)(imgHeight>>8)};
+
+                    //Write the image dimensions, then the actual image data to the file
+                    fos.write(bytes);
                     fos.write(imageBytes);
                 } catch (FileNotFoundException exc) {
                     telemetry.addData("File Not Found", "");
@@ -67,15 +86,14 @@ public class TestImageFileOutput extends LinearOpMode {
                 telemetry.addData("IO Exception on Close", "");
             }
         }
-         else{
-            telemetry.addData("Failed to get image","");
-        }
-            telemetry.update();
 
+        telemetry.update();
+
+        //Done writing file. Now enter a do-nothing loop until user stops the opmode
+
+        CameraDevice.getInstance().setFlashTorchMode(false);
 
         while (opModeIsActive()) continue;
-
-
 
     }
 

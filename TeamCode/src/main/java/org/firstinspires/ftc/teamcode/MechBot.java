@@ -113,9 +113,6 @@ public class MechBot
     /**
      * Default Constructor OmniBot for the class.
      */
-    public MechBot(Telemetry telemetry){
-        this.telemetry = telemetry;
-    }
 
     /**
      * Initialize default Hardware interfaces.
@@ -161,8 +158,8 @@ public class MechBot
         //sensorGyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("gyro");
         //sensorGyro.setHeadingMode(ModernRoboticsI2cGyro.HeadingMode.HEADING_CARTESIAN);
 
-        one.setDirection(DcMotor.Direction.REVERSE);
-        two.setDirection(DcMotor.Direction.REVERSE);
+        three.setDirection(DcMotor.Direction.REVERSE);
+        four.setDirection(DcMotor.Direction.REVERSE);
 
         /**
          * Call our setDriveMode function and pass it the constant DcMotor.RunMode.Run_Using_Encoder so it sets all drive train motors to use encoders.
@@ -172,7 +169,7 @@ public class MechBot
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         /**
          * Call setDrivePower function and pass it the values 0,0,0 and the constant liftFront to set all motor powers to zero, and set default drive mode.
          *

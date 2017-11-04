@@ -29,7 +29,7 @@ package org.firstinspires.ftc.teamcode;
  */
 @TeleOp(name="TestMechDrive", group="Rev")
 public class TestMechDrive extends LinearOpMode {
-    private MechBotSensor mechBot = new MechBotSensor(telemetry);
+    private MechBotSensor mechBot = new MechBotSensor();
     private boolean drive = true;
     private boolean sensor = false;
 

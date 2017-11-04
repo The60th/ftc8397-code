@@ -73,15 +73,10 @@ public class MechBotSensor extends MechBot
      * Default Constructor hardwareMap for the class.
      * Setting to null because of no use at current time.
      */
-    Telemetry telemetry;
 
     /**
      * Default Constructor OmniBot for the class.
      */
-    public MechBotSensor(Telemetry telemetry){
-        super(telemetry);
-        this.telemetry = telemetry;
-    }
 
     /**
      * Initialize default Hardware interfaces.

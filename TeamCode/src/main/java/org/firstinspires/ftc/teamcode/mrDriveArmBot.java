@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 /**
  * Created by FTC Team 8397 on 9/29/2017.
  */
-@TeleOp(name="MDarm", group="Rev")
+@TeleOp(name="MDarm", group="Other")
 public class mrDriveArmBot extends LinearOpMode {
-    private MechBot mechBot = new MechBot(telemetry);
+    private MechBot mechBot = new MechBot();
     private  MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1,gamepad2,mechBot,1);
     private float[] driveHeading = new float[]{0,0,0};
     @Override

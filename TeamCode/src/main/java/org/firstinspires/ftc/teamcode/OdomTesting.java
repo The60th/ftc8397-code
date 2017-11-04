@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  */
 @TeleOp(name="OdomTesting", group="Rev")
 public class OdomTesting extends LinearOpMode {
-    private MechBotSensor mechBot = new MechBotSensor(telemetry);
+    private MechBotSensor mechBot = new MechBotSensor();
     private  MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1,gamepad2,mechBot);
     private float[] driveHeading = new float[]{0,0,0};
     @Override
@@ -26,12 +26,12 @@ public class OdomTesting extends LinearOpMode {
         telemetry.update();
         while (opModeIsActive()) {
           //  driveHeading = mechBot.updateOdometry(driveHeading);
-           // telemetry.addData("","Robot x %.2f  y %.2f  th %.2f ",driveHeading[0],driveHeading[1],(driveHeading[2] * (180.0/Math.PI)));
-           // telemetry.addData("","Encoder 1 %d Encoder 2 %d Encoder 3 %d Encoder 4 %d",
-                   // mechBot.one.getCurrentPosition(),mechBot.two.getCurrentPosition(),
-                    //mechBot.three.getCurrentPosition(),mechBot.four.getCurrentPosition());
+           telemetry.addData("","Robot x %.2f  y %.2f  th %.2f ",driveHeading[0],driveHeading[1],(driveHeading[2] * (180.0/Math.PI)));
+           telemetry.addData("","Encoder 1 %d Encoder 2 %d Encoder 3 %d Encoder 4 %d",
+                   mechBot.one.getCurrentPosition(),mechBot.two.getCurrentPosition(),
+                   mechBot.three.getCurrentPosition(),mechBot.four.getCurrentPosition());
 
-            //mechBotDriveControls.refreshGamepads(gamepad1,gamepad2);
+            mechBotDriveControls.refreshGamepads(gamepad1,gamepad2);
 
             if(mechBotDriveControls.isGamepadRefreshed()) {
                 if (mechBotDriveControls.joyStickMecnumDrive()) {
