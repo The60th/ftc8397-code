@@ -36,7 +36,7 @@ public class LineFollowDemo extends LinearOpMode {
         boolean onTape = onLine(colorSensor);
         float initAngle = side == Side.LEFT ? INNER_TAPE_ANGLE_RADS : -INNER_TAPE_ANGLE_RADS; //Check if the side is equal to left or right and set it the negative if right.
         float currentAngle = initAngle;
-        DemoSignEnum sign;
+        //DemoSignEnum sign;
         ElapsedTime et = new ElapsedTime();
 
         vXSpeed = -LINE_FOLLOW_SPEED * (float)Math.sin(currentAngle);
@@ -47,11 +47,11 @@ public class LineFollowDemo extends LinearOpMode {
         sleep(500);
         bot.setDriveSpeed(vXSpeed,vYSpeed,0);
         while (opModeIsActive()){
-            String calledMethod = "";
+            //String calledMethod = "";
             boolean refreshedOnTape = onLine(colorSensor);
             telemetry.addData("OnTape? ",refreshedOnTape);
             if(onTape != refreshedOnTape){
-                calledMethod = "onTape!=refreshedTape";
+                //calledMethod = "onTape!=refreshedTape";
                 //On-Off tape state has changed.
                 float angleChange = currentAngle - initAngle;
                 initAngle = initAngle +  angleChange/2.0f;
@@ -59,56 +59,53 @@ public class LineFollowDemo extends LinearOpMode {
                 telemetry.addData("ET value before reset.",et.seconds());
                 et.reset();
                 onTape = refreshedOnTape;
-                if(side == Side.LEFT){
+               /* if(side == Side.LEFT){
                     sign = DemoSignEnum.Pos;
                 }else{
                     sign = DemoSignEnum.Neg;
-                }
+                }*/
             }else{
                 telemetry.addData("ET value without reset.",et.seconds());
                 //On-Off tape state has not changed.
                 if(onTape){
-                    calledMethod = "if(onTape)";
-                    currentAngle = side == Side.LEFT ? currentAngle + (float) et.seconds()*LINE_FOLLOW_ANGLE_FACTOR : currentAngle - (float) et.seconds()*LINE_FOLLOW_ANGLE_FACTOR;
+                   // calledMethod = "if(onTape)";
+                    currentAngle = side == Side.LEFT ? initAngle + (float) et.seconds()*LINE_FOLLOW_ANGLE_FACTOR : initAngle - (float) et.seconds()*LINE_FOLLOW_ANGLE_FACTOR;
                     telemetry.addData("currentAngle within onTape ",currentAngle);
-                    if(side == Side.LEFT){
+                    /*if(side == Side.LEFT){
                         sign = DemoSignEnum.Pos;
                     }else{
                         sign = DemoSignEnum.Neg;
-                    }
+                    }*/
                     //Check what side of the line you are on then add or remove from the angle to drive off the land.
                 }else{
-                    calledMethod = "else{}";
-                    currentAngle = side == Side.LEFT ? currentAngle - (float) et.seconds()*LINE_FOLLOW_ANGLE_FACTOR : currentAngle + (float) et.seconds()*LINE_FOLLOW_ANGLE_FACTOR;
+                    //calledMethod = "else{}";
+                    currentAngle = side == Side.LEFT ? initAngle - (float) et.seconds()*LINE_FOLLOW_ANGLE_FACTOR : initAngle + (float) et.seconds()*LINE_FOLLOW_ANGLE_FACTOR;
                     telemetry.addData("currentAngle within onTape -> else ",currentAngle);
-                    if(side == Side.LEFT){
+                   /* if(side == Side.LEFT){
                         sign = DemoSignEnum.Neg;
                     }else{
                         sign = DemoSignEnum.Pos;
-                    }
+                    }*/
                     //Check what side of the line you are on then add or remove from the angle to drive off the land.
                 }
             }
             //TODO note to ask jim? It seems like as the current angle value surpasses 180 the value of current angle's sin will become negative, this then causes the robot
             //TODO just to wiggle around rather then driving one way.
-            float vXSpeedMod = (float)Math.sin(currentAngle);
-            float vYSpeedMod = (float)Math.cos(currentAngle);
-            if(sign == DemoSignEnum.Neg){
+            /*if(sign == DemoSignEnum.Neg){
                 vXSpeedMod = Math.abs(vXSpeedMod);
                 vYSpeedMod = Math.abs(vYSpeedMod)*-1.0f;
             }else{
                 vXSpeedMod = Math.abs(vXSpeedMod);
                 vYSpeedMod = Math.abs(vYSpeedMod);
-            }
-            telemetry.addData("vXSpeedMod " + vXSpeedMod + "vYSpeedMod " + vYSpeedMod,"");
-            vXSpeed = LINE_FOLLOW_SPEED * vXSpeedMod;// (float)Math.sin(currentAngle); //Forcing sign to be positive for testing.
-            vYSpeed = LINE_FOLLOW_SPEED * vYSpeedMod;//(float)Math.cos(currentAngle);
-            telemetry.addData("What method did we call? ",calledMethod);
+            }*/
+            vXSpeed = LINE_FOLLOW_SPEED * -(float)Math.sin(currentAngle);// (float)Math.sin(currentAngle); //Forcing sign to be positive for testing.
+            vYSpeed = LINE_FOLLOW_SPEED * (float)Math.cos(currentAngle);//(float)Math.cos(currentAngle);
+           // telemetry.addData("What method did we call? ",calledMethod);
             telemetry.addData("Driving at speeds of second section: ", "X %f Y %f Angle 0",vXSpeed,vYSpeed,0);
             telemetry.update();
             bot.setDriveSpeed(0,0,0);
             //sleep(500); //Add a 500 mili second wait to debug better.
-            bot.setDriveSpeed(vXSpeed*2,vYSpeed,0);
+            bot.setDriveSpeed(vXSpeed,vYSpeed,0);
         }
     }
 
