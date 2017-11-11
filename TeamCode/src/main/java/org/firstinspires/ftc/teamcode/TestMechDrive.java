@@ -59,12 +59,12 @@ public class TestMechDrive extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         mechBot.init(hardwareMap);
 
-        mechBot.sensorGyro.calibrate();
+        /*mechBot.sensorGyro.calibrate();
         while (mechBot.sensorGyro.isCalibrating()) {
             telemetry.addData("Calibrating Modern Robotics Gyro","");
             telemetry.update();
             idle();
-        }
+        }*/
 
         telemetry.addData("Ready to go: ","");
         telemetry.update();
@@ -150,32 +150,32 @@ public class TestMechDrive extends LinearOpMode {
                 telemetry.addData("","\n");
 
                 telemetry.addData("*****Modern Robotics Gyro*****","");
-                telemetry.addData("Heading: ",mechBot.sensorGyro.getHeading());
+                //telemetry.addData("Heading: ",mechBot.sensorGyro.getHeading());
                 telemetry.addData("","\n");
 
                 telemetry.addData("*****Rev Robotics BN055*****","");
 
-                mechBot.angles   = mechBot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                mechBot.gravity  = mechBot.imu.getGravity();
+                //mechBot.angles   = mechBot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                //mechBot.gravity  = mechBot.imu.getGravity();
                 telemetry
                         .addData("status",  mechBot.imu.getSystemStatus().toShortString());
 
                 telemetry.addData("calib",  mechBot.imu.getCalibrationStatus().toString());
 
 
-                telemetry.addData("heading",  mechBot.formatAngle(mechBot.angles.angleUnit, mechBot.angles.firstAngle));
+               // telemetry.addData("heading",  mechBot.formatAngle(mechBot.angles.angleUnit, mechBot.angles.firstAngle));
 
-                telemetry.addData("roll",  mechBot.formatAngle(mechBot.angles.angleUnit, mechBot.angles.secondAngle));
+               // telemetry.addData("roll",  mechBot.formatAngle(mechBot.angles.angleUnit, mechBot.angles.secondAngle));
 
-                telemetry.addData("pitch",  mechBot.formatAngle(mechBot.angles.angleUnit, mechBot.angles.thirdAngle));
+                //telemetry.addData("pitch",  mechBot.formatAngle(mechBot.angles.angleUnit, mechBot.angles.thirdAngle));
 
 
-                telemetry.addData("grvty",  mechBot.gravity.toString());
+                //telemetry.addData("grvty",  mechBot.gravity.toString());
 
-                telemetry.addData("mag",  String.format(Locale.getDefault(), "%.3f",
-                                        Math.sqrt(mechBot.gravity.xAccel*mechBot.gravity.xAccel
-                                                + mechBot.gravity.yAccel*mechBot.gravity.yAccel
-                                                + mechBot.gravity.zAccel*mechBot.gravity.zAccel)));
+               // telemetry.addData("mag",  String.format(Locale.getDefault(), "%.3f",
+                //                        Math.sqrt(mechBot.gravity.xAccel*mechBot.gravity.xAccel
+               //                                 + mechBot.gravity.yAccel*mechBot.gravity.yAccel
+                //                                + mechBot.gravity.zAccel*mechBot.gravity.zAccel)));
 
 
                 telemetry.addData("","\n");

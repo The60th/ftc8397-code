@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -12,10 +13,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 class MechBotBackUpBot extends MechBot {
     private DcMotor arm1;
     private DcMotor arm2;
-    private DcMotor lift;
+    public DcMotor lift;
     private Servo leftServo;
     private Servo rightServo;
-    private Servo liftServo;
+    private CRServo liftServo;
     public void init(HardwareMap ahwMap) {
 
         super.init(ahwMap);
@@ -26,23 +27,32 @@ class MechBotBackUpBot extends MechBot {
 
         leftServo = hardwareMap.servo.get("lServo");
         rightServo = hardwareMap.servo.get("rServo");
-        liftServo = hardwareMap.servo.get("liftServo");
+        liftServo = hardwareMap.crservo.get("liftServo");
 
         arm2.setDirection(DcMotorSimple.Direction.FORWARD);
-
+        arm1.setDirection(DcMotorSimple.Direction.FORWARD);
         arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     void setInTakePower(float power){
         arm1.setPower(power);
-        arm2.setPower(power);
+        arm2.setPower(-power);
     }
-    void setLiftPower(float power){
+    void setLiftPower(double power){
         lift.setPower(power);
     }
     void dropArm(){
         //Set servo pos -> need testing.
+    }
+    void clapIn(){
+        liftServo.setPower(1);
+    }
+    void clapOff(){
+        liftServo.setPower(-1);
+    }
+    void clapRest(){
+        liftServo.setPower(0);
     }
 
 

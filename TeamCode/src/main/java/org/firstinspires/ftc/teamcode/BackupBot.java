@@ -21,17 +21,41 @@ public class BackupBot extends LinearOpMode{
     public void runOpMode() throws InterruptedException {
         bot.init(hardwareMap);
         waitForStart();
+        while (opModeIsActive()) {
+            mechBotDriveControls.refreshGamepads(gamepad1, gamepad2);
+            if (gamepad2.right_trigger > .25) {
+                bot.setInTakePower(1);
+            } else if (gamepad2.left_trigger > .25) {
+                bot.setInTakePower(-1);
+            } else if (gamepad2.dpad_up) {
+                bot.lift.setPower(.40);
+            } else if (gamepad2.dpad_down) {
+                bot.lift.setPower(-.30);
+            }
+            else if(gamepad2.x){
+                bot.clapIn();
+            }
+            else if(gamepad2.a){
+                bot.clapOff();
+            }
+            else {
+                bot.setInTakePower(0);
+                bot.lift.setPower(0);
+                bot.clapRest();
+            }
 
-        while(opModeIsActive())
-        mechBotDriveControls.refreshGamepads(gamepad1,gamepad2);
-        if(mechBotDriveControls.isGamepadRefreshed()) {
-            if (mechBotDriveControls.joyStickMecnumDrive()) {
-            }else if(gamepad1.right_trigger > .25){bot.setInTakePower(1);}
-            else if(gamepad1.left_trigger > .25){bot.setInTakePower(-1);}
-            else if(gamepad1.dpad_up){bot.setLiftPower(.10f);}
-            else if(gamepad1.dpad_down){bot.setLiftPower(-.10f);}
-        }else{
-            telemetry.addData("", "Calling joyStickMecnumDrive without updating gamepads");
+            mechBotDriveControls.joyStickMecnumDrive();
+
+            if (gamepad1.x) {
+                mechBotDriveControls.driveDirectonByPower(MechBotDriveControls.XYZ.negX, 1);
+            } else if (gamepad1.b) {
+                mechBotDriveControls.driveDirectonByPower(MechBotDriveControls.XYZ.plusX, 1);
+            } else if (gamepad1.y) {
+                mechBotDriveControls.driveDirectonByPower(MechBotDriveControls.XYZ.plusY, 1);
+            } else if (gamepad1.a) {
+                mechBotDriveControls.driveDirectonByPower(MechBotDriveControls.XYZ.negY, 1);
+            }
+
         }
     }
 }

@@ -42,7 +42,7 @@ public class MechBot
      * Final constant equal to our robots encoder ticks per centimeter. Found by taking ticks per motor rotations times gear ratio divided by wheel diameter.
      */
     public final double TICKS_PER_CM = TICKS_PER_MOTOR_ROTATION/WHEEL_Circumference;
-    public final double MAX_TICKS_PER_SEC = 4000;
+    public final double MAX_TICKS_PER_SEC = 2400;
 
     /**
      * Final constant equal to robot length in centimeters.
@@ -187,6 +187,7 @@ public class MechBot
          * With the LED in active mode the sensor will emmit light and use this light to reflect any colors on object back at it and detect its color.
          */
         //sensorRGB_One.enableLed(false);
+        setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
 
