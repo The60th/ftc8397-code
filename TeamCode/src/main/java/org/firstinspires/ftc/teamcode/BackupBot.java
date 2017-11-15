@@ -28,9 +28,9 @@ public class BackupBot extends LinearOpMode{
             } else if (gamepad2.left_trigger > .25) {
                 bot.setInTakePower(-1);
             } else if (gamepad2.dpad_up) {
-                bot.lift.setPower(.40);
+                bot.lift.setPower(1.0);
             } else if (gamepad2.dpad_down) {
-                bot.lift.setPower(-.30);
+                bot.lift.setPower(-.40);
             }
             else if(gamepad2.x){
                 bot.clapIn();

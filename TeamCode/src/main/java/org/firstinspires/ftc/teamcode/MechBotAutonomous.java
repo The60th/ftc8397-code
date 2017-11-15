@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.vuforia.CameraDevice;
 
+import org.firstinspires.ftc.robotcore.external.Predicate;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public abstract class MechBotAutonomous extends LinearOpMode {
     private final float LINE_FOLLOW_ANGLE_FACTOR = 30.0f * ((float)Math.PI/180.0f); //30.0 Degrees converted to radians.
     private final float HEADING_CORECTION_FACTOR = 2.0f;
     private enum JewlSide{BLUE_LEFT,RED_LEFT,UNKNOWN}
+    protected float[] robotZXPhi = null;
 
     protected void setFlashOn(){
         CameraDevice.getInstance().setFlashTorchMode(true);
@@ -35,7 +37,7 @@ public abstract class MechBotAutonomous extends LinearOpMode {
         CameraDevice.getInstance().setFlashTorchMode(false);
     }
 
-    private void followLineProportionate(LineFollowSide side, ColorSensor colorSensor){
+    private void followLineProportionateOLD(LineFollowSide side, ColorSensor colorSensor){
         float[] hsvValues = new float[3];
         final float coeff = 20.0f;
         while (opModeIsActive()){
@@ -47,6 +49,22 @@ public abstract class MechBotAutonomous extends LinearOpMode {
             float angleDiff = side == LineFollowSide.LEFT? heading - INNER_TAPE_ANGLE_RADS : heading + INNER_TAPE_ANGLE_RADS;
             float vx = LINE_FOLLOW_SPEED * (float)Math.sin(angleDiff) + coeff * err * (float)Math.cos(angleDiff);
             float vy = LINE_FOLLOW_SPEED * (float)Math.cos(angleDiff) - coeff * err * (float)Math.sin(angleDiff);
+            float va = -heading * HEADING_CORECTION_FACTOR;
+            bot.setDriveSpeed(vx, vy, va);
+        }
+    }
+    private void followLineProportionate(LineFollowSide side, ColorSensor colorSensor){
+        float[] hsvValues = new float[3];
+        final float coeff = 20.0f;
+        while (opModeIsActive()){
+            float heading = bot.getHeadingRadians();
+            Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+            float err = side == LineFollowSide.LEFT? 0.5f - hsvValues[1] : hsvValues[1] - 0.5f;
+            if (err < -0.5) err = -0.4f;
+            else if (err > 0.5) err = 0.4f;
+            float angleDiff = side == LineFollowSide.LEFT? heading - INNER_TAPE_ANGLE_RADS : heading + INNER_TAPE_ANGLE_RADS;
+            float vx = -LINE_FOLLOW_SPEED * (float)Math.cos(angleDiff)  + coeff*err*(float)Math.sin(angleDiff);
+            float vy = LINE_FOLLOW_SPEED * (float)Math.sin(angleDiff) + coeff*err*(float)Math.cos(angleDiff);
             float va = -heading * HEADING_CORECTION_FACTOR;
             bot.setDriveSpeed(vx, vy, va);
         }
@@ -214,5 +232,26 @@ public abstract class MechBotAutonomous extends LinearOpMode {
 
         }
         return JewlSide.UNKNOWN;
+    }
+
+    public void driveDirectionGyro(float speedCMs, float directionAngleDegrees, Predicate finish){
+        bot.updateOdometry();
+        float directionAngleRadians = directionAngleDegrees * (float)Math.PI/180.0f;
+        while (opModeIsActive()){
+            float gyroHeading = bot.getHeadingRadians();
+            float odomHeading = bot.getOdomHeadingFromGyroHeading(gyroHeading);
+
+            this.robotZXPhi = bot.updateOdometry(robotZXPhi, odomHeading);
+
+            if(finish.isTrue())break;
+
+            float vx = -speedCMs * (float)Math.sin(directionAngleRadians - odomHeading);
+            float vy = speedCMs * (float)Math.cos(directionAngleRadians - odomHeading);
+            float va = -HEADING_CORECTION_FACTOR * gyroHeading;
+        }
+    }
+
+    protected interface Predicate{
+        public boolean isTrue();
     }
 }

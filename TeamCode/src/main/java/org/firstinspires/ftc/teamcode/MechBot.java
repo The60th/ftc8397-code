@@ -99,20 +99,10 @@ public class MechBot
     public DcMotor four;
 
     /**
-     * Modern Robotics I2c Gyro Sensor used for getting correct rotational readings to control rotation and correct in-correct movements.
-     */
-    //public ModernRoboticsI2cGyro sensorGyro;
-
-    /**
      * Default Constructor hardwareMap for the class.
      * Setting to null because of no use at current time.
      */
     HardwareMap hardwareMap = null;
-    Telemetry telemetry;
-
-    /**
-     * Default Constructor OmniBot for the class.
-     */
 
     /**
      * Initialize default Hardware interfaces.
@@ -126,23 +116,6 @@ public class MechBot
         hardwareMap = ahwMap;
 
         /**
-         * Below we take the predeclared objects from above and save them to places in the robot hardwareMap.
-         * This allows them to be quick referenced by as a string name.
-         */
-
-        /**
-         * Saving variable Modern Robotics Color Sensor variable to the hardwareMap path "mr" object can now be refrenced in a config path using "mr".
-         */
-        //sensorRGB_One = hardwareMap.colorSensor.get("mr");
-
-        //TODO Placeholder addon for secondary sensor
-        //sensorPlaceHolder = hardwareMap.colorSensor.get("mr2");
-        /**
-         * After saving the color sensor to a new object we rewrite I2c address to a custom value.
-         */
-        //sensorRGB_One.setI2cAddress(I2cAddr.create8bit(0x70));
-
-        /**
          * Saving all drive wheel motor values to their own string values inside the hardwareMap.
          * Each motor is saved as "M" followed by its number in inger form so Motor One is now "M1".
          */
@@ -150,13 +123,6 @@ public class MechBot
         two = hardwareMap.dcMotor.get("M2");
         three = hardwareMap.dcMotor.get("M3");
         four = hardwareMap.dcMotor.get("M4");
-
-        /**
-         * Saves the Modern Robotics Gyro Sensor to a string value inside the hardwareMap
-         * Then sets the Gyro default heading to the Cartesian mode for data reading.
-         */
-        //sensorGyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("gyro");
-        //sensorGyro.setHeadingMode(ModernRoboticsI2cGyro.HeadingMode.HEADING_CARTESIAN);
 
         three.setDirection(DcMotor.Direction.REVERSE);
         four.setDirection(DcMotor.Direction.REVERSE);
@@ -167,7 +133,6 @@ public class MechBot
          * More documentation on the setDriveMode function can be found within it.
          */
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         /**
@@ -186,7 +151,6 @@ public class MechBot
          * With the LED in passive mode the sensor will NOT emmit light and only detect and read data from light sources.
          * With the LED in active mode the sensor will emmit light and use this light to reflect any colors on object back at it and detect its color.
          */
-        //sensorRGB_One.enableLed(false);
         setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
@@ -250,13 +214,6 @@ public class MechBot
                             va * TICKS_PER_CM * R_ROOT_TWO /MAX_TICKS_PER_SEC);
     }
 
-   /*
-    public float[] getColorValues(){
-        float[] colorValues = {sensorRGB_One.red(),sensorRGB_One.green(),sensorRGB_One.blue()};
-       return colorValues;
-    }
-
-     */
     public void updateOdometry(){
         last_Wheel_Ticks.put(0,one.getCurrentPosition());
         last_Wheel_Ticks.put(1,two.getCurrentPosition());
@@ -289,7 +246,6 @@ public class MechBot
         float newY = y+deltaRobotPos.get(1)*sin - deltaRobotPos.get(0)*cosin;
         float newTheta = theta+deltaRobotPos.get(2);
         last_Wheel_Ticks = curTicks;
-       // last_Gyro_Theta = (float)((double)-sensorGyro.getIntegratedZValue()*(Math.PI/180.0));
         return new float[]{newX,newY,newTheta};
     }
 
@@ -301,30 +257,30 @@ public class MechBot
      * @param newThetaGyro
      * @return
      */
-    public float[] updateOdometry(float x,float y,float theta,float newThetaGyro){
-        return null;
-    }
-
-    /*public float[] updateOdometryGyro(float x,float y,float theta){
+    public float[] updateOdometry(float[] lastPos, float newOdomHeading){
+        float x = lastPos[0];
+        float y = lastPos[1];
+        float theta = lastPos[2];
         VectorF curTicks = new VectorF(one.getCurrentPosition(),two.getCurrentPosition(),three.getCurrentPosition(),four.getCurrentPosition());
         VectorF newTicks = curTicks.subtracted(last_Wheel_Ticks);
-        VectorF deltaWheelCM = newTicks.multiplied((float)(1.0f/TICKS_PER_CM));
+        VectorF deltaWheelCM = newTicks.multiplied((float)(1.0/TICKS_PER_CM));
 
         VectorF deltaRobotPos = WHEEL_ROBOT_TRANSFORM.multiplied(deltaWheelCM);
-        float newGyroTheta = (float)((double)-sensorGyro.getIntegratedZValue()*(Math.PI/180.0));
-        float deltaGyroTheta = newGyroTheta-last_Gyro_Theta;
 
-        final float sin = (float)(Math.sin(theta+deltaGyroTheta/2.0));
-        final float cosin = (float)(Math.cos(theta+deltaGyroTheta/2.0));
+        final float sin = (float)(Math.sin((theta + newOdomHeading) / 2.0f) );
+        final float cosin = (float)(Math.cos((theta + newOdomHeading) / 2.0f));
 
         float newX = x+deltaRobotPos.get(0)*sin +deltaRobotPos.get(1)*cosin;
         float newY = y+deltaRobotPos.get(1)*sin - deltaRobotPos.get(0)*cosin;
-        float newTheta = theta+newGyroTheta;
-        last_Wheel_Ticks = newTicks;
-        last_Gyro_Theta = newGyroTheta;
+        last_Wheel_Ticks = curTicks;
+        return new float[]{newX,newY,newOdomHeading};
+    }
 
-        return new float[]{newX,newY,newTheta};
-    }*/
-
+    public float getOdomHeadingFromGyroHeading(float gyroHeading){
+        return (float)VuMarkNavigator.NormalizeAngle(gyroHeading + (float)Math.PI / 2.0f);
+    }
+    public float getGyroHeadingFromOdomHeading(float odomHeading){
+        return (float)VuMarkNavigator.NormalizeAngle(odomHeading - (float)Math.PI / 2.0f);
+    }
 }
 
