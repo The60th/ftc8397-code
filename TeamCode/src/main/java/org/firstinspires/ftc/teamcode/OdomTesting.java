@@ -5,13 +5,16 @@ import android.graphics.Color;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.mechbot.MechBotDriveControls;
+import org.firstinspires.ftc.teamcode.mechbot.MechBotSensor;
+
 /**
  * Created by FTC Team 8397 on 9/29/2017.
  */
 @TeleOp(name="OdomTesting", group="Rev")
 public class OdomTesting extends LinearOpMode {
     private MechBotSensor mechBot = new MechBotSensor();
-    private  MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1,gamepad2,mechBot);
+    private MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1,gamepad2,mechBot);
     private float[] driveHeading = new float[]{0,0,0};
     @Override
     public void runOpMode() throws InterruptedException {

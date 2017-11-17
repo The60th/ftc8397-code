@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.mechbot;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -6,11 +6,13 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.mechbot.MechBot;
+
 /**
  * Created by FTC Team 8397 on 10/30/2017.
  */
 
-class MechBotBackUpBot extends MechBot {
+public class MechBotBackUpBot extends MechBot {
     private DcMotor arm1;
     private DcMotor arm2;
     public DcMotor lift;
@@ -35,23 +37,23 @@ class MechBotBackUpBot extends MechBot {
         arm2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
-    void setInTakePower(float power){
+    public void setInTakePower(float power){
         arm1.setPower(power);
         arm2.setPower(-power);
     }
-    void setLiftPower(double power){
+    public void setLiftPower(double power){
         lift.setPower(power);
     }
-    void dropArm(){
+    public void dropArm(){
         //Set servo pos -> need testing.
     }
-    void clapIn(){
+    public void clapIn(){
         liftServo.setPower(1);
     }
-    void clapOff(){
+    public void clapOff(){
         liftServo.setPower(-1);
     }
-    void clapRest(){
+    public void clapRest(){
         liftServo.setPower(0);
     }
 

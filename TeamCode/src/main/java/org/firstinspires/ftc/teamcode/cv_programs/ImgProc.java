@@ -1,7 +1,4 @@
-package org.firstinspires.ftc.teamcode;
-
-import android.graphics.Bitmap;
-import android.graphics.Color;
+package org.firstinspires.ftc.teamcode.cv_programs;
 
 /**
  * Created by JimLori on 7/4/2017.

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.mechbot;
 
 import android.graphics.Color;
 
@@ -8,8 +8,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.vuforia.CameraDevice;
 
-import org.firstinspires.ftc.robotcore.external.Predicate;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.teamcode.cv_programs.Blob;
+import org.firstinspires.ftc.teamcode.cv_programs.ImgProc;
+import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
@@ -83,7 +85,7 @@ public abstract class MechBotAutonomous extends LinearOpMode {
         final float vaMax = 0.2f * (float)Math.PI;
         float heading = bot.getHeadingRadians();
         float targetHeading = heading + angle;
-        float offset = (float)VuMarkNavigator.NormalizeAngle(targetHeading - heading);
+        float offset = (float) VuMarkNavigator.NormalizeAngle(targetHeading - heading);
 
         while (opModeIsActive() && Math.abs(offset) > tolerance) {
             float absAdjustedOffset = Math.abs(offset) - tolerance;

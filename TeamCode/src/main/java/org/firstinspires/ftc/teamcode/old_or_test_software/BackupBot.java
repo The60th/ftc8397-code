@@ -1,22 +1,18 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.old_or_test_software;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.vuforia.CameraDevice;
 
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import java.util.ArrayList;
-import java.util.concurrent.BlockingQueue;
+import org.firstinspires.ftc.teamcode.mechbot.MechBotDriveControls;
+import org.firstinspires.ftc.teamcode.mechbot.MechBotBackUpBot;
 
 /**
  * Created by FTC Team 8397 on 10/30/2017.
  */
 @TeleOp(name="BackupBot", group="Other")
 public class BackupBot extends LinearOpMode{
-    private MechBotBackUpBot bot = new MechBotBackUpBot();
-    private  MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1,gamepad2,bot);
+    public MechBotBackUpBot bot = new MechBotBackUpBot();
+    private MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1,gamepad2,bot);
     @Override
     public void runOpMode() throws InterruptedException {
         bot.init(hardwareMap);

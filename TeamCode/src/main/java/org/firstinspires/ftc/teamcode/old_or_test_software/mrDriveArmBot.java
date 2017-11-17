@@ -1,8 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.old_or_test_software;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+import org.firstinspires.ftc.teamcode.mechbot.MechBot;
+import org.firstinspires.ftc.teamcode.mechbot.MechBotDriveControls;
 
 /**
  * Created by FTC Team 8397 on 9/29/2017.
@@ -10,7 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp(name="MDarm", group="Other")
 public class mrDriveArmBot extends LinearOpMode {
     private MechBot mechBot = new MechBot();
-    private  MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1,gamepad2,mechBot,1);
+    private MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1,gamepad2,mechBot,1);
     private float[] driveHeading = new float[]{0,0,0};
     @Override
     public void runOpMode() throws InterruptedException {

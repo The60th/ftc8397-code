@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.mechbot;
 
 
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -11,7 +11,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.i2c.BNO055Enhanced;
 import org.firstinspires.ftc.teamcode.i2c.BNO055EnhancedImpl;
-
+import org.firstinspires.ftc.teamcode.mechbot.MechBot;
+import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
 
 @SuppressWarnings("all")
@@ -28,7 +29,7 @@ public class MechBotSensor extends MechBot
 
 
     //Change to our custom BNO055 class.
-    BNO055EnhancedImpl imu;
+    public BNO055EnhancedImpl imu;
 
     private float initGyroHeading = 0;
 
@@ -69,7 +70,7 @@ public class MechBotSensor extends MechBot
     public float getHeadingRadians(){
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.RADIANS);
         float heading = angles.firstAngle + this.initGyroHeading;
-        return (float)VuMarkNavigator.NormalizeAngle(heading);
+        return (float) VuMarkNavigator.NormalizeAngle(heading);
     }
 }
 

@@ -1,9 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.cv_programs;
 
-import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.vuforia.CameraDevice;
-import com.vuforia.Vec2F;
 
 import java.util.ArrayList;
 

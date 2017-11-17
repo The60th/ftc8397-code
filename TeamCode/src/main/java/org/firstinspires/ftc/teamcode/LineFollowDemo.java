@@ -8,6 +8,9 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.teamcode.mechbot.MechBotSensor;
+import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
+
 /**
  * Created by FTC Team 8397 on 10/27/2017.
  */
@@ -164,7 +167,7 @@ public class LineFollowDemo extends LinearOpMode {
         final float vaMax = 0.2f * (float)Math.PI;
         float heading = bot.getHeadingRadians();
         float targetHeading = heading + angle;
-        float offset = (float)VuMarkNavigator.NormalizeAngle(targetHeading - heading);
+        float offset = (float) VuMarkNavigator.NormalizeAngle(targetHeading - heading);
 
         while (opModeIsActive() && Math.abs(offset) > tolerance) {
             float absAdjustedOffset = Math.abs(offset) - tolerance;

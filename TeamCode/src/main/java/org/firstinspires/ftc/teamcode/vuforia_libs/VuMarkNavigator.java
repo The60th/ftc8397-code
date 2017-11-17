@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.vuforia_libs;
 
 /**
  * Created by JimLori on 11/6/2016.

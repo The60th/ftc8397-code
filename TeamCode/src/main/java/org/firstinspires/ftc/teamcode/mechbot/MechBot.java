@@ -1,17 +1,12 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.mechbot;
 
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsUsbDcMotorController;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.I2cAddr;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.GeneralMatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.MatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
 
 @SuppressWarnings("all")
@@ -102,7 +97,7 @@ public class MechBot
      * Default Constructor hardwareMap for the class.
      * Setting to null because of no use at current time.
      */
-    HardwareMap hardwareMap = null;
+    public HardwareMap hardwareMap = null;
 
     /**
      * Initialize default Hardware interfaces.
@@ -277,7 +272,7 @@ public class MechBot
     }
 
     public float getOdomHeadingFromGyroHeading(float gyroHeading){
-        return (float)VuMarkNavigator.NormalizeAngle(gyroHeading + (float)Math.PI / 2.0f);
+        return (float) VuMarkNavigator.NormalizeAngle(gyroHeading + (float)Math.PI / 2.0f);
     }
     public float getGyroHeadingFromOdomHeading(float odomHeading){
         return (float)VuMarkNavigator.NormalizeAngle(odomHeading - (float)Math.PI / 2.0f);
