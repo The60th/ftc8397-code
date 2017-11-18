@@ -22,15 +22,18 @@ import java.util.concurrent.BlockingQueue;
 
 public abstract class MechBotAutonomous extends LinearOpMode {
 
-    protected MechBotSensor bot = new MechBotSensor();
-    private enum LineFollowSide {LEFT,RIGHT}
+    public MechBotSensor bot = new MechBotSensor();
+    public enum LineFollowSide {LEFT,RIGHT}
     private final float INNER_TAPE_ANGLE = 33.70f;
     private final float INNER_TAPE_ANGLE_RADS = INNER_TAPE_ANGLE * ((float)Math.PI/180.0f);
     private final float LINE_FOLLOW_SPEED = 10.0f; //10 centimeters per second.
     private final float LINE_FOLLOW_ANGLE_FACTOR = 30.0f * ((float)Math.PI/180.0f); //30.0 Degrees converted to radians.
     private final float HEADING_CORECTION_FACTOR = 2.0f;
-    private enum JewlSide{BLUE_LEFT,RED_LEFT,UNKNOWN}
+    protected enum JewlSide{BLUE_LEFT,RED_LEFT,UNKNOWN}
     protected float[] robotZXPhi = null;
+
+    protected final String DRIVE_DIRECTION_GYRO_TAG = "DRIVE_DIRECTION_GYRO";
+    protected final boolean DRIVE_DIRECTION_GYRO_LOG = true;
 
     protected void setFlashOn(){
         CameraDevice.getInstance().setFlashTorchMode(true);
@@ -55,7 +58,7 @@ public abstract class MechBotAutonomous extends LinearOpMode {
             bot.setDriveSpeed(vx, vy, va);
         }
     }
-    private void followLineProportionate(LineFollowSide side, ColorSensor colorSensor){
+    public void followLineProportionate(LineFollowSide side, ColorSensor colorSensor){
         float[] hsvValues = new float[3];
         final float coeff = 20.0f;
         while (opModeIsActive()){
@@ -237,19 +240,31 @@ public abstract class MechBotAutonomous extends LinearOpMode {
     }
 
     public void driveDirectionGyro(float speedCMs, float directionAngleDegrees, Predicate finish){
+        if (DRIVE_DIRECTION_GYRO_LOG) RobotLog.dd(DRIVE_DIRECTION_GYRO_TAG,"Entering driveDirectionGyro");
         bot.updateOdometry();
         float directionAngleRadians = directionAngleDegrees * (float)Math.PI/180.0f;
         while (opModeIsActive()){
             float gyroHeading = bot.getHeadingRadians();
             float odomHeading = bot.getOdomHeadingFromGyroHeading(gyroHeading);
 
+            if (DRIVE_DIRECTION_GYRO_LOG) RobotLog.dd(DRIVE_DIRECTION_GYRO_TAG, "gHeading = %.1f  oHeading = %.1f",
+                    gyroHeading * Math.PI/180.0, odomHeading * Math.PI/180.0);
+
             this.robotZXPhi = bot.updateOdometry(robotZXPhi, odomHeading);
+
+            if (DRIVE_DIRECTION_GYRO_LOG) RobotLog.dd(DRIVE_DIRECTION_GYRO_TAG, "z = %.1f  x = %.1f  Phi = %.1f",
+                    robotZXPhi[0], robotZXPhi[1], robotZXPhi[2] * Math.PI/180.0);
 
             if(finish.isTrue())break;
 
             float vx = -speedCMs * (float)Math.sin(directionAngleRadians - odomHeading);
             float vy = speedCMs * (float)Math.cos(directionAngleRadians - odomHeading);
             float va = -HEADING_CORECTION_FACTOR * gyroHeading;
+
+            if (DRIVE_DIRECTION_GYRO_LOG) RobotLog.dd(DRIVE_DIRECTION_GYRO_TAG, "vx = %.1f  vy = %.1f  va = %.2f", vx, vy, va);
+
+            bot.setDriveSpeed(vx,vy,va);
+
         }
     }
 

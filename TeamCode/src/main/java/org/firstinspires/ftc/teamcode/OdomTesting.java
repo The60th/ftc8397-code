@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.mechbot.MechBotDriveControls;
+import org.firstinspires.ftc.teamcode.mechbot.MechBotNickBot;
 import org.firstinspires.ftc.teamcode.mechbot.MechBotSensor;
 
 /**
@@ -13,7 +14,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotSensor;
  */
 @TeleOp(name="OdomTesting", group="Rev")
 public class OdomTesting extends LinearOpMode {
-    private MechBotSensor mechBot = new MechBotSensor();
+    private MechBotNickBot mechBot = new MechBotNickBot();
     private MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1,gamepad2,mechBot);
     private float[] driveHeading = new float[]{0,0,0};
     @Override
@@ -50,6 +51,34 @@ public class OdomTesting extends LinearOpMode {
             }else{
                 telemetry.addData("", "Calling joyStickMecnumDrive without updating gamepads");
             }
+            if(gamepad2.dpad_up){
+                mechBot.driveArm(-1.0f);
+            }else if(gamepad2.dpad_down){
+                mechBot.driveArm(1.0f);
+            }else{
+                mechBot.driveArm(.0f);
+
+            }
+
+            if(gamepad2.x){
+                mechBot.liftAdjuster.setPower(1);
+            }
+            else if(gamepad2.b){
+                mechBot.liftAdjuster.setPower(-1);
+            }
+            else{
+                mechBot.liftAdjuster.setPower(0);
+            }
+
+            if(gamepad2.y){
+               mechBot.blockLift.setPower(1);
+            }else if(gamepad2.a){
+                mechBot.blockLift.setPower(-1);
+            }
+            else{
+                mechBot.blockLift.setPower(0);
+            }
+
             float[] hsvValues = new float[3];
             float[] hsvValues2 = new float[3];
 
