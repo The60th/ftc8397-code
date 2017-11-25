@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.matrices.GeneralMatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.MatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
 
@@ -41,7 +42,7 @@ public class MechBot
      * Final constant equal to our robots encoder ticks per centimeter. Found by taking ticks per motor rotations times gear ratio divided by wheel diameter.
      */
     public final double TICKS_PER_CM = TICKS_PER_MOTOR_ROTATION/WHEEL_Circumference;
-    public final double MAX_TICKS_PER_SEC = 1200;
+    public final double MAX_TICKS_PER_SEC = 2400;
 
     /**
      * Final constant equal to robot length in centimeters.
@@ -120,8 +121,8 @@ public class MechBot
         three = hardwareMap.dcMotor.get("M3");
         four = hardwareMap.dcMotor.get("M4");
 
-        three.setDirection(DcMotor.Direction.REVERSE);
-        four.setDirection(DcMotor.Direction.REVERSE);
+        one.setDirection(DcMotor.Direction.REVERSE);
+        two.setDirection(DcMotor.Direction.REVERSE);
 
         /**
          * Call our setDriveMode function and pass it the constant DcMotor.RunMode.Run_Using_Encoder so it sets all drive train motors to use encoders.
@@ -253,40 +254,44 @@ public class MechBot
      * @param newThetaGyro
      * @return
      */
+
+    //Updated to .2f rather then .1f for logging.
     public float[] updateOdometry(float[] lastPos, float newOdomHeading){
-        if (LOG_ODOMETRY) {
-            RobotLog.dd(ODOMETRY_TAG,"Entering updateOdometry");
-            RobotLog.dd(ODOMETRY_TAG, "lastPos = %.1f %.1f %.1f", lastPos[0], lastPos[1], lastPos[2]);
-            RobotLog.dd(ODOMETRY_TAG, "newOdomHeading = %.1f", newOdomHeading);
-            RobotLog.dd(ODOMETRY_TAG, "lastWheelTicks = %.0f %.0f %.0f %.0f", last_Wheel_Ticks.get(0),
-                    last_Wheel_Ticks.get(1), last_Wheel_Ticks.get(2), last_Wheel_Ticks.get(3));
-        }
-        float x = lastPos[0];
-        float y = lastPos[1];
-        float theta = lastPos[2];
-        VectorF curTicks = new VectorF(one.getCurrentPosition(),two.getCurrentPosition(),three.getCurrentPosition(),four.getCurrentPosition());
-        VectorF newTicks = curTicks.subtracted(last_Wheel_Ticks);
-        VectorF deltaWheelCM = newTicks.multiplied((float)(1.0/TICKS_PER_CM));
-        VectorF deltaRobotPos = WHEEL_ROBOT_TRANSFORM.multiplied(deltaWheelCM);
-        if (LOG_ODOMETRY){
-            RobotLog.dd(ODOMETRY_TAG, "curTicks = %.0f %.0f %.0f %.0f", curTicks.get(0), curTicks.get(1), curTicks.get(2), curTicks.get(3));
-            RobotLog.dd(ODOMETRY_TAG, "newTicks = %.0f %.0f %.0f %.0f", newTicks.get(0), newTicks.get(1), newTicks.get(2), newTicks.get(3));
-            RobotLog.dd(ODOMETRY_TAG, "deltaWheelCM = %.1f %.1f %.1f %.1f", deltaWheelCM.get(0), deltaWheelCM.get(1),
-                    deltaWheelCM.get(2), deltaWheelCM.get(3));
-            RobotLog.dd(ODOMETRY_TAG, "deltaRobotPos = %.1f %.1f %.1f %.1f", deltaRobotPos.get(0), deltaRobotPos.get(1),
-                    deltaRobotPos.get(2), deltaRobotPos.get(3));
-        }
+            if (LOG_ODOMETRY) {
+                BetaLog.dd(ODOMETRY_TAG, "Entering updateOdometry");
+                BetaLog.dd(ODOMETRY_TAG, "lastPos = %.2f %.2f %.2f", lastPos[0], lastPos[1], lastPos[2]);
+                BetaLog.dd(ODOMETRY_TAG, "newOdomHeading = %.2f", newOdomHeading);
+                BetaLog.dd(ODOMETRY_TAG, "lastWheelTicks = %.0f %.0f %.0f %.0f", last_Wheel_Ticks.get(0),
+                        last_Wheel_Ticks.get(1), last_Wheel_Ticks.get(2), last_Wheel_Ticks.get(3));
+            }
+            float x = lastPos[0];
+            float y = lastPos[1];
+            float theta = lastPos[2];
+            VectorF curTicks = new VectorF(one.getCurrentPosition(), two.getCurrentPosition(), three.getCurrentPosition(), four.getCurrentPosition());
+            VectorF newTicks = curTicks.subtracted(last_Wheel_Ticks);
+            VectorF deltaWheelCM = newTicks.multiplied((float) (1.0 / TICKS_PER_CM));
+            VectorF deltaRobotPos = WHEEL_ROBOT_TRANSFORM.multiplied(deltaWheelCM);
+            if (LOG_ODOMETRY) {
+                BetaLog.dd(ODOMETRY_TAG, "curTicks = %.0f %.0f %.0f %.0f", curTicks.get(0), curTicks.get(1), curTicks.get(2), curTicks.get(3));
+                BetaLog.dd(ODOMETRY_TAG, "newTicks = %.0f %.0f %.0f %.0f", newTicks.get(0), newTicks.get(1), newTicks.get(2), newTicks.get(3));
+                BetaLog.dd(ODOMETRY_TAG, "deltaWheelCM = %.2f %.2f %.2f %.2f", deltaWheelCM.get(0), deltaWheelCM.get(1),
+                        deltaWheelCM.get(2), deltaWheelCM.get(3));
+                BetaLog.dd(ODOMETRY_TAG, "deltaRobotPos = %.2f %.2f %.2f %.2f", deltaRobotPos.get(0), deltaRobotPos.get(1),
+                        deltaRobotPos.get(2), deltaRobotPos.get(3));
+            }
 
-        final float sin = (float)(Math.sin((theta + newOdomHeading) / 2.0f) );
-        final float cosin = (float)(Math.cos((theta + newOdomHeading) / 2.0f));
+            final float sin = (float) (Math.sin((theta + newOdomHeading) / 2.0f));
+            final float cosin = (float) (Math.cos((theta + newOdomHeading) / 2.0f));
 
-        float newX = x+deltaRobotPos.get(0)*sin +deltaRobotPos.get(1)*cosin;
-        float newY = y+deltaRobotPos.get(1)*sin - deltaRobotPos.get(0)*cosin;
+            float newX = x + deltaRobotPos.get(0) * sin + deltaRobotPos.get(1) * cosin;
+            float newY = y + deltaRobotPos.get(1) * sin - deltaRobotPos.get(0) * cosin;
 
-        if (LOG_ODOMETRY) RobotLog.dd(ODOMETRY_TAG, "newPos = %.1f %.1f %.2f", newX, newY, newOdomHeading);
-        last_Wheel_Ticks = curTicks;
-        return new float[]{newX,newY,newOdomHeading};
+            if (LOG_ODOMETRY)
+                BetaLog.dd(ODOMETRY_TAG, "newPos = %.2f %.2f %.2f", newX, newY, newOdomHeading);
+            last_Wheel_Ticks = curTicks;
+            return new float[]{newX, newY, newOdomHeading};
     }
+
 
     public float getOdomHeadingFromGyroHeading(float gyroHeading){
         return (float) VuMarkNavigator.NormalizeAngle(gyroHeading + (float)Math.PI / 2.0f);

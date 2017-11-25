@@ -8,6 +8,7 @@ package org.firstinspires.ftc.teamcode.vuforia_libs;
 import android.graphics.Bitmap;
 
 import com.qualcomm.ftcrobotcontroller.R;
+import com.vuforia.Box3D;
 import com.vuforia.CameraDevice;
 import com.vuforia.Image;
 import com.vuforia.PIXEL_FORMAT;
@@ -32,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 //import org.firstinspires.ftc.robotcore.internal.VuforiaLocalizerImpl;
 
 public class VuMarkNavigator {
-
+    public static Boolean isActive = false;
     private static VuforiaLocalizer vuforia;
     private static VuforiaTrackables targets;
     private static VuforiaTrackable target;
@@ -65,7 +66,7 @@ public class VuMarkNavigator {
         target.setLocation(TARGET_LOCATION);
         ((VuforiaTrackableDefaultListener)target.getListener()).setPhoneInformation(PHONE_LOCATION_ON_ROBOT, CAMERA_DIRECTION);
         targets.activate();
-
+        isActive = true;
     }
 
     //Return the RelicRecoveryVuMark code of the visualized target (RIGHT, CENTER, LEFT); UNKNOWN if no target found.

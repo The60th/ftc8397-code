@@ -14,31 +14,24 @@ public class DoAlmostNothingTele extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        //Right left is considered from looking down at the robot with the rev mods on the right side of it facing forwards.
         bot.init(hardwareMap);
         waitForStart();
         while (opModeIsActive()) {
-            if (gamepad1.a) {
-                bot.one.setPower(.4);
-            } else {
-                bot.one.setPower(0);
-            }
-
-            if (gamepad1.x) {
-                bot.two.setPower(.4);
-            } else {
-                bot.two.setPower(0);
-            }
-
-            if (gamepad1.y) {
-                bot.three.setPower(.4);
-            } else {
-                bot.three.setPower(0);
-            }
-
-            if (gamepad1.b) {
-                bot.four.setPower(.4);
-            } else {
-                bot.four.setPower(0);
+            if (gamepad1.y) { //Drives right.
+                bot.setDriveSpeed(30, 0, 0);
+            } else if (gamepad1.a) { //Drives left.
+                bot.setDriveSpeed(-30, 0, 0);
+            } else if (gamepad1.b) { //Drives forwards
+                bot.setDriveSpeed(0, 30, 0);
+            } else if (gamepad1.x) { //Drives backwards
+                bot.setDriveSpeed(0, -30, 0);
+            }else if(gamepad1.right_bumper){//Spins right.
+                bot.setDriveSpeed(0, 0, 10);
+            }else if(gamepad1.left_bumper){ //Spins left
+                bot.setDriveSpeed(0, 0, -10);
+            }else{
+                bot.setDriveSpeed(0,0,0);
             }
 
         }

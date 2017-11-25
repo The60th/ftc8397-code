@@ -48,7 +48,7 @@ public class MechBotDriveControls {
                 a = gamepad1.right_trigger;
             }
         }
-        mechBot.setDrivePower(((x/1.25f)/this.speedScaler), (-y/this.speedScaler), (-a/this.speedScaler));
+        mechBot.setDrivePower((x/this.speedScaler), (-y/this.speedScaler), (-a/this.speedScaler));
         return true;
     }
 

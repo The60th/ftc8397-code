@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.debug_programs;
         import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
         import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+        import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
         import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
         import org.firstinspires.ftc.teamcode.mechbot.MechBotSensor;
 
@@ -13,17 +14,25 @@ package org.firstinspires.ftc.teamcode.debug_programs;
 public class DoAlmostNothing extends MechBotAutonomous {
     @Override
     public void runOpMode() throws InterruptedException {
-        bot.init(hardwareMap);
-        waitForStart();
+            try{
+                BetaLog.initialize();
 
-        robotZXPhi = new float[]{0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+            bot.init(hardwareMap);
+            waitForStart();
 
-        driveDirectionGyro(20, 90,
-                new Predicate() {
-                    @Override
-                    public boolean isTrue() {
-                        return robotZXPhi[1] > 100;
-                    }
-                });
+            robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+
+            driveDirectionGyro(30, 90,
+                    new Predicate() {
+                        @Override
+                        public boolean isTrue() {
+                            return robotZXPhi[1] > 100;
+                        }
+                    });
+
+    }
+    finally {
+                BetaLog.close();
+            }
     }
 }

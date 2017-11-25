@@ -16,6 +16,6 @@ public class DoAlmostNothingLineFollow extends MechBotAutonomous {
         bot.init(hardwareMap);
         waitForStart();
 
-        followLineProportionate(LineFollowSide.LEFT, bot.sensorMRColor);
+        //followLineProportionate(LineFollowSide.LEFT, bot.sensorMRColor);
     }
 }

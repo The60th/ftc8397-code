@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.mechbot.MechBotDriveControls;
 import org.firstinspires.ftc.teamcode.mechbot.MechBotNickBot;
-import org.firstinspires.ftc.teamcode.mechbot.MechBotSensor;
 
 /**
  * Created by FTC Team 8397 on 9/29/2017.
@@ -61,22 +60,30 @@ public class OdomTesting extends LinearOpMode {
             }
 
             if(gamepad2.x){
-                mechBot.liftAdjuster.setPower(1);
+                mechBot.blockSlideCRServo.setPower(1);
             }
             else if(gamepad2.b){
-                mechBot.liftAdjuster.setPower(-1);
+                mechBot.blockSlideCRServo.setPower(-1);
             }
             else{
-                mechBot.liftAdjuster.setPower(0);
+                mechBot.blockSlideCRServo.setPower(0);
+            }
+
+            if(gamepad2.right_bumper){
+                mechBot.blockSmackerKickerCRServo.setPower(1);
+            }else if(gamepad2.left_bumper){
+                mechBot.blockSmackerKickerCRServo.setPower(-1);
+            }else{
+                mechBot.blockSmackerKickerCRServo.setPower(0);
             }
 
             if(gamepad2.y){
-               mechBot.blockLift.setPower(1);
+               mechBot.blockLiftMotor.setPower(1);
             }else if(gamepad2.a){
-                mechBot.blockLift.setPower(-1);
+                mechBot.blockLiftMotor.setPower(-.5);
             }
             else{
-                mechBot.blockLift.setPower(0);
+                mechBot.blockLiftMotor.setPower(0);
             }
 
             float[] hsvValues = new float[3];
