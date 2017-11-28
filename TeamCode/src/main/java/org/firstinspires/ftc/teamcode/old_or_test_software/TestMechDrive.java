@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.old_or_test_software;
 
         import android.graphics.Color;
 
+        import com.qualcomm.robotcore.eventloop.opmode.Disabled;
         import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
         import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -15,6 +16,7 @@ package org.firstinspires.ftc.teamcode.old_or_test_software;
  * Created by FTC Team 8397 on 9/22/2017.
  */
 @TeleOp(name="TestMechDrive", group="Rev")
+@Disabled
 public class TestMechDrive extends LinearOpMode {
     private MechBotSensor mechBot = new MechBotSensor();
     private boolean drive = true;
@@ -101,10 +103,10 @@ public class TestMechDrive extends LinearOpMode {
 
                 // update previous state variable.
                 bPrevState = bCurrState;
-                Color.RGBToHSV((int) (mechBot.sensorREVColor.red() * SCALE_FACTOR),
-                        (int) (mechBot.sensorREVColor.green() * SCALE_FACTOR),
-                        (int) (mechBot.sensorREVColor.blue() * SCALE_FACTOR),
-                        hsvValues);
+              //  Color.RGBToHSV((int) (mechBot.sensorREVColor.red() * SCALE_FACTOR),
+                  //      (int) (mechBot.sensorREVColor.green() * SCALE_FACTOR),
+                   //     (int) (mechBot.sensorREVColor.blue() * SCALE_FACTOR),
+                    ///    hsvValues);
 
                 // send the info back to driver station using telemetry function.
                 telemetry.addData("***<Sensor Mode>***","");
@@ -112,13 +114,13 @@ public class TestMechDrive extends LinearOpMode {
 
                 telemetry.addData("*****Rev Robotics Color Distance*****","");
 
-                telemetry.addData("Distance (cm)",
-                        String.format(Locale.US, "%.02f", mechBot.sensorRevDistance.getDistance(DistanceUnit.CM)));
-                telemetry.addData("Alpha", mechBot.sensorREVColor.alpha());
-                telemetry.addData("Red  ", mechBot.sensorREVColor.red());
-                telemetry.addData("Green", mechBot.sensorREVColor.green());
-                telemetry.addData("Blue ", mechBot.sensorREVColor.blue());
-                telemetry.addData("Hue", hsvValues[0]);
+                //telemetry.addData("Distance (cm)",
+                //        String.format(Locale.US, "%.02f", mechBot.sensorRevDistance.getDistance(DistanceUnit.CM)));
+               // telemetry.addData("Alpha", mechBot.sensorREVColor.alpha());
+               // telemetry.addData("Red  ", mechBot.sensorREVColor.red());
+               // telemetry.addData("Green", mechBot.sensorREVColor.green());
+               // telemetry.addData("Blue ", mechBot.sensorREVColor.blue());
+               // telemetry.addData("Hue", hsvValues[0]);
                 //Sensor stuff.
                 telemetry.addData("","\n");
 

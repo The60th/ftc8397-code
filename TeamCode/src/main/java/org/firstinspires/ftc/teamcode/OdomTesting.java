@@ -20,7 +20,7 @@ public class OdomTesting extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         mechBot.init(hardwareMap);
         mechBot.sensorMRColor.enableLed(true);
-        //mechBot.sensorMRColor2.enableLed(true);
+        mechBot.sensorMRColor2.enableLed(true);
         telemetry.addData("Ready to go: ","");
         telemetry.update();
         mechBot.updateOdometry();
@@ -28,7 +28,7 @@ public class OdomTesting extends LinearOpMode {
         telemetry.addData("Starting","");
         telemetry.update();
         while (opModeIsActive()) {
-          //  driveHeading = mechBot.updateOdometry(driveHeading);
+           driveHeading = mechBot.updateOdometry(driveHeading);
            telemetry.addData("","Robot x %.2f  y %.2f  th %.2f ",driveHeading[0],driveHeading[1],(driveHeading[2] * (180.0/Math.PI)));
            telemetry.addData("","Encoder 1 %d Encoder 2 %d Encoder 3 %d Encoder 4 %d",
                    mechBot.one.getCurrentPosition(),mechBot.two.getCurrentPosition(),
@@ -90,11 +90,11 @@ public class OdomTesting extends LinearOpMode {
             float[] hsvValues2 = new float[3];
 
             Color.RGBToHSV(mechBot.sensorMRColor.red() * 8, mechBot.sensorMRColor.green() * 8, mechBot.sensorMRColor.blue() * 8, hsvValues);
-            //Color.RGBToHSV(mechBot.sensorMRColor2.red() * 8, mechBot.sensorMRColor2.green() * 8, mechBot.sensorMRColor2.blue() * 8, hsvValues2);
+            Color.RGBToHSV(mechBot.sensorMRColor2.red() * 8, mechBot.sensorMRColor2.green() * 8, mechBot.sensorMRColor2.blue() * 8, hsvValues2);
             telemetry.addData("","Sensor One: Red: %d Green %d Blue %d Hue: %f Sat: %f Value:",mechBot.sensorMRColor.red(),mechBot.sensorMRColor.green(),mechBot.sensorMRColor.blue(),
                  hsvValues[0],hsvValues[1],hsvValues[2]);
-            //telemetry.addData("","Sensor Two: Red: %d Green %d Blue %d Hue: %f Sat: %f Value:",mechBot.sensorMRColor2.red(),mechBot.sensorMRColor2.green(),mechBot.sensorMRColor2.blue(),
-            //        hsvValues2[0],hsvValues2[1],hsvValues2[2]);
+            telemetry.addData("demo","Sensor Two: Red: %d Green %d Blue %d Hue: %f Sat: %f Value:",mechBot.sensorMRColor2.red(),mechBot.sensorMRColor2.green(),mechBot.sensorMRColor2.blue(),
+                   hsvValues2[0],hsvValues2[1],hsvValues2[2]);
             telemetry.update();
 
         }

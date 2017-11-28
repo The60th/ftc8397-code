@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
 
 public class RedMidStart extends MechBotAutonomous {
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runLoggingOpmode() {
 
     }
 }

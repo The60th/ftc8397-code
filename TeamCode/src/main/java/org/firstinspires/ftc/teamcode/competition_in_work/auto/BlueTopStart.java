@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 @Autonomous( name= "BlueTop", group = "Auto")
 public class BlueTopStart extends MechBotAutonomous {
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runLoggingOpmode() throws InterruptedException{
 
         //Call this initAuto method passing in teamcolor and our cv timeout values.
         //After this we can use the variables of cryptokey and target side to figure out what to do next.

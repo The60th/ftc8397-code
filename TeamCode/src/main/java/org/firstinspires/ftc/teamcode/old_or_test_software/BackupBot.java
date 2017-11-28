@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.old_or_test_software;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotBackUpBot;
  * Created by FTC Team 8397 on 10/30/2017.
  */
 @TeleOp(name="BackupBot", group="Other")
+@Disabled
 public class BackupBot extends LinearOpMode{
     public MechBotBackUpBot bot = new MechBotBackUpBot();
     private MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1,gamepad2,bot);

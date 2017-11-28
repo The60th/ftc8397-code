@@ -19,6 +19,6 @@ public abstract class LoggingLinearOpMode extends LinearOpMode {
         }
     }
 
-    public abstract void runLoggingOpmode();
+    public abstract void runLoggingOpmode() throws InterruptedException;
 
 }

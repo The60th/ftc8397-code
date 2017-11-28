@@ -31,7 +31,7 @@ public class MechBot
     /**
      * Final constant equal to the number of ticks per motor rotation with a NeverRest Motor, using a 1-40 Gearbox reduction.
      */
-    public final double TICKS_PER_MOTOR_ROTATION = 520; // With a 1 to 40 gearbox.
+    public final double TICKS_PER_MOTOR_ROTATION = 560; // With a 1 to 40 gearbox.
 
     /**
      * Final constant equal to current robot wheel circumference in cm. Measurement is in inches then convented to centimeters with the value 2.54
@@ -42,7 +42,7 @@ public class MechBot
      * Final constant equal to our robots encoder ticks per centimeter. Found by taking ticks per motor rotations times gear ratio divided by wheel diameter.
      */
     public final double TICKS_PER_CM = TICKS_PER_MOTOR_ROTATION/WHEEL_Circumference;
-    public final double MAX_TICKS_PER_SEC = 2400;
+    public final double MAX_TICKS_PER_SEC = 2500;
 
     /**
      * Final constant equal to robot length in centimeters.
@@ -130,7 +130,7 @@ public class MechBot
          * More documentation on the setDriveMode function can be found within it.
          */
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
         setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         /**
          * Call setDrivePower function and pass it the values 0,0,0 and the constant liftFront to set all motor powers to zero, and set default drive mode.
@@ -140,15 +140,6 @@ public class MechBot
          */
         setDrivePower(0,0,0);
 
-
-        /**
-         * Call the Modern Robotics Color Sensor, sensorRGB_One and disable its LED.
-         *
-         * On the color sensor the LED is used to toggle the sensor from a passive mode and a active mode.
-         * With the LED in passive mode the sensor will NOT emmit light and only detect and read data from light sources.
-         * With the LED in active mode the sensor will emmit light and use this light to reflect any colors on object back at it and detect its color.
-         */
-        setDriveZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
 

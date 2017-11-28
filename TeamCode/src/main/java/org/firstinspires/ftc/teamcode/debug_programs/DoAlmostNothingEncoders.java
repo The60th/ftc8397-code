@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
 @Autonomous( name= "Do Almost Nothing Encoders", group = "Test")
 public class DoAlmostNothingEncoders extends MechBotAutonomous {
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runLoggingOpmode() throws InterruptedException {
         bot.init(hardwareMap);
         waitForStart();
         while (opModeIsActive()){

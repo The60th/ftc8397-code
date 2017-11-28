@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
+import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
 import org.firstinspires.ftc.teamcode.cv_programs.Blob;
 import org.firstinspires.ftc.teamcode.cv_programs.ImgProc;
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
@@ -23,7 +24,7 @@ import java.util.concurrent.BlockingQueue;
  * Created by FTC Team 8397 on 11/10/2017.
  */
 
-public abstract class MechBotAutonomous extends LinearOpMode {
+public abstract class MechBotAutonomous extends LoggingLinearOpMode {
 
     private boolean goForRankingPoints = false; // This boolean will control if our software tries to go for ranking points over earning us points.
     //This will mostly control the knocking off the jewel, if this is true the program will knock off the enemy jewel, and give them a 30 point lead.
@@ -46,6 +47,18 @@ public abstract class MechBotAutonomous extends LinearOpMode {
 
     protected final String DRIVE_DIRECTION_GYRO_TAG = "DRIVE_DIRECTION_GYRO";
     protected final boolean DRIVE_DIRECTION_GYRO_LOG = true;
+
+    protected final String TURN_ANGLE_TAG = "TURN_ANGLE_TAG";
+    protected final boolean TURN_ANGLE_LOG = true;
+
+    protected final String TURN_TO_HEADING_TAG = "TURN_TO_HEADING";
+    protected final boolean TURN_TO_HEADING_LOG = true;
+
+    protected final String DRIVE_GYRO_TIME_TAG = "DRIVE_GYRO_TIME";
+    protected final boolean DRIVE_GYRO_TIME_LOG = true;
+
+    protected final String FOLLOW_LINE_PROP_TAG = "FOLLOW_LINE_PROP";
+    protected final boolean FOLLOW_LINE_PROP_LOG = true;
 
     protected void setFlashOn(){
         CameraDevice.getInstance().setFlashTorchMode(true);
@@ -73,6 +86,7 @@ public abstract class MechBotAutonomous extends LinearOpMode {
             bot.setDriveSpeed(vx, vy, va);
         }
     }
+
     public void followLineProportionate(LineFollowSide side, ColorSensor colorSensor, Predicate finish){
         float[] hsvValues = new float[3];
         final float coeff = 20.0f;
@@ -83,12 +97,15 @@ public abstract class MechBotAutonomous extends LinearOpMode {
             float err = side == LineFollowSide.LEFT? 0.5f - hsvValues[1] : hsvValues[1] - 0.5f;
             if (err < -0.5) err = -0.4f;
             else if (err > 0.5) err = 0.4f;
+            if(FOLLOW_LINE_PROP_LOG)BetaLog.dd(FOLLOW_LINE_PROP_TAG,"Heading %.2f Sat %.2f error %.2f",heading,hsvValues[1],err);
             float angleDiff = side == LineFollowSide.LEFT? heading - INNER_TAPE_ANGLE_RADS : heading + INNER_TAPE_ANGLE_RADS;
             float vx = -LINE_FOLLOW_SPEED * (float)Math.cos(angleDiff)  + coeff*err*(float)Math.sin(angleDiff);
             float vy = LINE_FOLLOW_SPEED * (float)Math.sin(angleDiff) + coeff*err*(float)Math.cos(angleDiff);
             float va = -heading * HEADING_CORECTION_FACTOR;
+            if(FOLLOW_LINE_PROP_LOG)BetaLog.dd(FOLLOW_LINE_PROP_TAG,"Angle Diff %.2f Vx %.2f Vy %.2f Va %.2f",angleDiff,vx,vy,va);
             bot.setDriveSpeed(vx, vy, va);
         }
+        bot.setDrivePower(0,0,0);
     }
 
     //Using gyro, turns robot the specified number of degrees (angle), with acceptable error
@@ -111,7 +128,7 @@ public abstract class MechBotAutonomous extends LinearOpMode {
             float absVa = vaMin + C * absAdjustedOffset;
             absVa = Math.min(absVa, vaMax);
             float va = absVa * Math.signum(offset);
-            BetaLog.d("Turning va = %.2f hd = %.0f, off = %.0f absAdjOff = %.0f", va, heading, offset, absAdjustedOffset);
+            if(TURN_ANGLE_LOG) BetaLog.dd(TURN_ANGLE_TAG,"Turning va = %.2f hd = %.0f, off = %.0f absAdjOff = %.0f", va, heading, offset, absAdjustedOffset);
             bot.setDriveSpeed(0, 0, va);
             heading = bot.getHeadingRadians();
             offset = targetHeading - heading;
@@ -127,7 +144,7 @@ public abstract class MechBotAutonomous extends LinearOpMode {
 
         final float vaMin = 1.5f * tolerance / latency;
         final float C = 0.75f / latency;
-        final float vaMax = 0.75f * (float)Math.PI;
+        final float vaMax = 0.2f * (float)Math.PI;
         float heading = bot.getHeadingRadians();
         float offset = (float)VuMarkNavigator.NormalizeAngle(targetHeading - heading);
 
@@ -136,7 +153,7 @@ public abstract class MechBotAutonomous extends LinearOpMode {
             float absVa = vaMin + C * absAdjustedOffset;
             absVa = Math.min(absVa, vaMax);
             float va = absVa * Math.signum(offset);
-            BetaLog.d("Turning va = %.2f hd = %.0f, off = %.0f absAdjOff = %.0f", va, heading, offset, absAdjustedOffset);
+            if(TURN_TO_HEADING_LOG)BetaLog.dd(TURN_TO_HEADING_TAG,"Turning va = %.2f hd = %.0f, off = %.0f absAdjOff = %.0f", va, heading, offset, absAdjustedOffset);
             bot.setDriveSpeed(0, 0, va);
             heading = bot.getHeadingRadians();
             offset = targetHeading - heading;
@@ -152,19 +169,19 @@ public abstract class MechBotAutonomous extends LinearOpMode {
             final float initialHeading = bot.getHeadingRadians();
             ElapsedTime et = new ElapsedTime();
             double scale = bot.setDriveSpeed(vx, vy, 0);
-            BetaLog.d("<Debug> DriveStrGyroTime Pre Scale duration = %.0f vx = %.0f vy = %.0f", duration, vx, vy);
+            if(DRIVE_GYRO_TIME_LOG)BetaLog.dd(DRIVE_GYRO_TIME_TAG,"<Debug> DriveStrGyroTime Pre Scale duration = %.0f vx = %.0f vy = %.0f", duration, vx, vy);
 
             duration /= scale;
             vx *= scale;
             vy *= scale;
-            BetaLog.d("<Debug> DriveStrGyroTime Post Scale( %.2f ) duration = %.0f vx = %.0f vy = %.0f", scale, duration, vx, vy);
+            if(DRIVE_GYRO_TIME_LOG)BetaLog.dd(DRIVE_GYRO_TIME_TAG,"<Debug> DriveStrGyroTime Post Scale( %.2f ) duration = %.0f vx = %.0f vy = %.0f", scale, duration, vx, vy);
 
             while (opModeIsActive()) {
                 double etms = et.milliseconds();
                 if (etms > duration) break;
                 float currentHeading = bot.getHeadingRadians();
                 float va = (initialHeading - currentHeading) * C_ANGLE;
-                BetaLog.d("<Debug> Initial Angle = %.1f Current Angle = %.1f", initialHeading, currentHeading);
+                if(DRIVE_GYRO_TIME_LOG)BetaLog.dd(DRIVE_GYRO_TIME_TAG,"<Debug> Initial Angle = %.1f Current Angle = %.1f", initialHeading, currentHeading);
                 bot.setDriveSpeed(vx, vy, va);
             }
             bot.setDriveSpeed(0, 0, 0);
@@ -302,8 +319,46 @@ public abstract class MechBotAutonomous extends LinearOpMode {
                 bot.setDriveSpeed(vx, vy, va);
 
             }
+            bot.setDriveSpeed(0,0,0);
     }
+    //Robot heading in degrees.
+    public void driveDirectionGyro(float speedCMs, float directionAngleDegrees, float gyroHeadingTargetDegrees, Predicate finish){
 
+        if (DRIVE_DIRECTION_GYRO_LOG) BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "Entering driveDirectionGyro");
+        bot.updateOdometry();
+        float directionAngleRadians = directionAngleDegrees * (float) Math.PI / 180.0f;
+        float gyroHeadingTargetRadians = gyroHeadingTargetDegrees * (float) Math.PI / 180.0f;
+
+        while (opModeIsActive()) {
+            float gyroHeading = bot.getHeadingRadians();
+            float odomHeading = bot.getOdomHeadingFromGyroHeading(gyroHeading);
+
+            if (DRIVE_DIRECTION_GYRO_LOG)
+                BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "gHeading = %.2f  oHeading = %.2f",
+                        gyroHeading * 180.0 / Math.PI , odomHeading * 180.0 / Math.PI); //Fixed convert error
+
+            this.robotZXPhi = bot.updateOdometry(robotZXPhi, odomHeading);
+
+            if (DRIVE_DIRECTION_GYRO_LOG)
+                BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "z = %.2f  x = %.2f  Phi = %.2f",
+                        robotZXPhi[0], robotZXPhi[1], robotZXPhi[2] * 180.0 / Math.PI); //Fixed convert error
+
+            if (finish.isTrue()) break;
+
+            float vx = -speedCMs * (float) Math.sin(directionAngleRadians - odomHeading);
+            float vy = speedCMs * (float) Math.cos(directionAngleRadians - odomHeading);
+
+            float headingError = (float)VuMarkNavigator.NormalizeAngle(gyroHeading - gyroHeadingTargetRadians);
+            float va = -HEADING_CORECTION_FACTOR * headingError;
+
+            if (DRIVE_DIRECTION_GYRO_LOG)
+                BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "vx = %.2f  vy = %.2f  va = %.2f", vx, vy, va * 180.0 / Math.PI);
+
+            bot.setDriveSpeed(vx, vy, va);
+
+        }
+        bot.setDrivePower(0,0,0);
+    }
     protected interface Predicate{
         public boolean isTrue();
     }
@@ -324,8 +379,7 @@ public abstract class MechBotAutonomous extends LinearOpMode {
         double vuforiaActivateTime = et.milliseconds();
         telemetry.addData("Started Vuforia after " + vuforiaActivateTime + " milliseconds.","");
         telemetry.update();
-        CameraDevice.getInstance().setFlashTorchMode(true);
-
+        this.setFlashOn();
         waitForStart();
 
         vuMark = findKey(cryptoKeyTimeOut);
@@ -349,7 +403,7 @@ public abstract class MechBotAutonomous extends LinearOpMode {
         }
         telemetry.addData("Found both the jewel and vuMark in: " + et.milliseconds() + " milliseconds. ","");
         telemetry.update();
-        CameraDevice.getInstance().setFlashTorchMode(false);
+        this.setFlashOff();
     }
 
     public boolean knockJewel(Side side){

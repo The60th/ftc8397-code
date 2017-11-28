@@ -13,16 +13,13 @@ package org.firstinspires.ftc.teamcode.debug_programs;
 @Autonomous( name= "Do Almost Nothing", group = "Test")
 public class DoAlmostNothing extends MechBotAutonomous {
     @Override
-    public void runOpMode() throws InterruptedException {
-            try{
-                BetaLog.initialize();
-
-            bot.init(hardwareMap);
+    public void runLoggingOpmode() throws InterruptedException {
+            bot.init(hardwareMap,90);
             waitForStart();
 
             robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
 
-            driveDirectionGyro(30, 90,
+            driveDirectionGyro(30, 90,90,
                     new Predicate() {
                         @Override
                         public boolean isTrue() {
@@ -30,9 +27,5 @@ public class DoAlmostNothing extends MechBotAutonomous {
                         }
                     });
 
-    }
-    finally {
-                BetaLog.close();
-            }
     }
 }
