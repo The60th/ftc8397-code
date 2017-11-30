@@ -19,8 +19,8 @@ public class OdomTesting extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         mechBot.init(hardwareMap);
-        mechBot.sensorMRColor.enableLed(true);
-        mechBot.sensorMRColor2.enableLed(true);
+        mechBot.colorLeft.enableLed(true);
+        mechBot.colorRight.enableLed(true);
         telemetry.addData("Ready to go: ","");
         telemetry.update();
         mechBot.updateOdometry();
@@ -89,11 +89,11 @@ public class OdomTesting extends LinearOpMode {
             float[] hsvValues = new float[3];
             float[] hsvValues2 = new float[3];
 
-            Color.RGBToHSV(mechBot.sensorMRColor.red() * 8, mechBot.sensorMRColor.green() * 8, mechBot.sensorMRColor.blue() * 8, hsvValues);
-            Color.RGBToHSV(mechBot.sensorMRColor2.red() * 8, mechBot.sensorMRColor2.green() * 8, mechBot.sensorMRColor2.blue() * 8, hsvValues2);
-            telemetry.addData("","Sensor One: Red: %d Green %d Blue %d Hue: %f Sat: %f Value:",mechBot.sensorMRColor.red(),mechBot.sensorMRColor.green(),mechBot.sensorMRColor.blue(),
+            Color.RGBToHSV(mechBot.colorLeft.red() * 8, mechBot.colorLeft.green() * 8, mechBot.colorLeft.blue() * 8, hsvValues);
+            Color.RGBToHSV(mechBot.colorRight.red() * 8, mechBot.colorRight.green() * 8, mechBot.colorRight.blue() * 8, hsvValues2);
+            telemetry.addData("","Sensor One: Red: %d Green %d Blue %d Hue: %f Sat: %f Value:",mechBot.colorLeft.red(),mechBot.colorLeft.green(),mechBot.colorLeft.blue(),
                  hsvValues[0],hsvValues[1],hsvValues[2]);
-            telemetry.addData("demo","Sensor Two: Red: %d Green %d Blue %d Hue: %f Sat: %f Value:",mechBot.sensorMRColor2.red(),mechBot.sensorMRColor2.green(),mechBot.sensorMRColor2.blue(),
+            telemetry.addData("demo","Sensor Two: Red: %d Green %d Blue %d Hue: %f Sat: %f Value:",mechBot.colorRight.red(),mechBot.colorRight.green(),mechBot.colorRight.blue(),
                    hsvValues2[0],hsvValues2[1],hsvValues2[2]);
             telemetry.update();
 

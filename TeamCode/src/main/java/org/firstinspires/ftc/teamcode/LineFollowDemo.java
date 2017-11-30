@@ -30,11 +30,11 @@ public class LineFollowDemo extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         bot.init(hardwareMap);
         waitForStart();
-        followLineProportionate(Side.LEFT, bot.sensorMRColor);
-        //followLine(Side.LEFT, bot.sensorMRColor);
+        followLineProportionate(Side.LEFT, bot.colorLeft);
+        //followLine(Side.LEFT, bot.colorLeft);
         //turnAngleGyro(90f,3,.3f);
-        //bot.sensorMRColor is mounted on the left side of the robot.
-        //bot.sensorMRColor2 is mounted on the right side of the robot.
+        //bot.colorLeft is mounted on the left side of the robot.
+        //bot.colorRight is mounted on the right side of the robot.
     }
 
 

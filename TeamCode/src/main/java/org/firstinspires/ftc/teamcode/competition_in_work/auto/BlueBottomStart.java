@@ -10,12 +10,13 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
 /**
  * Created by FTC Team 8397 on 11/22/2017.
  */
-@Autonomous(name="Red Bottom Comp Start",group = "Comp")
-public class RedBottomStart extends MechBotAutonomous {
+@Autonomous(name="Blue Bottom Comp Start",group = "Comp")
+public class BlueBottomStart extends MechBotAutonomous {
+    int timesColorFoundSensorOne =0;
     final float[] hsvValues = new float[3];
 
-    final String RED_BOTTOM_START_TAG = "RED_BOTTOM_START";
-    final boolean RED_BOTTOM_START_LOG = true;
+    final boolean BLUE_BOTTOM_START_LOG = true;
+    final String BLUE_BOTTOM_START_TAG = "Blue bottom start:";
 
     @Override
     public void runLoggingOpmode() throws InterruptedException {
@@ -23,18 +24,18 @@ public class RedBottomStart extends MechBotAutonomous {
         //The starting angle is the gyro heading relative to the crypto box.
         robotZXPhi = new float[3];
 
-        if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "initAuto");
-        initAuto(TeamColor.RED, 2000,2000); //Find the targetJewl side and the target crypto key.
+        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "INITIALIZE AUTO");
+        initAuto(TeamColor.BLUE, 2000,2000); //Find the targetJewl side and the target crypto key.
 
-        if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "knockJewel");
+        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "KNOCK JEWEL");
         knockJewel(this.targetSide);
 
         //Assume the robot is facing the wall once again still on the balance stone and the wall is a heading of 0.
-        if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "driveDirectionGyro 1");
-        driveDirectionGyro(20, -90, new Predicate() {
+        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "driveDirectionGyro 1");
+        driveDirectionGyro(20, 90, new Predicate() {
             @Override
             public boolean isTrue() {
-                Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
+                Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
                 if(hsvValues[1] < .5){
                     sleep(250);
                     return true;
@@ -43,16 +44,17 @@ public class RedBottomStart extends MechBotAutonomous {
             }
         });
 
-        if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "turnToheadingGyro");
+        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "turnToheadingGyro");
 
         turnToHeadingGyro(0,2,0.3f); //Turn to face the wall again.
 
         //Drive towards the box till the colored tape is detected.
-        BetaLog.dd(RED_BOTTOM_START_TAG, "driveDirectionGyro2");
-        driveDirectionGyro(20, -90, new Predicate() {
+        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "driveDirectionGyro 2");
+
+        driveDirectionGyro(20, 90, new Predicate() {
             @Override
             public boolean isTrue() {
-                Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
+                Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
                 if(hsvValues[1] > .5){
                     return true;
                 }
@@ -61,35 +63,35 @@ public class RedBottomStart extends MechBotAutonomous {
             }
         });
 
-        if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "Checking pre line follow.");
+        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "Checking pre line follow.");
 
-        Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
+        Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
         //Follow the line depending on how many times it has already been seen.
         if(hsvValues[1] < .5){
-            if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "Line following forward left.");
-            followLineProportionate(LineFollowSide.RIGHT, bot.colorRight, new Predicate() {
+            if (BLUE_BOTTOM_START_LOG)  BetaLog.dd(BLUE_BOTTOM_START_TAG, "Line following forward left.");
+            followLineProportionate(LineFollowSide.LEFT, bot.colorLeft, new Predicate() {
                 @Override
                 public boolean isTrue() {
-                    Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
+                    Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
                     if(hsvValues[1] > .5)return true;
                     return false;
                 }
             });
         }else{
-            if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "Line following backwards left.");
-            //Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
-            followLineProportionate(LineFollowSide.RIGHT, bot.colorRight, -10, new Predicate() {
+            if (BLUE_BOTTOM_START_LOG)  BetaLog.dd(BLUE_BOTTOM_START_TAG, "Line following backwards left.");
+            followLineProportionate(LineFollowSide.LEFT, bot.colorLeft, -10, new Predicate() {
                @Override
                public boolean isTrue() {
-                   Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
+                   Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
                    return (hsvValues[1] < .5);
                }
            });
         }
 
-        if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "adjust on triangle");
+        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "adjust on triangle");
 
         adjustPosOnTriangle(4000);
+        while(opModeIsActive())continue;
 
 
         //18.8 shift.
@@ -97,7 +99,7 @@ public class RedBottomStart extends MechBotAutonomous {
         bot.updateOdometry();
         switch (this.cryptoKey){
             case LEFT:
-                if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "driveDirectionGyro left");
+                if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "driveDirectionGyro left");
                 driveDirectionGyro(10, -90, new Predicate() {
                     @Override
                     public boolean isTrue() {
@@ -106,7 +108,7 @@ public class RedBottomStart extends MechBotAutonomous {
                 });
                 break;
             case RIGHT:
-                if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "driveDirectionGyro right");
+                if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "driveDirectionGyro right");
                 driveDirectionGyro(10, 90, new Predicate() {
                     @Override
                     public boolean isTrue() {
@@ -118,7 +120,8 @@ public class RedBottomStart extends MechBotAutonomous {
             case UNKNOWN:
         }
 
-        if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "driveDirectionGyro3");
+        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "driveDirectionGyro 3");
+
         driveDirectionGyro(10, 180, new Predicate() {
             @Override
             public boolean isTrue() {

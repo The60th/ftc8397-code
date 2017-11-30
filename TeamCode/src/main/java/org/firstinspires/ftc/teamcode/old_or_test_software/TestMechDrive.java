@@ -6,10 +6,7 @@ package org.firstinspires.ftc.teamcode.old_or_test_software;
         import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
         import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-        import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
         import org.firstinspires.ftc.teamcode.mechbot.MechBotSensor;
-
-        import java.util.Locale;
 
 
 /**
@@ -60,7 +57,7 @@ public class TestMechDrive extends LinearOpMode {
         waitForStart();
         telemetry.addData("Starting","");
         telemetry.update();
-        mechBot.sensorMRColor.enableLed(bLedOn);
+        mechBot.colorLeft.enableLed(bLedOn);
         while (opModeIsActive()) {
             if(drive) {
                 if(gamepad1.a){
@@ -98,7 +95,7 @@ public class TestMechDrive extends LinearOpMode {
 
                     // button is transitioning to a pressed state. So Toggle LED
                     bLedOn = !bLedOn;
-                    mechBot.sensorMRColor.enableLed(bLedOn);
+                    mechBot.colorLeft.enableLed(bLedOn);
                 }
 
                 // update previous state variable.
@@ -125,13 +122,13 @@ public class TestMechDrive extends LinearOpMode {
                 telemetry.addData("","\n");
 
                 telemetry.addData("*****Modern Robotics Color One*****","");
-                Color.RGBToHSV(mechBot.sensorMRColor.red() * 8, mechBot.sensorMRColor.green() * 8, mechBot.sensorMRColor.blue() * 8, hsvValuesMR);
+                Color.RGBToHSV(mechBot.colorLeft.red() * 8, mechBot.colorLeft.green() * 8, mechBot.colorLeft.blue() * 8, hsvValuesMR);
                 // send the info back to driver station using telemetry function.
                 telemetry.addData("LED", bLedOn ? "On" : "Off");
-                telemetry.addData("Clear", mechBot.sensorMRColor.alpha());
-                telemetry.addData("Red  ", mechBot.sensorMRColor.red());
-                telemetry.addData("Green", mechBot.sensorMRColor.green());
-                telemetry.addData("Blue ", mechBot.sensorMRColor.blue());
+                telemetry.addData("Clear", mechBot.colorLeft.alpha());
+                telemetry.addData("Red  ", mechBot.colorLeft.red());
+                telemetry.addData("Green", mechBot.colorLeft.green());
+                telemetry.addData("Blue ", mechBot.colorLeft.blue());
                 telemetry.addData("Hue", hsvValuesMR[0]);
                 telemetry.addData("","\n");
 

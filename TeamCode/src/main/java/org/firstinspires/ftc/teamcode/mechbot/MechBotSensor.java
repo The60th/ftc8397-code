@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.mechbot;
 
 
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 
@@ -12,7 +11,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.i2c.BNO055Enhanced;
 import org.firstinspires.ftc.teamcode.i2c.BNO055EnhancedImpl;
-import org.firstinspires.ftc.teamcode.mechbot.MechBot;
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
 
@@ -24,7 +22,7 @@ public class MechBotSensor extends MechBot
     //public float last_Gyro_Theta = 0;
 
 
-    public ColorSensor sensorMRColor,sensorMRColor2;
+    public ColorSensor colorLeft, colorRight;
 
     //Change to our custom BNO055 class.
     public BNO055EnhancedImpl imu;
@@ -48,10 +46,10 @@ public class MechBotSensor extends MechBot
          * Each motor is saved as "M" followed by its number in inger form so Motor One is now "M1".
          */
 
-        sensorMRColor = hardwareMap.get(ColorSensor.class, "sensor_color");
-        sensorMRColor2 = hardwareMap.get(ColorSensor.class, "sensor_color2");
+        colorLeft = hardwareMap.get(ColorSensor.class, "sensor_color");
+        colorRight = hardwareMap.get(ColorSensor.class, "sensor_color2");
 
-        sensorMRColor2.setI2cAddress(I2cAddr.create8bit(0x70));
+        colorRight.setI2cAddress(I2cAddr.create8bit(0x70));
 
 
         imu = hardwareMap.get(BNO055EnhancedImpl.class, "imu");
