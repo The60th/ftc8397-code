@@ -2,13 +2,10 @@ package org.firstinspires.ftc.teamcode.mechbot;
 
 import android.graphics.Color;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.RobotLog;
 import com.vuforia.CameraDevice;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -84,6 +81,19 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
 
     public float initRoll;
     public float initPitch;
+
+    public final float GLOBAL_STANDERD_TOLERANCE =2f; //Degrees
+    public final float GLOBAL_STANDERD_LATENCY = 0.3f; //Seconds
+    public final float HSV_SAT_CUT_OFF = .5f;
+
+    public final float JEWEL_SCAN_TIME = 2000;
+    public final float VUMARK_KEY_SCAN_TIME = 2000;
+
+    public final float CRYPTO_BOX_SIDE_SHIFT_VALUE = 22;
+
+    public final float CRYPTO_BOX_FOWARD_SHIFT_VALUE = 27;
+
+    public final float ADUST_POS_TIMEOUT = 4000;
 
     private void followLineProportionateOLD(LineFollowSide side, ColorSensor colorSensor){
         float[] hsvValues = new float[3];
@@ -455,6 +465,9 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         telemetry.addData("Found both the jewel and vuMark in: " + et.milliseconds() + " milliseconds. ","");
         telemetry.update();
         this.setFlashOff();
+        extendCollecter(MIN_COLLECTER_DRIVE_TIME_BEFORE_ARM_CAN_BE_LIFTED);
+        raiseArm(ARM_RAISE_TIME_PRE_DRIVE);
+        //retractCollecter(MIN_COLLECTER_DRIVE_TIME_BEFORE_ARM_CAN_BE_LIFTED);
     }
 
     public boolean knockJewel(Side side){
@@ -675,6 +688,91 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         }
         if(AUTO_POS_DEBUG)BetaLog.dd(AUTO_POS_TAG, "Auto pos finished.");
         bot.setDriveSpeed(0,0,0);
+    }
+
+
+    public final float MAX_COLLECT_DRIVE_TIME_BEFORE_STRESS = 1750;
+    public final float MIN_COLLECTER_DRIVE_TIME_BEFORE_ARM_CAN_BE_LIFTED = 100;
+
+    public final float COLLECTER_EXTEND_TIME = 250;
+    //Below here will be new arm drive and control functions.
+
+    public void extendCollecter(float timeout){
+        bot.driveCollecter(MechBotNickBot.collecterStateValues.OUT);
+        sleep((long)timeout);
+        bot.driveCollecter(MechBotNickBot.collecterStateValues.STOP);
+    }
+    public void retractCollecter(float timeout){
+        bot.driveCollecter(MechBotNickBot.collecterStateValues.IN);
+        sleep((long)timeout);
+        bot.driveCollecter(MechBotNickBot.collecterStateValues.STOP);
+    }
+
+    public void extendCollecterToMax(){
+        ElapsedTime et = new ElapsedTime();
+        bot.driveCollecter(MechBotNickBot.collecterStateValues.OUT);
+        while (opModeIsActive()){
+            telemetry.addData("Timer: ", et.milliseconds());
+            telemetry.update();
+        }
+    }
+
+    public final float MAX_ARM_RAISE_TIME_BEFORE_STRESS = 2000; //Untested just assumed.
+
+    public final float ARM_RAISE_TIME_FOR_GLYPH= 1000; //Test about 19 inches
+
+    public final float ARM_RAISE_TIME_PRE_DRIVE = 250;
+    //500 ms run up == 9.5 inchs raise height.
+    //1000 ms run up == 19 inches raise height.
+
+    public void raiseArm(float timeout){
+        bot.driveArm(MechBotNickBot.armStateValues.UP);
+        sleep((long)timeout);
+        bot.driveArm(MechBotNickBot.armStateValues.STOP);
+    }
+
+    public void lowerArm(float timeout){
+        bot.driveArm(MechBotNickBot.armStateValues.DOWN);
+        sleep((long)timeout);
+        bot.driveArm(MechBotNickBot.armStateValues.STOP);
+    }
+
+    final double RAMP_LOWERED = 0.135;
+    final double RAMP_UP = 0.34;
+
+    public void lowerRamp(){
+        bot.slideServo.setPosition(RAMP_LOWERED);
+    }
+    public void raiseRamp(){
+        bot.slideServo.setPosition(RAMP_UP);
+    }
+
+
+    public void kickBlock(){
+        bot.kickerServo.setPosition(-.85);
+    }
+    public void resetKicker(){
+        bot.kickerServo.setPosition(7);
+    }
+
+    public void scoreGlyph(){
+        extendCollecter(MIN_COLLECTER_DRIVE_TIME_BEFORE_ARM_CAN_BE_LIFTED); //Locks thread
+
+        raiseArm(ARM_RAISE_TIME_FOR_GLYPH + 200); //Locks thread
+
+        //Servo methods do not lock thread.
+        lowerRamp();
+        kickBlock();
+
+        sleep(400);
+        resetKicker();
+        sleep(1250);
+
+        kickBlock();
+        sleep(1500);
+
+        raiseRamp();
+        sleep(750);
     }
 
 }

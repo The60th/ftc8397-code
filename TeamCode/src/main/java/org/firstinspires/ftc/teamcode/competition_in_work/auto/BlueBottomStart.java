@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
  */
 @Autonomous(name="Blue Bottom Comp Start",group = "Blue")
 public class BlueBottomStart extends MechBotAutonomous {
-    int timesColorFoundSensorOne =0;
     final float[] hsvValues = new float[3];
 
     final boolean BLUE_BOTTOM_START_LOG = true;
@@ -25,7 +24,7 @@ public class BlueBottomStart extends MechBotAutonomous {
         robotZXPhi = new float[3];
 
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "INITIALIZE AUTO");
-        initAuto(TeamColor.BLUE, 2000,2000); //Find the targetJewl side and the target crypto key.
+        initAuto(TeamColor.BLUE, VUMARK_KEY_SCAN_TIME,JEWEL_SCAN_TIME); //Find the targetJewl side and the target crypto key.
 
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "KNOCK JEWEL");
 
@@ -37,7 +36,7 @@ public class BlueBottomStart extends MechBotAutonomous {
             @Override
             public boolean isTrue() {
                 Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
-                if(hsvValues[1] < .5){
+                if(hsvValues[1] < HSV_SAT_CUT_OFF){
                     sleep(250);
                     return true;
                 }
@@ -47,7 +46,7 @@ public class BlueBottomStart extends MechBotAutonomous {
 
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "turnToheadingGyro");
 
-        turnToHeadingGyro(0,2,0.3f); //Turn to face the wall again.
+        turnToHeadingGyro(0,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY); //Turn to face the wall again.
 
         //Drive towards the box till the colored tape is detected.
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "driveDirectionGyro 2");
@@ -56,7 +55,7 @@ public class BlueBottomStart extends MechBotAutonomous {
             @Override
             public boolean isTrue() { // I just changed the speed of this to see if we can get back over the balancing stone it used to be 20. Also if this works change all the other auto programs.
                 Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
-                if(hsvValues[1] > .5){
+                if(hsvValues[1] > HSV_SAT_CUT_OFF){
                     return true;
                 }
 
@@ -68,13 +67,13 @@ public class BlueBottomStart extends MechBotAutonomous {
 
         Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
         //Follow the line depending on how many times it has already been seen.
-        if(hsvValues[1] < .5){
+        if(hsvValues[1] < HSV_SAT_CUT_OFF){
             if (BLUE_BOTTOM_START_LOG)  BetaLog.dd(BLUE_BOTTOM_START_TAG, "Line following forward left.");
             followLineProportionate(LineFollowSide.LEFT, bot.colorLeft, new Predicate() {
                 @Override
                 public boolean isTrue() {
                     Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
-                    if(hsvValues[1] > .5)return true;
+                    if(hsvValues[1] > HSV_SAT_CUT_OFF)return true;
                     return false;
                 }
             });
@@ -84,15 +83,14 @@ public class BlueBottomStart extends MechBotAutonomous {
                @Override
                public boolean isTrue() {
                    Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
-                   return (hsvValues[1] < .5);
+                   return (hsvValues[1] < HSV_SAT_CUT_OFF);
                }
            });
         }
 
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "adjust on triangle");
 
-        adjustPosOnTriangle(4000);
-
+        adjustPosOnTriangle(ADUST_POS_TIMEOUT);
 
         //18.8 shift.
         robotZXPhi = new float[] {30,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
@@ -103,7 +101,7 @@ public class BlueBottomStart extends MechBotAutonomous {
                 driveDirectionGyro(10, -90, new Predicate() {
                     @Override
                     public boolean isTrue() {
-                        return robotZXPhi[1] < -18;
+                        return robotZXPhi[1] < -CRYPTO_BOX_SIDE_SHIFT_VALUE;
                     }
                 });
                 break;
@@ -112,7 +110,7 @@ public class BlueBottomStart extends MechBotAutonomous {
                 driveDirectionGyro(10, 90, new Predicate() {
                     @Override
                     public boolean isTrue() {
-                        return robotZXPhi[1] > 18;
+                        return robotZXPhi[1] > CRYPTO_BOX_SIDE_SHIFT_VALUE;
                     }
                 });
                 break;
@@ -125,14 +123,15 @@ public class BlueBottomStart extends MechBotAutonomous {
         driveDirectionGyro(10, 180, new Predicate() {
             @Override
             public boolean isTrue() {
-                return robotZXPhi[0] < 15;
+                return robotZXPhi[0] < CRYPTO_BOX_FOWARD_SHIFT_VALUE; //Z is at 30 robot cords here, we have to move forward now so lower Z.
             }
         });
 
         telemetry.addData("Auto data: ","Vumark target: " + cryptoKey + " target jewel side: " + targetSide);
         telemetry.update();
+
+        scoreGlyph();
+
         while (opModeIsActive());
     }
-
-
 }

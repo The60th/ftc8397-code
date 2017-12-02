@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.competition_in_work.auto;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
  * Created by FTC Team 8397 on 12/1/2017.
  */
 @Autonomous(name = "Auto Pos Balance",group = "Testing")
+@Disabled
 public class AutonomousAutoBalanceStonePos extends MechBotAutonomous {
     @Override
     public void runLoggingOpmode() throws InterruptedException {

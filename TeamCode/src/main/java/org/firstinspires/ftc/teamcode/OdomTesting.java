@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotNickBot;
 /**
  * Created by FTC Team 8397 on 9/29/2017.
  */
-@TeleOp(name="OdomTesting", group="Rev")
+@TeleOp(name="Debug teleOP", group="Rev")
 public class OdomTesting extends LinearOpMode {
     private MechBotNickBot mechBot = new MechBotNickBot();
     private MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1,gamepad2,mechBot);
@@ -50,14 +50,14 @@ public class OdomTesting extends LinearOpMode {
             }else{
                 telemetry.addData("", "Calling joyStickMecnumDrive without updating gamepads");
             }
-            if(gamepad2.dpad_up){
-                mechBot.driveArm(-1.0f);
+            /*if(gamepad2.dpad_up){
+                mechBot.driveCollecter(-1.0f);
             }else if(gamepad2.dpad_down){
-                mechBot.driveArm(1.0f);
+                mechBot.driveCollecter(1.0f);
             }else{
-                mechBot.driveArm(.0f);
+                mechBot.driveCollecter(.0f);
 
-            }
+            }*/
 
            /* if(gamepad2.x){
                 mechBot.slideServo.setPower(1);

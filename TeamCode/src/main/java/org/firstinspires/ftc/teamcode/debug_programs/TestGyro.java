@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.debug_programs;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotSensor;
  * Created by FTC Team 8397 on 11/4/2017.
  */
 @Autonomous(name="TestGyroDrive", group="Rev")
+@Disabled
 public class TestGyro extends LinearOpMode {
     MechBotSensor bot = new MechBotSensor();
     Orientation orientation;

@@ -14,6 +14,8 @@ public class MechBotNickBot extends MechBotSensor {
     public DcMotor leftSlideExtenderMotor, rightSlideExtenderMotor, blockLiftMotor;
     public Servo kickerServo,slideServo;
     public CRServo jewelServo;
+    public enum collecterStateValues {OUT,IN,STOP}
+    public enum armStateValues {UP,DOWN,STOP}
     public void init(HardwareMap ahwMap) {
         super.init(ahwMap);
 
@@ -35,11 +37,30 @@ public class MechBotNickBot extends MechBotSensor {
 
     }
 
-    public void driveArm(float power){
-        leftSlideExtenderMotor.setPower(power);
-        rightSlideExtenderMotor.setPower(power);
+    public void driveCollecter(collecterStateValues collecterStateValuesLocal){
+        if(collecterStateValuesLocal == collecterStateValues.IN){
+            leftSlideExtenderMotor.setPower(1.0);
+            rightSlideExtenderMotor.setPower(1.0);
+        }else if(collecterStateValuesLocal == collecterStateValues.OUT){
+            leftSlideExtenderMotor.setPower(-1.0);
+            rightSlideExtenderMotor.setPower(-1.0);
+        }else{
+            leftSlideExtenderMotor.setPower(0);
+            rightSlideExtenderMotor.setPower(0);
+        }
+
     }
 
+    public void driveArm(armStateValues armStateValuesLocal){
+        if(armStateValuesLocal == armStateValues.UP ){
+            blockLiftMotor.setPower(1);
+        }else if(armStateValuesLocal == armStateValues.DOWN){
+            blockLiftMotor.setPower(-.5);
+        }else{
+            blockLiftMotor.setPower(0);
+        }
+
+    }
     public void lowerJewelArm(){
         jewelServo.setPower(.5);
     }

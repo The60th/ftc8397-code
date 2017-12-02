@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.competition_in_work.teleop;
 
-import android.graphics.Color;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
 import org.firstinspires.ftc.teamcode.mechbot.MechBotDriveControls;
@@ -9,26 +9,31 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotNickBot;
 /**
  * Created by FTC Team 8397 on 11/30/2017.
  */
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp", group="Comp")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Game TeleOP", group="Comp")
 public class TeleOp extends LoggingLinearOpMode{
 
     private MechBotNickBot mechBot = new MechBotNickBot();
     private MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1,gamepad2,mechBot);
 
+    double kickerPos = .50;
+
     final double armModify = 0.0006;
-    double armPos = .5;
-    final double und_arm = 0.2;
-    final double ovr_arm = 0.7;
+    final double und_arm = 0.135;
+    final double ovr_arm = 0.34;
+
+    double armPos = .34; //.7 to high for all the way up. //.5 to far //3 lower then max. //4 still below max.
 
     @Override
     public void runLoggingOpmode() throws InterruptedException {
         mechBot.init(hardwareMap);
+        ElapsedTime et = new ElapsedTime();
 
         telemetry.addData("Ready to go: ","");
         telemetry.update();
 
         mechBot.updateOdometry();
         waitForStart();
+
         mechBot.raiseJewelArm();
         sleep(100);
         mechBot.breakJewelArm();
@@ -41,11 +46,11 @@ public class TeleOp extends LoggingLinearOpMode{
 
             //Extend block collector.
             if(gamepad1.dpad_up){
-                mechBot.driveArm(-1.0f);
+                mechBot.driveCollecter(MechBotNickBot.collecterStateValues.OUT);
             }else if(gamepad1.dpad_down){
-                mechBot.driveArm(1.0f);
+                mechBot.driveCollecter(MechBotNickBot.collecterStateValues.IN);
             }else{
-                mechBot.driveArm(.0f);
+                mechBot.driveCollecter(MechBotNickBot.collecterStateValues.STOP);
             }
             if(gamepad1.right_stick_y > .5){
                 mechBot.lowerJewelArm();
@@ -65,12 +70,25 @@ public class TeleOp extends LoggingLinearOpMode{
                 mechBot.blockLiftMotor.setPower(0);
             }
 
+
             //Swing block pusher. //Servo the pushes block down slide.
-            if (gamepad2.right_trigger > .2 || gamepad2.left_trigger > .2) {
-                mechBot.kickerServo.setPosition(-.85);
-            } else  {
-                mechBot.kickerServo.setPosition(.85);
-            }
+             if(gamepad2.right_trigger > .2){
+               mechBot.kickerServo.setPosition(-.85);
+           }
+            else if(gamepad2.left_trigger > .2){
+            mechBot.kickerServo.setPosition(1);
+           }
+
+
+           //Find the pos that is the wheel all the way drive so that the roller is up: -> max pos
+
+            //Find the pos that is the wheel all the way drive so that the roller is down: -> min pos
+
+           //Range within max-min pos:
+
+            //Toggle up and down within range with modify function -> can't go over max pos or under min pos
+
+            //Use max pos and base pos for init code.
 
             if(gamepad2.y  && armPos <= ovr_arm) {
                 armPos += armModify;
@@ -78,12 +96,21 @@ public class TeleOp extends LoggingLinearOpMode{
                 armPos -= armModify;
             }
 
-            mechBot.slideServo.setPosition(armPos);
+           // mechBot.kickerServo.setPosition(kickerPos);
 
-            telemetry.addData("Gamepad 1: ","Left Stick Values X:"+gamepad1.left_stick_x+" Y: "+gamepad1.left_stick_y + " | Right Stick Values X:"+gamepad1.left_stick_x+" Y: "+gamepad1.left_stick_y);
-            telemetry.addData("Gamepad 2: ","Left Stick Values X:"+gamepad2.right_stick_x+" Y: "+gamepad2.right_stick_y + " | Right Stick Values X:"+gamepad2.right_stick_x+" Y: "+gamepad2.right_stick_y);
-            telemetry.addData("Gamepad 1: " , gamepad1.toString());
-            telemetry.addData("Gamepad 2: " , gamepad2.toString());
+            mechBot.slideServo.setPosition(armPos);
+           // if(et.milliseconds() > 100) {
+             //   mechBot.raiseJewelArm();
+            //}else{
+             //   mechBot.breakJewelArm();
+            //}
+
+            telemetry.addData("Spinny servo pos: ", mechBot.slideServo.getPosition());
+
+            //telemetry.addData("Gamepad 1: ","Left Stick Values X:"+gamepad1.left_stick_x+" Y: "+gamepad1.left_stick_y + " | Right Stick Values X:"+gamepad1.left_stick_x+" Y: "+gamepad1.left_stick_y);
+           /// telemetry.addData("Gamepad 2: ","Left Stick Values X:"+gamepad2.right_stick_x+" Y: "+gamepad2.right_stick_y + " | Right Stick Values X:"+gamepad2.right_stick_x+" Y: "+gamepad2.right_stick_y);
+            //telemetry.addData("Gamepad 1: " , gamepad1.toString());
+            //telemetry.addData("Gamepad 2: " , gamepad2.toString());
             telemetry.update();
         }
     }
