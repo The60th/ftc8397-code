@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.mechbot;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
  */
 
 @TeleOp (name = "MechBotDiagnostics", group = "Test")
+@Disabled
 
 public class MechBotDiagnostics extends LoggingLinearOpMode {
 

@@ -43,7 +43,7 @@ public class VuMarkNavigator {
     private static final OpenGLMatrix PHONE_LOCATION_ON_ROBOT =
             OpenGLMatrix.translation(0,0,0).multiplied(
                     Orientation.getRotationMatrix(AxesReference.EXTRINSIC, AxesOrder.XZX,
-                            AngleUnit.DEGREES,90,0,0));;
+                            AngleUnit.DEGREES,0,0,0));;
     private static final VuforiaLocalizer.CameraDirection CAMERA_DIRECTION = VuforiaLocalizer.CameraDirection.BACK;
 
 

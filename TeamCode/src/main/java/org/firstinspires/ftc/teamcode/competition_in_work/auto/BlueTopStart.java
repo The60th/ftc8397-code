@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
 /**
  * Created by FTC Team 8397 on 11/22/2017.
  */
-@Autonomous(name="Blue  Top Comp Start",group = "Comp")
+@Autonomous(name="Blue  Top Comp Start",group = "Blue")
 public class BlueTopStart extends MechBotAutonomous {
     int timesColorFoundSensorOne =0;
     final float[] hsvValues = new float[3];
@@ -27,7 +27,8 @@ public class BlueTopStart extends MechBotAutonomous {
         if (BLUE_TOP_START_LOG) BetaLog.dd(BLUE_TOP_START_TAG, "initAuto");
         initAuto(TeamColor.BLUE, 2000,2000); //Find the targetJewl side and the target crypto key.
         BetaLog.dd(BLUE_TOP_START_TAG, "knockJewel");
-        knockJewel(this.targetSide);
+
+        knockJewelWithBalanceTurn(this.targetSide);
 
         //Assume the robot is facing the wall once again still on the balance stone and the wall is a heading of 0.
         if (BLUE_TOP_START_LOG) BetaLog.dd(BLUE_TOP_START_TAG, "driveDirectionGyro 1");
@@ -50,6 +51,8 @@ public class BlueTopStart extends MechBotAutonomous {
         driveDirectionGyro(20, 180, 90, new Predicate() {
             @Override
             public boolean isTrue() {
+                telemetry.addData("","Z " + robotZXPhi[0] + " X" +robotZXPhi[1]);
+                telemetry.update();
                 return robotZXPhi[0] < -10;
             }
         });
@@ -98,7 +101,6 @@ public class BlueTopStart extends MechBotAutonomous {
         if (BLUE_TOP_START_LOG) BetaLog.dd(BLUE_TOP_START_TAG, "adjust on triangle");
 
         adjustPosOnTriangle(4000);
-        while(opModeIsActive())continue;
 
 
         //18.8 shift.

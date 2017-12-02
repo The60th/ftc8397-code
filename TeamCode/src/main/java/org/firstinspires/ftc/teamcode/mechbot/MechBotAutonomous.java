@@ -9,6 +9,11 @@ import com.qualcomm.robotcore.util.RobotLog;
 import com.vuforia.CameraDevice;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
@@ -32,7 +37,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
     public void disableThrowing(){this.goForRankingPoints = false;}
 
 
-    public MechBotSensor bot = new MechBotSensor();
+    public MechBotNickBot bot = new MechBotNickBot();
     public enum LineFollowSide {LEFT,RIGHT}
     private final float INNER_TAPE_ANGLE = 33.70f;
     private final float INNER_TAPE_ANGLE_RADS = INNER_TAPE_ANGLE * ((float)Math.PI/180.0f);
@@ -63,6 +68,9 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
     protected final String ADJUST_POS_TAG = "ADJUST_POSITION";
     protected final boolean ADJUST_POS_LOG = true;
 
+    final String AUTO_POS_TAG = "AUTO_POS_TAG";
+    final boolean AUTO_POS_DEBUG = true;
+
     protected void setFlashOn(){
         CameraDevice.getInstance().setFlashTorchMode(true);
     }
@@ -72,6 +80,10 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
 
     public Side targetSide;
     public RelicRecoveryVuMark cryptoKey;
+    public TeamColor teamColor;
+
+    public float initRoll;
+    public float initPitch;
 
     private void followLineProportionateOLD(LineFollowSide side, ColorSensor colorSensor){
         float[] hsvValues = new float[3];
@@ -237,9 +249,13 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         int imgHeight = Math.round(size[1]);
         byte[] imageBytes = new byte[2 * imgWidth * imgHeight];
 
+        int y0 = 300;
+        int croppedImgWidth = imgWidth;
+        int croppedImgHeight = 420;
+
         //Set up reduced image dimensions
-        int reducedImgWidth = imgWidth / sampleRatio;
-        int reducedImgHeight = imgHeight / sampleRatio;
+        int reducedImgWidth = croppedImgWidth / sampleRatio;
+        int reducedImgHeight = croppedImgHeight / sampleRatio;
         byte[] reducedImageBytes = new byte[2 * reducedImgWidth * reducedImgHeight];
 
         //int arrays for binary images for identifying the red and blue jewels
@@ -268,7 +284,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
 
             //First, reduce the imgWidthximgHeight image to reducedImgWidth x reducedImgHeight by skipping rows and columns per sampleRatio
             //From the reduced RGB565 image, obtain the binary images for red and blue blob detection
-            ImgProc.getReducedRangeRGB565(imageBytes,imgWidth,imgHeight,0,0,imgWidth,imgHeight,reducedImageBytes,sampleRatio);
+            ImgProc.getReducedRangeRGB565(imageBytes,imgWidth,imgHeight,0,y0,croppedImgWidth,croppedImgHeight,reducedImageBytes,sampleRatio);
             ImgProc.getBinaryImage(reducedImageBytes,345,15,0.7f,1.0f,0.3f,1.0f,binaryRed);
             ImgProc.getBinaryImage(reducedImageBytes,195,235,0.7f,1.0f,0.2f,1.0f,binaryBlue);
 
@@ -391,10 +407,13 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
 
 
     public void initAuto(TeamColor teamColor, float cryptoKeyTimeOut, double jewelTimeOut) throws InterruptedException{
+        Orientation orientation;
+        this.teamColor = teamColor;
         RelicRecoveryVuMark vuMark;
         JewelSide jewelSide;
         ElapsedTime et = new ElapsedTime();
-
+        telemetry.addData("Starting Vuforia","");
+        telemetry.update();
         VuMarkNavigator.activate();
         while (opModeIsActive() && !VuMarkNavigator.isActive){
             sleep(1);
@@ -406,6 +425,12 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         telemetry.addData("Started Vuforia after " + vuforiaActivateTime + " milliseconds.","");
         telemetry.update();
         this.setFlashOn();
+
+        orientation = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS); //WAS ZYX
+
+        this.initPitch = orientation.thirdAngle;
+        this.initRoll = orientation.secondAngle;
+
         waitForStart();
 
         vuMark = findKey(cryptoKeyTimeOut);
@@ -433,6 +458,13 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
     }
 
     public boolean knockJewel(Side side){
+        int rightShift = 4; //Distance in cms
+        int leftShift = 4;
+
+        if(this.teamColor == TeamColor.BLUE){rightShift=6;}
+        else{leftShift=6;}
+
+        bot.updateOdometry();
         if(goForRankingPoints){
             //This logic flow, will score the jewel for the ENEMY team.
             return true;
@@ -441,16 +473,54 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
                 return false;
             }
             else if(side == Side.LEFT){
-                //turnToHeadingGyro(-1,-1,-1);
+                bot.lowerJewelArm();
+                sleep(1050);
+                bot.breakJewelArm();
+                //turnAngleGyro(20,2,0.3f);
+                final int finalLeftShift = leftShift;
+                driveDirectionGyro(-20, 90+bot.getInitGyroHeadingDegrees(),bot.getInitGyroHeadingDegrees(), new Predicate() {
+                    ElapsedTime et = new ElapsedTime();
+                    @Override
+                    public boolean isTrue() {
+                        telemetry.addData("","Z " + robotZXPhi[0] + " X" +robotZXPhi[1]);
+                        telemetry.update();
+                        if(bot.getInitGyroHeadingDegrees()>0)return robotZXPhi[0]> finalLeftShift;
+                        return robotZXPhi[1] < -finalLeftShift;
+
+                       // return et.milliseconds() > 500;
+                    }
+                });
+                bot.raiseJewelArm();
+                sleep(1050);
+                bot.breakJewelArm();
+                //turnAngleGyro(-20,2,0.3f);
                 //spin the robot left 45 degrees then return to facing forwards.
             }else if(side == Side.RIGHT){
-                //turnToHeadingGyro(-1,-1,-1);
+                bot.lowerJewelArm();
+                sleep(1050);
+                bot.breakJewelArm();
+               // turnAngleGyro(-20,2,0.3f);
+                final int finalRightShift = rightShift;
+                driveDirectionGyro(20, 90+bot.getInitGyroHeadingDegrees(),bot.getInitGyroHeadingDegrees(), new Predicate() {
+                    ElapsedTime et = new ElapsedTime();
+                    @Override
+                    public boolean isTrue() {
+                        telemetry.addData("","Z " + robotZXPhi[0] + " X" +robotZXPhi[1]);
+                        telemetry.update();
+                        if(bot.getInitGyroHeadingDegrees()>0)return robotZXPhi[0]<-finalRightShift;
+                        return robotZXPhi[1] > finalRightShift;
+                        //return et.milliseconds() > 500;
+                    }
+                });
+                bot.raiseJewelArm();
+                sleep(1050);
+                bot.breakJewelArm();
+                //turnAngleGyro(20,2,0.3f);
                 //spin the robot right 45 degrees then return to facing forwards.
             }
             return true;
         }
     }
-
 
     public void adjustPosOnTriangle(double timeOut){
         if (ADJUST_POS_LOG) BetaLog.dd(ADJUST_POS_TAG,"Entering Adjust Pos on Triangle.");
@@ -492,4 +562,119 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         bot.setDriveSpeed(0,0,0);
 
     }
+
+
+    public boolean knockJewelWithBalanceTurn(Side side){
+        if(goForRankingPoints){
+            //This logic flow, will score the jewel for the ENEMY team.
+            return false;
+        }else{
+            if(side == Side.UNKNOWN){
+                return false;
+            }
+            bot.lowerJewelArm();
+            sleep(1050);
+            bot.breakJewelArm();
+            if(side == Side.LEFT){
+                turnToHeadingWhilebAutoBalance(20+bot.getInitGyroHeadingDegrees(),2f,.3f);
+                bot.raiseJewelArm();
+                sleep(1050);
+                bot.breakJewelArm();
+                turnToHeadingWhilebAutoBalance(bot.getInitGyroHeadingDegrees(),2f,.3f);
+            }else if(side == Side.RIGHT){
+                turnToHeadingWhilebAutoBalance(-20+bot.getInitGyroHeadingDegrees(),2f,.3f);
+                bot.raiseJewelArm();
+                sleep(1050);
+                bot.breakJewelArm();
+                turnToHeadingWhilebAutoBalance(bot.getInitGyroHeadingDegrees(),2f,.3f);
+
+            }
+
+            return true;
+        }
+    }
+
+    /*
+        telemetry.addData("Heading degrees: ",orientation.firstAngle);
+            telemetry.addData("Roll degrees: ",orientation.secondAngle);
+            telemetry.addData("Pitch degrees: ", orientation.thirdAngle);
+    */
+
+    public void turnToHeadingWhilebAutoBalance(float targetHeading, float tolerance, float latency){
+        //Tolerance in degrees latency seconds.
+        tolerance = tolerance * (float)Math.PI/180f;
+        targetHeading = targetHeading * (float)Math.PI/180f;
+        Orientation orientation;
+
+        final float cPitch =100; //Cm/(s*r)
+        final float cRoll =100;  //Cm/(s*r)
+
+        final float vaMin = 1.5f * tolerance / latency;
+        final float C = 0.75f / latency;
+        final float vaMax = 0.2f * (float)Math.PI;
+        float heading = bot.getHeadingRadians();
+        float offset = (float)VuMarkNavigator.NormalizeAngle(targetHeading - heading);
+
+        while (opModeIsActive() && Math.abs(offset) > tolerance) {
+            orientation = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+            float pitchError = orientation.thirdAngle - this.initPitch;
+            float rollError = orientation.secondAngle - this.initRoll;
+
+            float vx = -cRoll * pitchError;
+            float vy = cPitch * pitchError;
+
+            float absAdjustedOffset = Math.abs(offset) - tolerance;
+            float absVa = vaMin + C * absAdjustedOffset;
+            absVa = Math.min(absVa, vaMax);
+            float va = absVa * Math.signum(offset);
+            if(TURN_TO_HEADING_LOG)BetaLog.dd(TURN_TO_HEADING_TAG,"Turning va = %.2f hd = %.0f, off = %.0f absAdjOff = %.0f ", va, heading, offset, absAdjustedOffset);
+            bot.setDriveSpeed(vx, vy, va);
+            heading = bot.getHeadingRadians();
+            offset = targetHeading - heading;
+        }
+        bot.setDrivePower(0, 0, 0);
+    }
+
+    public void startingAutoPos(double timeOut){
+        final float targetHeading = -2.2f * (float)Math.PI/180.0f;
+        final float targetX = 8;
+        final float targetZ = 40;
+
+        final float tolHeading = 0.2f;
+        final float tolX = 0.5f;
+        final float tolZ = 0.5f;
+
+        final float cX =1;
+        final float cZ =1;
+        final float cA = 2;
+
+        ElapsedTime et = new ElapsedTime();
+        OpenGLMatrix robotPose;
+        if(AUTO_POS_DEBUG)BetaLog.dd(AUTO_POS_TAG, "Entering auto pos.");
+        while (opModeIsActive() && et.milliseconds() < timeOut){
+            robotPose = VuMarkNavigator.getRobotPoseRelativeToTarget();
+            float[] poseData = robotPose.getData();
+            float heading = (float)Math.atan2( poseData[8], poseData[10]);
+            float newZValue = poseData[14]/10f;
+            float newXValue = poseData[12]/10f;
+            float xError = newXValue-targetX;
+            float zError = newZValue - targetZ;
+            float headingError = heading-targetHeading;
+            if(AUTO_POS_DEBUG)BetaLog.dd(AUTO_POS_TAG, "xError %.2f zError %.2f headingError %.2f",xError, zError, headingError * 180.0/Math.PI);
+            if(Math.abs(xError) < tolX && Math.abs(zError) < tolZ && Math.abs(headingError) < tolHeading){
+                if(AUTO_POS_DEBUG)BetaLog.dd(AUTO_POS_TAG, "Worked");
+                break;
+            }
+            float vX = -cX * xError * (float)Math.sin(heading) - cZ * zError * (float)Math.cos(heading);
+            float vY = -cX * xError * (float)Math.cos(heading) + cZ * zError * (float)Math.sin(heading);
+            float vA = -cA * headingError;
+            if(AUTO_POS_DEBUG)BetaLog.dd(AUTO_POS_TAG, "vX %.2f vY %.2f vA %.2f",vX,vY,vA);
+
+            bot.setDriveSpeed(vX,vY,vA);
+
+        }
+        if(AUTO_POS_DEBUG)BetaLog.dd(AUTO_POS_TAG, "Auto pos finished.");
+        bot.setDriveSpeed(0,0,0);
+    }
+
 }

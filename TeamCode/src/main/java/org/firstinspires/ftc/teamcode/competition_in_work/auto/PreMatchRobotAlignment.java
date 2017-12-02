@@ -1,33 +1,43 @@
-package org.firstinspires.ftc.teamcode.cv_programs;
+package org.firstinspires.ftc.teamcode.competition_in_work.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.vuforia.CameraDevice;
 
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
+import org.firstinspires.ftc.teamcode.cv_programs.Blob;
+import org.firstinspires.ftc.teamcode.cv_programs.ImgProc;
+import org.firstinspires.ftc.teamcode.mechbot.MechBotSensor;
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 
 /**
- * Created by JimLori on 11/6/2016.
+ * Created by JimLori on 11/30/2017.
  */
 
-@Autonomous(name = "TestJewelDiscrimination", group = "Test")
-@Disabled
-public class TestJewelDiscrimination extends LinearOpMode {
+@Autonomous(name = "PreMatchRobotAlignment", group = "Set up")
+public class PreMatchRobotAlignment extends LoggingLinearOpMode {
 
+    enum JewelSide {BLUE_LEFT, RED_LEFT, UNKNOWN}
+    Orientation orientation;
     @Override
-    public void runOpMode()  {
+    public void runLoggingOpmode() throws InterruptedException {
+        MechBotSensor bot = new MechBotSensor();
+        bot.init(hardwareMap);
 
         VuMarkNavigator.activate();
 
         //Turn flashlight on. Found I needed this in my office after dark to get adequate read on blue.
         //May not be necessary under normal competition conditions, especially if value and saturation
         //threshholds are set pretty low for blue.
-        CameraDevice.getInstance().setFlashTorchMode(true);
+        //CameraDevice.getInstance().setFlashTorchMode(true);
 
         waitForStart();
 
@@ -56,7 +66,7 @@ public class TestJewelDiscrimination extends LinearOpMode {
         //Need a reference to the frame queue to get images
         BlockingQueue<VuforiaLocalizer.CloseableFrame> frameQueue = VuMarkNavigator.getFrameQueue();
 
-
+        JewelSide jewelSide;
 
 
         while (opModeIsActive()) {
@@ -96,20 +106,31 @@ public class TestJewelDiscrimination extends LinearOpMode {
                 Blob blueBlob = blueBlobs.get(0);
                 for (int i = 1; i < blueBlobs.size(); i++) if (blueBlobs.get(i).getRectArea() > blueBlob.getRectArea()) blueBlob = blueBlobs.get(i);
 
-                //If blueBlob.getAvgX() < redBlob.getAvgX(), the blue blob is on the left
-                telemetry.addData("Arrangement", "%s", blueBlob.getAvgX()<redBlob.getAvgX()? "BLUE LEFT" : "BLUE RIGHT");
-                telemetry.addData("Red ", " x = %.0f y = %.0f w = %.0f h = %.0f", redBlob.getAvgX(), redBlob.getAvgY(),
-                        redBlob.getWidth(), redBlob.getLength());
-                telemetry.addData("Blue","x = %.0f y = %.0f w = %.0f h = %.0f", blueBlob.getAvgX(), blueBlob.getAvgY(),
-                        blueBlob.getWidth(), blueBlob.getLength());
+                jewelSide = blueBlob.getAvgX() < redBlob.getAvgX() ? JewelSide.BLUE_LEFT : JewelSide.RED_LEFT;
             }
-            else telemetry.addData("Could Not Find Both Blobs","");
+            else jewelSide = JewelSide.UNKNOWN;
+
+            OpenGLMatrix robotPose = VuMarkNavigator.getRobotPoseRelativeToTarget();
+
+            telemetry.addData("Jewel Side", jewelSide);
+            if (robotPose == null) telemetry.addData("","Robot Pose Unknown");
+            else{
+                float[] poseData = robotPose.getData();
+                float heading = (float)Math.atan2( poseData[8], poseData[10]) * 180.0f/(float)Math.PI;
+                telemetry.addData("Robot Pose"," Heading = %.1f Z = %.1f X = %.1f", heading, poseData[14]/10.0, poseData[12]/10.0);
+
+                orientation = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES); //WAS ZYX
+                telemetry.addData("Gyro Heading degrees: ",orientation.firstAngle);
+                telemetry.addData("Roll degrees: ",orientation.secondAngle);
+                telemetry.addData("Pitch degrees: ", orientation.thirdAngle);
+            }
 
             telemetry.update();
 
         }
 
         //Turn flashlight back off before exiting.
-        CameraDevice.getInstance().setFlashTorchMode(false);
+        //CameraDevice.getInstance().setFlashTorchMode(false);
+
     }
 }

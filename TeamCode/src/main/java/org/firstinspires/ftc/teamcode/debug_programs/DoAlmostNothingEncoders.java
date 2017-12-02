@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
 /**
  * Created by FTC Team 8397 on 10/27/2017.
  */
-@Autonomous( name= "Do Almost Nothing Encoders", group = "Test")
+//@Autonomous( name= "Do Almost Nothing Encoders", group = "Test")
 public class DoAlmostNothingEncoders extends MechBotAutonomous {
     @Override
     public void runLoggingOpmode() throws InterruptedException {

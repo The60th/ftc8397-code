@@ -27,7 +27,10 @@ public class MechBotSensor extends MechBot
     //Change to our custom BNO055 class.
     public BNO055EnhancedImpl imu;
 
-    private float initGyroHeading = 0;
+    public float initGyroHeading = 0;
+    public float getInitGyroHeadingDegrees(){
+    return this.initGyroHeading *180/(float)Math.PI;
+    }
 
     /**
      * Initialize default Hardware interfaces.

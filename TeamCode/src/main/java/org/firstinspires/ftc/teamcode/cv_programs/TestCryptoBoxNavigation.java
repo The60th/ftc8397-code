@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.cv_programs;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -17,7 +18,7 @@ import java.util.concurrent.BlockingQueue;
  */
 
 @Autonomous(name = "TestCryptoBoxNavigation", group = "Test")
-//@Disabled
+@Disabled
 public class TestCryptoBoxNavigation extends LinearOpMode {
 
     final String TAG = "TST_CRYPT";

@@ -59,23 +59,23 @@ public class OdomTesting extends LinearOpMode {
 
             }
 
-            if(gamepad2.x){
-                mechBot.blockSlideCRServo.setPower(1);
+           /* if(gamepad2.x){
+                mechBot.slideServo.setPower(1);
             }
             else if(gamepad2.b){
-                mechBot.blockSlideCRServo.setPower(-1);
+                mechBot.slideServo.setPower(-1);
             }
             else{
-                mechBot.blockSlideCRServo.setPower(0);
+                mechBot.slideServo.setPower(0);
             }
 
             if(gamepad2.right_bumper){
-                mechBot.blockSmackerKickerCRServo.setPower(1);
+                mechBot.kickerServo.setPower(1);
             }else if(gamepad2.left_bumper){
-                mechBot.blockSmackerKickerCRServo.setPower(-1);
+                mechBot.kickerServo.setPower(-1);
             }else{
-                mechBot.blockSmackerKickerCRServo.setPower(0);
-            }
+                mechBot.kickerServo.setPower(0);
+            }*/
 
             if(gamepad2.y){
                mechBot.blockLiftMotor.setPower(1);

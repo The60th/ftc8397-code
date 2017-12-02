@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
@@ -16,6 +17,8 @@ import java.util.ArrayList;
  */
 
 @Autonomous(name = "GetMotorInfo", group = "Test")
+@Disabled
+
 public class GetMotorInfo extends LinearOpMode {
 
     MechBot bot = new MechBotSensor();

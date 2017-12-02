@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.competition_in_work.auto;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
 import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
@@ -10,8 +11,10 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
 /**
  * Created by FTC Team 8397 on 11/22/2017.
  */
-@Autonomous(name="Blue Bottom Comp Start",group = "Blue")
-public class BlueBottomStart extends MechBotAutonomous {
+@Autonomous(name="Blue Bottom Auto Balance Turn",group = "Blue")
+@Disabled
+//No longer in use, updated all programs to auto balance.
+public class BlueBottomStartBalanceTurn extends MechBotAutonomous {
     int timesColorFoundSensorOne =0;
     final float[] hsvValues = new float[3];
 
@@ -81,12 +84,12 @@ public class BlueBottomStart extends MechBotAutonomous {
         }else{
             if (BLUE_BOTTOM_START_LOG)  BetaLog.dd(BLUE_BOTTOM_START_TAG, "Line following backwards left.");
             followLineProportionate(LineFollowSide.LEFT, bot.colorLeft, -10, new Predicate() {
-               @Override
-               public boolean isTrue() {
-                   Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
-                   return (hsvValues[1] < .5);
-               }
-           });
+                @Override
+                public boolean isTrue() {
+                    Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
+                    return (hsvValues[1] < .5);
+                }
+            });
         }
 
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "adjust on triangle");

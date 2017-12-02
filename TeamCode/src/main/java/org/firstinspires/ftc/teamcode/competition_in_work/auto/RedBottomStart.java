@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
 /**
  * Created by FTC Team 8397 on 11/22/2017.
  */
-@Autonomous(name="Red Bottom Comp Start",group = "Comp")
+@Autonomous(name="Red Bottom Comp Start",group = "Red")
 public class RedBottomStart extends MechBotAutonomous {
     final float[] hsvValues = new float[3];
 
@@ -27,7 +27,7 @@ public class RedBottomStart extends MechBotAutonomous {
         initAuto(TeamColor.RED, 2000,2000); //Find the targetJewl side and the target crypto key.
 
         if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "knockJewel");
-        knockJewel(this.targetSide);
+        knockJewelWithBalanceTurn(this.targetSide);
 
         //Assume the robot is facing the wall once again still on the balance stone and the wall is a heading of 0.
         if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "driveDirectionGyro 1");

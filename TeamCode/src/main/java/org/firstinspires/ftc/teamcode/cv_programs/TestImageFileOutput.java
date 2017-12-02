@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.cv_programs;
 import android.content.Context;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.vuforia.CameraDevice;
 
@@ -18,6 +19,8 @@ import java.util.concurrent.BlockingQueue;
  */
 
 @Autonomous(name = "TestImageFileOutput", group = "Test")
+//@Disabled
+
 public class TestImageFileOutput extends LinearOpMode {
 
     @Override

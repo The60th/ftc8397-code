@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.old_or_test_software;
 
 import android.graphics.Color;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.hardware.I2cAddr;
  * Created by FTC Team 8397 on 11/26/2017.
  */
 @TeleOp(name="dd",group = "ddd")
+@Disabled
 public class colorSensor2_Test extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

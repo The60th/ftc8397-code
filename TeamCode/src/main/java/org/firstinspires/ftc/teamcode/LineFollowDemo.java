@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 /**
  * Created by FTC Team 8397 on 10/27/2017.
  */
-@Autonomous(name = "TestLineFollowDemo", group = "Test")
+//@Autonomous(name = "TestLineFollowDemo", group = "Test")
 public class LineFollowDemo extends LinearOpMode {
     private MechBotSensor bot = new MechBotSensor();
     private enum Side {LEFT,RIGHT}

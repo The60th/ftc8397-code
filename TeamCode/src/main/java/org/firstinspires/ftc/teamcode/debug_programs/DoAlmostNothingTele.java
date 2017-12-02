@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotSensor;
 /**
  * Created by FTC Team 8397 on 10/27/2017.
  */
-@TeleOp(name = "Do Almost Nothing Tele", group = "Test")
+//@TeleOp(name = "Do Almost Nothing Tele", group = "Test")
 public class DoAlmostNothingTele extends LinearOpMode {
     MechBotSensor bot = new MechBotSensor();
 

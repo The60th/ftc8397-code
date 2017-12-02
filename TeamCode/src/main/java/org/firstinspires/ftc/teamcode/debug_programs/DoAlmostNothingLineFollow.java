@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
 /**
  * Created by FTC Team 8397 on 10/27/2017.
  */
-@Autonomous( name= "Do Almost Nothing line follow", group = "Test")
+//@Autonomous( name= "Do Almost Nothing line follow", group = "Test")
 public class DoAlmostNothingLineFollow extends MechBotAutonomous {
     @Override
     public void runLoggingOpmode(){

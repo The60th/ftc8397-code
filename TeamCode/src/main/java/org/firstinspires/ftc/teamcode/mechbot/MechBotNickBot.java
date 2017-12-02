@@ -12,9 +12,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class MechBotNickBot extends MechBotSensor {
     public DcMotor leftSlideExtenderMotor, rightSlideExtenderMotor, blockLiftMotor;
-    public CRServo blockSmackerKickerCRServo, blockSlideCRServo;
-    public Servo jewelSmackerServo;
-
+    public Servo kickerServo,slideServo;
+    public CRServo jewelServo;
     public void init(HardwareMap ahwMap) {
         super.init(ahwMap);
 
@@ -22,10 +21,10 @@ public class MechBotNickBot extends MechBotSensor {
         rightSlideExtenderMotor = hardwareMap.dcMotor.get("rSE");
         blockLiftMotor = hardwareMap.dcMotor.get("lift");
 
-        blockSlideCRServo = hardwareMap.crservo.get("BS");
-        blockSmackerKickerCRServo = hardwareMap.crservo.get("lA");
+        slideServo = hardwareMap.servo.get("BS");
+        kickerServo = hardwareMap.servo.get("lA");
 
-        jewelSmackerServo = hardwareMap.servo.get("jSS");
+        jewelServo = hardwareMap.crservo.get("jSS");
 
         rightSlideExtenderMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -41,10 +40,20 @@ public class MechBotNickBot extends MechBotSensor {
         rightSlideExtenderMotor.setPower(power);
     }
 
-    public void smackJewel(){
-        jewelSmackerServo.setPosition(.5);
+    public void lowerJewelArm(){
+        jewelServo.setPower(.5);
     }
-    public void holdJewelSmacker(){
-        jewelSmackerServo.setPosition(0);
+    public void raiseJewelArm(){
+        jewelServo.setPower(-.5);
+
     }
+    public void breakJewelArm(){
+        jewelServo.setPower(0);
+    }
+    //public void smackJewel(){
+     //   jewelServo.setPosition(.5);
+    //}
+    //public void holdJewelSmacker(){
+      //  jewelServo.setPosition(0);
+    //}
 }
