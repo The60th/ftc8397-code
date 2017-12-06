@@ -52,9 +52,10 @@ public class MechBotDriveControls {
         return true;
     }
 
-    public boolean joyStickMecnumDriveComp(){
+    public void joyStickMecnumDriveComp(float[] data){
+        float scaler = 2;
         if(!this.gamepadRefreshed){
-            return false;
+            data = null;
         }
         float x = Math.abs(gamepad1.left_stick_x) > 0.05 ? gamepad1.left_stick_x : 0;
         float y = Math.abs(gamepad1.left_stick_y) > 0.05 ? gamepad1.left_stick_y : 0;
@@ -66,8 +67,14 @@ public class MechBotDriveControls {
                 a = gamepad1.right_trigger;
             }
         }
-        mechBot.setDrivePower((-y/2), (-x/2), (-a/2));
-        return true;
+        mechBot.setDrivePower((-y/scaler), (-x/scaler), (-a/scaler));
+        data[0] = y;
+        data[1] = x;
+        data[2] = a;
+        data[3] = y/scaler;
+        data[4] = x/scaler;
+        data[5] = a/scaler;
+
     }
 
     public boolean joyStickMecnumDrive(float speedScaler){

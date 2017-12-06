@@ -28,6 +28,7 @@ public class TeleOp extends LoggingLinearOpMode{
         mechBot.init(hardwareMap);
         ElapsedTime et = new ElapsedTime();
 
+
         telemetry.addData("Ready to go: ","");
         telemetry.update();
 
@@ -42,7 +43,7 @@ public class TeleOp extends LoggingLinearOpMode{
 
         while (opModeIsActive()) {
             mechBotDriveControls.refreshGamepads(gamepad1,gamepad2);
-            mechBotDriveControls.joyStickMecnumDriveComp();
+            mechBotDriveControls.joyStickMecnumDriveComp(new float[4]);
 
             //Extend block collector.
             if(gamepad1.dpad_up){

@@ -66,7 +66,6 @@ public class MechBotNickBot extends MechBotSensor {
     }
     public void raiseJewelArm(){
         jewelServo.setPower(-.5);
-
     }
     public void breakJewelArm(){
         jewelServo.setPower(0);
