@@ -4,8 +4,11 @@ package org.firstinspires.ftc.teamcode.competition_in_work.teleop;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
+import org.firstinspires.ftc.teamcode.mechbot.MechBot;
 import org.firstinspires.ftc.teamcode.mechbot.MechBotDriveControls;
+import org.firstinspires.ftc.teamcode.mechbot.MechBotNickBot;
 import org.firstinspires.ftc.teamcode.mechbot.MechBotRedHook;
+import org.firstinspires.ftc.teamcode.mechbot.MechBotSensor;
 
 /**
  * Created by FTC Team 8397 on 12/5/2017.
@@ -20,6 +23,7 @@ public class TeleOpRedHook extends LoggingLinearOpMode {
     @Override
     public void runLoggingOpmode() throws InterruptedException {
         bot.init(hardwareMap);
+
 
         ElapsedTime et = new ElapsedTime();
 
@@ -40,6 +44,56 @@ public class TeleOpRedHook extends LoggingLinearOpMode {
             telemetry.addData("Drive speeds input: ","X: %.2f Y: %.2f A: %.2f", driveData[3],driveData[4],driveData[5]);
             telemetry.update();
 
+            while (opModeIsActive()){
+                mechBotDriveControls.refreshGamepads(gamepad1,gamepad2);
+                mechBotDriveControls.joyStickMecnumDriveComp(new float[6]);
+
+                if(gamepad1.dpad_right){
+                    bot.closeLowerClamp();
+                }
+                else if(gamepad1.a){
+                    bot.openLowerClamp();
+                }
+                else if(gamepad1.b){
+                    bot.midPosLowerClamp();
+                }
+
+                if(gamepad1.dpad_left){
+                    bot.closeUpperClamp();
+                }
+                else if(gamepad1.x){
+                    bot.openUpperClamp();
+
+                }
+                else if(gamepad1.y){
+                    bot.midPosUpperClamp();
+                }
+
+                if (gamepad2.dpad_up){
+                    bot.liftArmUp();
+                }
+                else if (gamepad2.dpad_down){
+                    bot.liftArmDown();
+                }
+                else{
+                    bot.liftArmStop();
+                }
+                if(gamepad1.right_stick_y > .5){
+                    bot.lowerJewelArm();
+                }else if(gamepad1.right_stick_y < -.5){
+                    bot.raiseJewelArm();
+                }else{
+                    bot.breakJewelArm();
+                }
+
+
+
+            }
         }
+
+
+        }
+
+
     }
-}
+

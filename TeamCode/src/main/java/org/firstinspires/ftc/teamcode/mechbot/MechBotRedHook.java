@@ -42,34 +42,47 @@ public class MechBotRedHook extends MechBotSensor{
 
     }
 
-    public void raiseLinearSlideLift(){
-        leftLinearSlide.setPower(1);
-        rightLinearSlide.setPower(1);
-    }
-    public void lowerLinearSlideLift(){
-        leftLinearSlide.setPower(-1);
-        rightLinearSlide.setPower(-1);
-    }
-
     public void closeLowerClamp(){
-        leftLowerClamp.setPosition(nullPos);
-        rightLowerClamp.setPosition(nullPos);
+        leftLowerClamp.setPosition(1);
+        rightLowerClamp.setPosition(0);
     }
 
     public void openLowerClamp(){
-        leftLowerClamp.setPosition(nullPos);
-        rightLowerClamp.setPosition(nullPos);
+        leftLowerClamp.setPosition(0);
+        rightLowerClamp.setPosition(1);
+    }
+    public void midPosLowerClamp(){
+        leftLowerClamp.setPosition(.5);
+        rightLowerClamp.setPosition(.5);
     }
 
     public void closeUpperClamp(){
-        leftUpperClamp.setPosition(nullPos);
-        rightUpperClamp.setPosition(nullPos);
+        leftUpperClamp.setPosition(1);
+        rightUpperClamp.setPosition(1);
     }
 
     public void openUpperClamp(){
-        leftUpperClamp.setPosition(nullPos);
-        rightUpperClamp.setPosition(nullPos);
+        leftUpperClamp.setPosition(0);
+        rightUpperClamp.setPosition(0);
     }
+
+    public void midPosUpperClamp(){
+        leftUpperClamp.setPosition(0.5);
+        rightUpperClamp.setPosition(0.5);
+    }
+    public void liftArmDown(){
+        leftLinearSlide.setPower(-.5);
+        rightLinearSlide.setPower(.5);
+    }
+    public void liftArmUp (){
+        leftLinearSlide.setPower(1);
+        rightLinearSlide.setPower(-1);
+    }
+    public void liftArmStop (){
+        leftLinearSlide.setPower(0);
+        rightLinearSlide.setPower(0);
+    }
+
 
 
     public void lowerJewelArm(){
