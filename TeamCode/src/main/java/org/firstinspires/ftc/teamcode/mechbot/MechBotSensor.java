@@ -31,6 +31,9 @@ public class MechBotSensor extends MechBot
     public float getInitGyroHeadingDegrees(){
     return this.initGyroHeading *180/(float)Math.PI;
     }
+    public float getInitGyroHeadingRadians(){
+        return this.initGyroHeading;
+    }
 
     /**
      * Initialize default Hardware interfaces.

@@ -58,7 +58,7 @@ public class TeleOpRedHook extends LoggingLinearOpMode {
                 else if(gamepad1.b){
                     bot.midPosLowerClamp();
                 }
-                else if(gamepad1.left_trigger > .5){
+                else if(gamepad1.right_bumper){
                     bot.midPosExtraLowerClamp();
                 }
 
@@ -71,7 +71,7 @@ public class TeleOpRedHook extends LoggingLinearOpMode {
                 }
                 else if(gamepad1.y){
                     bot.midPosUpperClamp();
-                }else if(gamepad1.right_trigger > .5){
+                }else if(gamepad1.left_bumper){
                     bot.midPosExtraUpperClamp();
                 }
 

@@ -6,6 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
@@ -100,6 +104,9 @@ public class MechBotDiagnostics extends LoggingLinearOpMode {
             telemetry.addData("Color left", "H = %.2f S = %.2f V = %.2f", HSV[0],HSV[1],HSV[2]);
             Color.RGBToHSV(bot.colorRight.red(), bot.colorRight.green(), bot.colorRight.blue(),HSV);
             telemetry.addData("Color right", "H = %.2f S = %.2f V = %.2f", HSV[0],HSV[1],HSV[2]);
+
+            Orientation angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            telemetry.addData("Orientation-> read order -> ZYX","First angle: " + angles.firstAngle + " Second angle: " + angles.secondAngle + " Third angle " + angles.thirdAngle);
 
             telemetry.update();
 

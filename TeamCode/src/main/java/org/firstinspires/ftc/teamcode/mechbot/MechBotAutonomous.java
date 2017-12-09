@@ -46,7 +46,6 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
     public enum TeamColor {BLUE,RED}
     public enum Side{LEFT,RIGHT,UNKNOWN}
     protected float[] robotZXPhi = null;
-    public double colorSatCutOff = 0.5f; //Min value to be considered on a color.
 
     protected final String DRIVE_DIRECTION_GYRO_TAG = "DRIVE_DIRECTION_GYRO";
     protected final boolean DRIVE_DIRECTION_GYRO_LOG = true;
@@ -83,7 +82,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
     public float initRoll;
     public float initPitch;
 
-    public final float GLOBAL_STANDERD_TOLERANCE =2f; //Degrees
+    public final float GLOBAL_STANDERD_TOLERANCE = 2f; //Degrees
     public final float GLOBAL_STANDERD_LATENCY = 0.3f; //Seconds
     public final float HSV_SAT_CUT_OFF = .5f;
 
@@ -123,6 +122,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
             float err = side == LineFollowSide.LEFT? 0.5f - hsvValues[1] : hsvValues[1] - 0.5f;
             if (err < -0.5) err = -0.4f;
             else if (err > 0.5) err = 0.4f;
+
             if(FOLLOW_LINE_PROP_LOG)BetaLog.dd(FOLLOW_LINE_PROP_TAG,"Heading %.2f Sat %.2f error %.2f",heading,hsvValues[1],err);
             float angleDiff = side == LineFollowSide.LEFT? heading - INNER_TAPE_ANGLE_RADS : heading + INNER_TAPE_ANGLE_RADS;
             // I made this change for the new robot.
@@ -198,21 +198,57 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         final float vaMin = 1.5f * tolerance / latency;
         final float C = 0.75f / latency;
         final float vaMax = 0.2f * (float)Math.PI;
-        float heading = bot.getHeadingRadians();
-        float offset = (float)VuMarkNavigator.NormalizeAngle(targetHeading - heading);
+        float heading;
+        float offset;
+        while (opModeIsActive()) {
+            heading = bot.getHeadingRadians();
+            offset = (float)VuMarkNavigator.NormalizeAngle(targetHeading - heading);
+            if(Math.abs(offset) <= tolerance) break;
 
-        while (opModeIsActive() && Math.abs(offset) > tolerance) {
             float absAdjustedOffset = Math.abs(offset) - tolerance;
             float absVa = vaMin + C * absAdjustedOffset;
+
             absVa = Math.min(absVa, vaMax);
             float va = absVa * Math.signum(offset);
             if(TURN_TO_HEADING_LOG)BetaLog.dd(TURN_TO_HEADING_TAG,"Turning va = %.2f hd = %.0f, off = %.0f absAdjOff = %.0f", va, heading, offset, absAdjustedOffset);
             bot.setDriveSpeed(0, 0, va);
-            heading = bot.getHeadingRadians();
-            offset = targetHeading - heading;
         }
         bot.setDrivePower(0, 0, 0);
+    }
 
+    public enum RotationDirection{COUNTER_CLOCK,CLOCK}
+
+    //Turns robot to a specific integratedZ heading using Gyro, targetHeading in degrees
+    protected void turnToHeadingGyro(float targetHeading, float tolerance, float latency,RotationDirection rotationDirection){
+        //Tolerance in degrees latency seconds.
+        tolerance = tolerance * (float)Math.PI/180f;
+        targetHeading = targetHeading * (float)Math.PI/180f;
+
+        final float vaMin = 1.5f * tolerance / latency;
+        final float C = 0.75f / latency;
+        final float vaMax = 0.2f * (float)Math.PI;
+        float heading;
+        float offset;
+        while (opModeIsActive()) {
+            heading = bot.getHeadingRadians();
+            offset = (float)VuMarkNavigator.NormalizeAngle(targetHeading - heading);
+            if(Math.abs(offset) <= tolerance) break;
+
+            if(rotationDirection == RotationDirection.COUNTER_CLOCK){
+                if(offset < 0)offset += 2.0f*(float)Math.PI;
+            }else{
+                if(offset > 0)offset -= 2.0f*(float)Math.PI;
+            }
+
+            float absAdjustedOffset = Math.abs(offset) - tolerance;
+            float absVa = vaMin + C * absAdjustedOffset;
+
+            absVa = Math.min(absVa, vaMax);
+            float va = absVa * Math.signum(offset);
+            if(TURN_TO_HEADING_LOG)BetaLog.dd(TURN_TO_HEADING_TAG,"Turning va = %.2f hd = %.0f, off = %.0f absAdjOff = %.0f", va, heading, offset, absAdjustedOffset);
+            bot.setDriveSpeed(0, 0, va);
+        }
+        bot.setDrivePower(0, 0, 0);
     }
 
     protected void driveStraightGyroTime(float vx, float vy, float duration) {
@@ -544,8 +580,8 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
 
     public void adjustPosOnTriangle(double timeOut){
         if (ADJUST_POS_LOG) BetaLog.dd(ADJUST_POS_TAG,"Entering Adjust Pos on Triangle.");
-        final double interSensorDist = 22.9;
-        final double sensorOffSet = 7.6;
+        final double interSensorDist = 34;
+        final double sensorOffSet = 10;
         final double sensorR = Math.sqrt(interSensorDist*interSensorDist/4.0 + sensorOffSet*sensorOffSet);
         final double sensorAngle = Math.atan(2.0*sensorOffSet/interSensorDist);
         final float specialCoeff = (float)(sensorR*Math.sin(sensorAngle+INNER_TAPE_ANGLE_RADS)/Math.cos(INNER_TAPE_ANGLE_RADS));
@@ -572,10 +608,12 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
             }
 
             float va = -CAngle * gyroHeading;
-            float vx = CSum*(sumSat-1.0f)*(float)Math.cos(gyroHeading)
-                    + (CDiff*diffSat + specialCoeff*va)*(float)Math.sin(gyroHeading);
-            float vy = -CSum*(sumSat-1.0f)*(float)Math.sin(gyroHeading)
-                    + (CDiff*diffSat + specialCoeff*va)*(float)Math.cos(gyroHeading);
+
+            float vx = -CSum*(sumSat-1.0f)*(float)Math.cos(gyroHeading)
+                    - (CDiff*diffSat + specialCoeff*va)*(float)Math.sin(gyroHeading);
+
+            float vy = +CSum*(sumSat-1.0f)*(float)Math.sin(gyroHeading)
+                    - (CDiff*diffSat + specialCoeff*va)*(float)Math.cos(gyroHeading);
 
             bot.setDriveSpeed(vx,vy,va);
         }
@@ -596,17 +634,17 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
             sleep(1050);
             bot.breakJewelArm();
             if(side == Side.LEFT){
-                turnToHeadingWhilebAutoBalance(20+bot.getInitGyroHeadingDegrees(),2f,.3f);
+                turnToHeadingWhileAutoBalance(20+bot.getInitGyroHeadingDegrees(),2f,.3f);
                 bot.raiseJewelArm();
                 sleep(1050);
                 bot.breakJewelArm();
-                turnToHeadingWhilebAutoBalance(bot.getInitGyroHeadingDegrees(),2f,.3f);
+                turnToHeadingWhileAutoBalance(bot.getInitGyroHeadingDegrees(),2f,.3f);
             }else if(side == Side.RIGHT){
-                turnToHeadingWhilebAutoBalance(-20+bot.getInitGyroHeadingDegrees(),2f,.3f);
+                turnToHeadingWhileAutoBalance(-20+bot.getInitGyroHeadingDegrees(),2f,.3f);
                 bot.raiseJewelArm();
                 sleep(1050);
                 bot.breakJewelArm();
-                turnToHeadingWhilebAutoBalance(bot.getInitGyroHeadingDegrees(),2f,.3f);
+                turnToHeadingWhileAutoBalance(bot.getInitGyroHeadingDegrees(),2f,.3f);
 
             }
 
@@ -620,37 +658,35 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
             telemetry.addData("Pitch degrees: ", orientation.thirdAngle);
     */
 
-    public void turnToHeadingWhilebAutoBalance(float targetHeading, float tolerance, float latency){
+    public void turnToHeadingWhileAutoBalance(float targetHeading, float tolerance, float latency){
         //Tolerance in degrees latency seconds.
         tolerance = tolerance * (float)Math.PI/180f;
         targetHeading = targetHeading * (float)Math.PI/180f;
         Orientation orientation;
-
+        final float vaMax = 0.2f * (float)Math.PI;
+        float heading;
+        float offset;
         final float cPitch =100; //Cm/(s*r)
         final float cRoll =100;  //Cm/(s*r)
-
         final float vaMin = 1.5f * tolerance / latency;
         final float C = 0.75f / latency;
-        final float vaMax = 0.2f * (float)Math.PI;
-        float heading = bot.getHeadingRadians();
-        float offset = (float)VuMarkNavigator.NormalizeAngle(targetHeading - heading);
 
-        while (opModeIsActive() && Math.abs(offset) > tolerance) {
+        while (opModeIsActive()) {
             orientation = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
             float pitchError = orientation.thirdAngle - this.initPitch;
             float rollError = orientation.secondAngle - this.initRoll;
+            heading = (float)VuMarkNavigator.NormalizeAngle(orientation.firstAngle + bot.getInitGyroHeadingRadians());
+            offset = (float)VuMarkNavigator.NormalizeAngle(targetHeading - heading);
+            if(Math.abs(offset) <= tolerance) break;
 
-            float vx = -cRoll * pitchError;
+            float vx = -cRoll * rollError;
             float vy = cPitch * pitchError;
-
             float absAdjustedOffset = Math.abs(offset) - tolerance;
             float absVa = vaMin + C * absAdjustedOffset;
             absVa = Math.min(absVa, vaMax);
             float va = absVa * Math.signum(offset);
             if(TURN_TO_HEADING_LOG)BetaLog.dd(TURN_TO_HEADING_TAG,"Turning va = %.2f hd = %.0f, off = %.0f absAdjOff = %.0f ", va, heading, offset, absAdjustedOffset);
             bot.setDriveSpeed(vx, vy, va);
-            heading = bot.getHeadingRadians();
-            offset = targetHeading - heading;
         }
         bot.setDrivePower(0, 0, 0);
     }
@@ -697,12 +733,18 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         bot.setDriveSpeed(0,0,0);
     }
     public void prepGlyphForDrive(){
-        bot.closeLowerClamp();
-        bot.closeUpperClamp();
+        closeClampCustomAuto();
+        bot.midPosUpperClamp();
         sleep(1000);
         bot.liftArmUp();
-        sleep(500);
+        sleep(1500);
         bot.liftArmStop();
+    }
+    private void closeClampCustomAuto(){
+        bot.leftLowerClamp.setPosition(.60);
+        bot.rightLowerClamp.setPosition(.40);
+        bot.leftUpperClamp.setPosition(.40);
+        bot.rightUpperClamp.setPosition(.60);
     }
     public void scoreGylph(){
         //Raise

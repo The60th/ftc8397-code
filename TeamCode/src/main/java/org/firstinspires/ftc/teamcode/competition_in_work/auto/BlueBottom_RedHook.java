@@ -36,9 +36,9 @@ public class BlueBottom_RedHook extends MechBotAutonomous {
         driveDirectionGyro(20, 90,180, new Predicate() {
             @Override
             public boolean isTrue() {
-                Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
+                Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
                 if(hsvValues[1] < HSV_SAT_CUT_OFF){
-                    sleep(250);
+                    sleep(1250);
                     return true;
                 }
                 return false;
@@ -47,7 +47,7 @@ public class BlueBottom_RedHook extends MechBotAutonomous {
 
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "turnToheadingGyro");
 
-        turnToHeadingGyro(0,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY); //Turn to face the wall again. Now it should turn 180 to face the wall.
+        turnToHeadingGyro(0,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY,RotationDirection.COUNTER_CLOCK); //Turn to face the wall again. Now it should turn 180 to face the wall.
 
         //Drive towards the box till the colored tape is detected.
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "driveDirectionGyro 2");
@@ -93,9 +93,21 @@ public class BlueBottom_RedHook extends MechBotAutonomous {
 
         adjustPosOnTriangle(ADUST_POS_TIMEOUT);
 
-        //18.8 shift.
         robotZXPhi = new float[] {30,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
+
+
+        //Code above here works well new testing changes are being done below.
+        driveDirectionGyro(10, -90, new Predicate() {
+            @Override
+            public boolean isTrue() { //Way to far of left shift? //Encoders counting incorrectly? //because odom is already tracking encoder values, so values are incorrect?
+                return robotZXPhi[1] < -4;
+            }
+        });
+
+        while (opModeIsActive())
+
+        //18.8 shift.
         switch (this.cryptoKey){
             case LEFT:
                 if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "driveDirectionGyro left");

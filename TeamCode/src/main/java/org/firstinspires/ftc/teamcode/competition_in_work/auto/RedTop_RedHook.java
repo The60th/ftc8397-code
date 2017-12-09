@@ -33,7 +33,7 @@ public class RedTop_RedHook extends MechBotAutonomous {
 
         //Assume the robot is facing the wall once again still on the balance stone and the wall is a heading of 0.
         if (RED_START_TOP_LOG) BetaLog.dd(RED_START_TOP_TAG, "driveDirectionGyro1");
-        driveDirectionGyro(20, 180, -90, new Predicate() {
+        driveDirectionGyro(20, 180, 90, new Predicate() {
             @Override
             public boolean isTrue() {
                 Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
@@ -49,7 +49,7 @@ public class RedTop_RedHook extends MechBotAutonomous {
 
         robotZXPhi = new float[]{0,0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
-        driveDirectionGyro(20, 180, -90, new Predicate() {
+        driveDirectionGyro(20, 180, 90, new Predicate() {
             @Override
             public boolean isTrue() {
                 return robotZXPhi[0] < -10;

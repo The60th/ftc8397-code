@@ -38,7 +38,7 @@ public class RedBottom_RedHook extends MechBotAutonomous {
             public boolean isTrue() {
                 Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
                 if(hsvValues[1] < HSV_SAT_CUT_OFF){
-                    sleep(250);
+                    sleep(750);
                     return true;
                 }
                 return false;
@@ -47,7 +47,7 @@ public class RedBottom_RedHook extends MechBotAutonomous {
 
         if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "turnToheadingGyro");
 
-        turnToHeadingGyro(0,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY); //Turn to face the wall again.
+        turnToHeadingGyro(0,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY,RotationDirection.CLOCK); //Turn to face the wall again.
 
         //Drive towards the box till the colored tape is detected.
         BetaLog.dd(RED_BOTTOM_START_TAG, "driveDirectionGyro2");

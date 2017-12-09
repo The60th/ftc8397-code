@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class MechBotRedHook extends MechBotSensor{
     private DcMotor leftLinearSlide, rightLinearSlide;
     private CRServo jewelArm;
-    private Servo leftLowerClamp, leftUpperClamp, rightLowerClamp, rightUpperClamp;
+    public Servo leftLowerClamp, leftUpperClamp, rightLowerClamp, rightUpperClamp;
 
     //May need different pos sets for servos depending on side.
     private final double CLAMP_CLOSE_POSITION = 1;
@@ -51,8 +51,8 @@ public class MechBotRedHook extends MechBotSensor{
         rightLowerClamp.setPosition(1);
     }
     public void midPosLowerClamp(){
-        leftLowerClamp.setPosition(.5);
-        rightLowerClamp.setPosition(.5);
+        leftLowerClamp.setPosition(.6);
+        rightLowerClamp.setPosition(.4);
     }
     public void midPosExtraLowerClamp(){
         leftLowerClamp.setPosition(.40);
@@ -81,8 +81,8 @@ public class MechBotRedHook extends MechBotSensor{
 
 
     public void liftArmDown(){
-        leftLinearSlide.setPower(-.5);
-        rightLinearSlide.setPower(.5);
+        leftLinearSlide.setPower(-1);
+        rightLinearSlide.setPower(1);
     }
     public void liftArmUp (){
         leftLinearSlide.setPower(1);
