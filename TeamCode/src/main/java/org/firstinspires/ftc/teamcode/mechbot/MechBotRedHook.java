@@ -46,7 +46,6 @@ public class MechBotRedHook extends MechBotSensor{
         leftLowerClamp.setPosition(1);
         rightLowerClamp.setPosition(0);
     }
-
     public void openLowerClamp(){
         leftLowerClamp.setPosition(0);
         rightLowerClamp.setPosition(1);
@@ -55,21 +54,32 @@ public class MechBotRedHook extends MechBotSensor{
         leftLowerClamp.setPosition(.5);
         rightLowerClamp.setPosition(.5);
     }
+    public void midPosExtraLowerClamp(){
+        leftLowerClamp.setPosition(.40);
+        rightLowerClamp.setPosition(.60);
+    }
+
 
     public void closeUpperClamp(){
-        leftUpperClamp.setPosition(1);
+        leftUpperClamp.setPosition(0);
         rightUpperClamp.setPosition(1);
     }
-
     public void openUpperClamp(){
         leftUpperClamp.setPosition(0);
-        rightUpperClamp.setPosition(0);
+        rightUpperClamp.setPosition(1);
     }
-
     public void midPosUpperClamp(){
         leftUpperClamp.setPosition(0.5);
         rightUpperClamp.setPosition(0.5);
     }
+    public void midPosExtraUpperClamp(){
+        leftUpperClamp.setPosition(.60);
+        rightUpperClamp.setPosition(.40);
+    }
+
+
+
+
     public void liftArmDown(){
         leftLinearSlide.setPower(-.5);
         rightLinearSlide.setPower(.5);
@@ -82,9 +92,6 @@ public class MechBotRedHook extends MechBotSensor{
         leftLinearSlide.setPower(0);
         rightLinearSlide.setPower(0);
     }
-
-
-
     public void lowerJewelArm(){
         jewelArm.setPower(.5);
     }

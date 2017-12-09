@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.competition_in_work.auto;
+package org.firstinspires.ftc.teamcode.competition_in_work.auto.old;
 
 import android.util.Log;
 
@@ -18,7 +18,6 @@ import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 /**
  * Created by FTC Team 8397 on 12/1/2017.
  */
-@Autonomous(name = "Auto Pos Balance",group = "Testing")
 @Disabled
 public class AutonomousAutoBalanceStonePos extends MechBotAutonomous {
     @Override

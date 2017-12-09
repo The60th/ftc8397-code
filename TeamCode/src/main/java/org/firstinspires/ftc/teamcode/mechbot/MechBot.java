@@ -283,12 +283,12 @@ public class MechBot
             return new float[]{newX, newY, newOdomHeading};
     }
 
-
+    // We changed these two methods from adding 90 on the first one to - 90 and the reverse on the second one.
     public float getOdomHeadingFromGyroHeading(float gyroHeading){
-        return (float) VuMarkNavigator.NormalizeAngle(gyroHeading + (float)Math.PI / 2.0f);
+        return (float) VuMarkNavigator.NormalizeAngle(gyroHeading - (float)Math.PI / 2.0f);
     }
     public float getGyroHeadingFromOdomHeading(float odomHeading){
-        return (float)VuMarkNavigator.NormalizeAngle(odomHeading - (float)Math.PI / 2.0f);
+        return (float)VuMarkNavigator.NormalizeAngle(odomHeading + (float)Math.PI / 2.0f);
     }
 }
 

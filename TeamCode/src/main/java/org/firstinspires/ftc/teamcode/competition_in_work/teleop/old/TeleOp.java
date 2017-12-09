@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode.competition_in_work.teleop;
+package org.firstinspires.ftc.teamcode.competition_in_work.teleop.old;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotNickBot;
  * Created by FTC Team 8397 on 11/30/2017.
  */
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Game TeleOP", group="Comp")
+@Disabled
 public class TeleOp extends LoggingLinearOpMode{
 
     private MechBotNickBot mechBot = new MechBotNickBot();

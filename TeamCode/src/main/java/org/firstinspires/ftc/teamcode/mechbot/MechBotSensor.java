@@ -48,11 +48,17 @@ public class MechBotSensor extends MechBot
          * Saving all drive wheel motor values to their own string values inside the hardwareMap.
          * Each motor is saved as "M" followed by its number in inger form so Motor One is now "M1".
          */
+        // Change made after robot remodle.
+        //colorLeft = hardwareMap.get(ColorSensor.class, "sensor_color");
+        //colorRight = hardwareMap.get(ColorSensor.class, "sensor_color2");
 
-        colorLeft = hardwareMap.get(ColorSensor.class, "sensor_color");
-        colorRight = hardwareMap.get(ColorSensor.class, "sensor_color2");
+        //colorRight.setI2cAddress(I2cAddr.create8bit(0x70));
 
-        colorRight.setI2cAddress(I2cAddr.create8bit(0x70));
+        colorRight = hardwareMap.get(ColorSensor.class, "sensor_color");
+        colorLeft = hardwareMap.get(ColorSensor.class, "sensor_color2");
+
+        colorLeft.setI2cAddress(I2cAddr.create8bit(0x70));
+
 
 
         imu = hardwareMap.get(BNO055EnhancedImpl.class, "imu");

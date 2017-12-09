@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.competition_in_work.teleop;
+package org.firstinspires.ftc.teamcode.competition_in_work.teleop.old;
 
 
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotSensor;
 /**
  * Created by FTC Team 8397 on 12/5/2017.
  */
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Red hook comp", group="Comp")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Red hook Teleop", group="Comp")
 public class TeleOpRedHook extends LoggingLinearOpMode {
 
     private MechBotRedHook bot = new MechBotRedHook();
@@ -48,6 +48,7 @@ public class TeleOpRedHook extends LoggingLinearOpMode {
                 mechBotDriveControls.refreshGamepads(gamepad1,gamepad2);
                 mechBotDriveControls.joyStickMecnumDriveComp(new float[6]);
 
+
                 if(gamepad1.dpad_right){
                     bot.closeLowerClamp();
                 }
@@ -57,17 +58,23 @@ public class TeleOpRedHook extends LoggingLinearOpMode {
                 else if(gamepad1.b){
                     bot.midPosLowerClamp();
                 }
+                else if(gamepad1.left_trigger > .5){
+                    bot.midPosExtraLowerClamp();
+                }
+
 
                 if(gamepad1.dpad_left){
                     bot.closeUpperClamp();
                 }
                 else if(gamepad1.x){
                     bot.openUpperClamp();
-
                 }
                 else if(gamepad1.y){
                     bot.midPosUpperClamp();
+                }else if(gamepad1.right_trigger > .5){
+                    bot.midPosExtraUpperClamp();
                 }
+
 
                 if (gamepad2.dpad_up){
                     bot.liftArmUp();
@@ -78,6 +85,8 @@ public class TeleOpRedHook extends LoggingLinearOpMode {
                 else{
                     bot.liftArmStop();
                 }
+
+
                 if(gamepad1.right_stick_y > .5){
                     bot.lowerJewelArm();
                 }else if(gamepad1.right_stick_y < -.5){
@@ -85,9 +94,6 @@ public class TeleOpRedHook extends LoggingLinearOpMode {
                 }else{
                     bot.breakJewelArm();
                 }
-
-
-
             }
         }
 

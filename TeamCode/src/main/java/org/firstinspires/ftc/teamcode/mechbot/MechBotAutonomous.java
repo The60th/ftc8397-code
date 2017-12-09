@@ -34,7 +34,8 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
     public void disableThrowing(){this.goForRankingPoints = false;}
 
 
-    public MechBotNickBot bot = new MechBotNickBot();
+    //public MechBotNickBot bot = new MechBotNickBot(); I changed this so it would run with the new hardware map. We are now using MechBotRedHook.
+    public MechBotRedHook bot = new MechBotRedHook();
     public enum LineFollowSide {LEFT,RIGHT}
     private final float INNER_TAPE_ANGLE = 33.70f;
     private final float INNER_TAPE_ANGLE_RADS = INNER_TAPE_ANGLE * ((float)Math.PI/180.0f);
@@ -124,14 +125,18 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
             else if (err > 0.5) err = 0.4f;
             if(FOLLOW_LINE_PROP_LOG)BetaLog.dd(FOLLOW_LINE_PROP_TAG,"Heading %.2f Sat %.2f error %.2f",heading,hsvValues[1],err);
             float angleDiff = side == LineFollowSide.LEFT? heading - INNER_TAPE_ANGLE_RADS : heading + INNER_TAPE_ANGLE_RADS;
-            float vx = -LINE_FOLLOW_SPEED * (float)Math.cos(angleDiff)  + coeff*err*(float)Math.sin(angleDiff);
-            float vy = LINE_FOLLOW_SPEED * (float)Math.sin(angleDiff) + coeff*err*(float)Math.cos(angleDiff);
+            // I made this change for the new robot.
+            //float vx = -LINE_FOLLOW_SPEED * (float)Math.cos(angleDiff)  + coeff*err*(float)Math.sin(angleDiff);
+            //float vy = LINE_FOLLOW_SPEED * (float)Math.sin(angleDiff) + coeff*err*(float)Math.cos(angleDiff);
+            float vx = LINE_FOLLOW_SPEED * (float)Math.cos(angleDiff)  - coeff*err*(float)Math.sin(angleDiff);
+            float vy = -LINE_FOLLOW_SPEED * (float)Math.sin(angleDiff) - coeff*err*(float)Math.cos(angleDiff);
             float va = -heading * HEADING_CORECTION_FACTOR;
             if(FOLLOW_LINE_PROP_LOG)BetaLog.dd(FOLLOW_LINE_PROP_TAG,"Angle Diff %.2f Vx %.2f Vy %.2f Va %.2f",angleDiff,vx,vy,va);
             bot.setDriveSpeed(vx, vy, va);
         }
         bot.setDrivePower(0,0,0);
     }
+
     public void followLineProportionate(LineFollowSide side, ColorSensor colorSensor,float lineFollowSpeed, Predicate finish){
         float[] hsvValues = new float[3];
         final float coeff = 20.0f;
@@ -144,8 +149,11 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
             else if (err > 0.5) err = 0.4f;
             if(FOLLOW_LINE_PROP_LOG)BetaLog.dd(FOLLOW_LINE_PROP_TAG,"Heading %.2f Sat %.2f error %.2f",heading,hsvValues[1],err);
             float angleDiff = side == LineFollowSide.LEFT? heading - INNER_TAPE_ANGLE_RADS : heading + INNER_TAPE_ANGLE_RADS;
-            float vx = -lineFollowSpeed * (float)Math.cos(angleDiff)  + coeff*err*(float)Math.sin(angleDiff);
-            float vy = lineFollowSpeed * (float)Math.sin(angleDiff) + coeff*err*(float)Math.cos(angleDiff);
+            //I made this change for the new robot we are taking to Red Hook.
+            //float vx = -lineFollowSpeed * (float)Math.cos(angleDiff)  + coeff*err*(float)Math.sin(angleDiff);
+            //float vy = lineFollowSpeed * (float)Math.sin(angleDiff) + coeff*err*(float)Math.cos(angleDiff);
+            float vx = lineFollowSpeed * (float)Math.cos(angleDiff)  - coeff*err*(float)Math.sin(angleDiff);
+            float vy = -lineFollowSpeed * (float)Math.sin(angleDiff) - coeff*err*(float)Math.cos(angleDiff);
             float va = -heading * HEADING_CORECTION_FACTOR;
             if(FOLLOW_LINE_PROP_LOG)BetaLog.dd(FOLLOW_LINE_PROP_TAG,"Angle Diff %.2f Vx %.2f Vy %.2f Va %.2f",angleDiff,vx,vy,va);
             bot.setDriveSpeed(vx, vy, va);
@@ -465,9 +473,8 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         telemetry.addData("Found both the jewel and vuMark in: " + et.milliseconds() + " milliseconds. ","");
         telemetry.update();
         this.setFlashOff();
-        extendCollecter(MIN_COLLECTER_DRIVE_TIME_BEFORE_ARM_CAN_BE_LIFTED);
-        raiseArm(ARM_RAISE_TIME_PRE_DRIVE);
-        //retractCollecter(MIN_COLLECTER_DRIVE_TIME_BEFORE_ARM_CAN_BE_LIFTED);
+
+        prepGlyphForDrive(); //New function to score blocks.
     }
 
     public boolean knockJewel(Side side){
@@ -689,7 +696,27 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         if(AUTO_POS_DEBUG)BetaLog.dd(AUTO_POS_TAG, "Auto pos finished.");
         bot.setDriveSpeed(0,0,0);
     }
+    public void prepGlyphForDrive(){
+        bot.closeLowerClamp();
+        bot.closeUpperClamp();
+        sleep(1000);
+        bot.liftArmUp();
+        sleep(500);
+        bot.liftArmStop();
+    }
+    public void scoreGylph(){
+        //Raise
 
+        //Forward
+
+        //Release
+
+        //forward
+
+        //backwards
+
+        //Forward again to ram block in?
+    }
 
     public final float MAX_COLLECT_DRIVE_TIME_BEFORE_STRESS = 1750;
     public final float MIN_COLLECTER_DRIVE_TIME_BEFORE_ARM_CAN_BE_LIFTED = 100;
@@ -697,7 +724,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
     public final float COLLECTER_EXTEND_TIME = 250;
     //Below here will be new arm drive and control functions.
 
-    public void extendCollecter(float timeout){
+    /*public void extendCollecter(float timeout){
         bot.driveCollecter(MechBotNickBot.collecterStateValues.OUT);
         sleep((long)timeout);
         bot.driveCollecter(MechBotNickBot.collecterStateValues.STOP);
@@ -774,5 +801,6 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         raiseRamp();
         sleep(750);
     }
+    */
 
 }

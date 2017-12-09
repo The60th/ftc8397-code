@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.mechbot;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -11,9 +13,7 @@ import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
  * Created by JimLori on 11/22/2017.
  */
 
-@TeleOp (name = "MechBotDiagnostics", group = "Test")
-@Disabled
-
+@TeleOp (name = "MechBotDiagnostics", group = "Debug")
 public class MechBotDiagnostics extends LoggingLinearOpMode {
 
     MechBotSensor bot = new MechBotSensor();
@@ -95,6 +95,11 @@ public class MechBotDiagnostics extends LoggingLinearOpMode {
             telemetry.addData("Heading","%.2f degrees", newHeading * 180.0/Math.PI);
             telemetry.addData("Robot XYTheta","%.2f %.2f %.2f", robotXYTheta[0], robotXYTheta[1], robotXYTheta[2] * 180.0/Math.PI);
             telemetry.addData("Wheel Ticks", "%.0f %.0f %.0f %.0f", wheelTicks[0], wheelTicks[1], wheelTicks[2], wheelTicks[3]);
+            float[] HSV = new float[3];
+            Color.RGBToHSV(bot.colorLeft.red(), bot.colorLeft.green(), bot.colorLeft.blue(),HSV);
+            telemetry.addData("Color left", "H = %.2f S = %.2f V = %.2f", HSV[0],HSV[1],HSV[2]);
+            Color.RGBToHSV(bot.colorRight.red(), bot.colorRight.green(), bot.colorRight.blue(),HSV);
+            telemetry.addData("Color right", "H = %.2f S = %.2f V = %.2f", HSV[0],HSV[1],HSV[2]);
 
             telemetry.update();
 

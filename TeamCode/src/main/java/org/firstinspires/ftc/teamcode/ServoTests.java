@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
  * Created by FTC Team 8397 on 12/5/2017.
  */
 @TeleOp(name="Servo tests",group = "Testing")
+@Disabled
 public class ServoTests extends LoggingLinearOpMode {
     private Servo leftLowerClamp, leftUpperClamp, rightLowerClamp, rightUpperClamp;
     @Override

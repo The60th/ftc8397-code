@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Color;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotNickBot;
  * Created by FTC Team 8397 on 9/29/2017.
  */
 @TeleOp(name="Debug teleOP", group="Rev")
+@Disabled
 public class OdomTesting extends LinearOpMode {
     private MechBotNickBot mechBot = new MechBotNickBot();
     private MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1,gamepad2,mechBot);
