@@ -36,7 +36,7 @@ public class RedBottom_RedHook extends MechBotAutonomous {
         driveDirectionGyro(20, -90, 180,new Predicate() {
             @Override
             public boolean isTrue() {
-                Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
+                Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
                 if(hsvValues[1] < HSV_SAT_CUT_OFF){
                     sleep(750);
                     return true;
@@ -50,7 +50,7 @@ public class RedBottom_RedHook extends MechBotAutonomous {
         turnToHeadingGyro(0,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY,RotationDirection.CLOCK); //Turn to face the wall again.
 
         //Drive towards the box till the colored tape is detected.
-        BetaLog.dd(RED_BOTTOM_START_TAG, "driveDirectionGyro2");
+        if (RED_BOTTOM_START_LOG)  BetaLog.dd(RED_BOTTOM_START_TAG, "driveDirectionGyro2");
 
         driveDirectionGyro(25, -90, new Predicate() {
             @Override
@@ -92,10 +92,10 @@ public class RedBottom_RedHook extends MechBotAutonomous {
         if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "adjust on triangle");
 
         adjustPosOnTriangle(ADUST_POS_TIMEOUT);
-
-        //18.8 shift.
-        robotZXPhi = new float[] {30,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        final float distanceFromCrptoBoxAfterAdjust = 30;
+        robotZXPhi = new float[] {distanceFromCrptoBoxAfterAdjust,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
+
         switch (this.cryptoKey){
             case LEFT:
                 if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "driveDirectionGyro left");
@@ -131,6 +131,6 @@ public class RedBottom_RedHook extends MechBotAutonomous {
         telemetry.addData("Auto data: ","Vumark target: " + cryptoKey + " target jewel side: " + targetSide);
         telemetry.update();
 
-        //scoreGlyph();
+        scoreGylph();
     }
 }

@@ -89,11 +89,11 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
     public final float JEWEL_SCAN_TIME = 2000;
     public final float VUMARK_KEY_SCAN_TIME = 2000;
 
-    public final float CRYPTO_BOX_SIDE_SHIFT_VALUE = 22;
+    public final float CRYPTO_BOX_SIDE_SHIFT_VALUE = 18.6f;
 
     public final float CRYPTO_BOX_FOWARD_SHIFT_VALUE = 27;
 
-    public final float ADUST_POS_TIMEOUT = 4000;
+    public final float ADUST_POS_TIMEOUT = 2000;
 
     private void followLineProportionateOLD(LineFollowSide side, ColorSensor colorSensor){
         float[] hsvValues = new float[3];
@@ -226,7 +226,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
 
         final float vaMin = 1.5f * tolerance / latency;
         final float C = 0.75f / latency;
-        final float vaMax = 0.2f * (float)Math.PI;
+        final float vaMax = 0.3f * (float)Math.PI; //Was .2
         float heading;
         float offset;
         while (opModeIsActive()) {
@@ -531,7 +531,6 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
             else if(side == Side.LEFT){
                 bot.lowerJewelArm();
                 sleep(1050);
-                bot.breakJewelArm();
                 //turnAngleGyro(20,2,0.3f);
                 final int finalLeftShift = leftShift;
                 driveDirectionGyro(-20, 90+bot.getInitGyroHeadingDegrees(),bot.getInitGyroHeadingDegrees(), new Predicate() {
@@ -548,13 +547,11 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
                 });
                 bot.raiseJewelArm();
                 sleep(1050);
-                bot.breakJewelArm();
                 //turnAngleGyro(-20,2,0.3f);
                 //spin the robot left 45 degrees then return to facing forwards.
             }else if(side == Side.RIGHT){
                 bot.lowerJewelArm();
                 sleep(1050);
-                bot.breakJewelArm();
                // turnAngleGyro(-20,2,0.3f);
                 final int finalRightShift = rightShift;
                 driveDirectionGyro(20, 90+bot.getInitGyroHeadingDegrees(),bot.getInitGyroHeadingDegrees(), new Predicate() {
@@ -570,7 +567,6 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
                 });
                 bot.raiseJewelArm();
                 sleep(1050);
-                bot.breakJewelArm();
                 //turnAngleGyro(20,2,0.3f);
                 //spin the robot right 45 degrees then return to facing forwards.
             }
@@ -632,18 +628,15 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
             }
             bot.lowerJewelArm();
             sleep(1050);
-            bot.breakJewelArm();
             if(side == Side.LEFT){
                 turnToHeadingWhileAutoBalance(20+bot.getInitGyroHeadingDegrees(),2f,.3f);
                 bot.raiseJewelArm();
                 sleep(1050);
-                bot.breakJewelArm();
                 turnToHeadingWhileAutoBalance(bot.getInitGyroHeadingDegrees(),2f,.3f);
             }else if(side == Side.RIGHT){
                 turnToHeadingWhileAutoBalance(-20+bot.getInitGyroHeadingDegrees(),2f,.3f);
                 bot.raiseJewelArm();
                 sleep(1050);
-                bot.breakJewelArm();
                 turnToHeadingWhileAutoBalance(bot.getInitGyroHeadingDegrees(),2f,.3f);
 
             }
@@ -663,7 +656,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         tolerance = tolerance * (float)Math.PI/180f;
         targetHeading = targetHeading * (float)Math.PI/180f;
         Orientation orientation;
-        final float vaMax = 0.2f * (float)Math.PI;
+        final float vaMax = 0.3f * (float)Math.PI; //Was .2
         float heading;
         float offset;
         final float cPitch =100; //Cm/(s*r)
@@ -733,21 +726,57 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         bot.setDriveSpeed(0,0,0);
     }
     public void prepGlyphForDrive(){
-        closeClampCustomAuto();
-        bot.midPosUpperClamp();
+        bot.closeLowerClamp();
+        bot.closeUpperClamp();
         sleep(1000);
         bot.liftArmUp();
-        sleep(1500);
+        robotZXPhi = new float[] { 0,0,bot.getOdomHeadingFromGyroHeading(bot.getInitGyroHeadingRadians())};
+        bot.updateOdometry();
+        driveDirectionGyro(20, 0, 180, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                if(robotZXPhi[0] >4){
+                    return true;
+                }
+                return false;
+            }
+        });
         bot.liftArmStop();
-    }
-    private void closeClampCustomAuto(){
-        bot.leftLowerClamp.setPosition(.60);
-        bot.rightLowerClamp.setPosition(.40);
-        bot.leftUpperClamp.setPosition(.40);
-        bot.rightUpperClamp.setPosition(.60);
+
     }
     public void scoreGylph(){
-        //Raise
+        robotZXPhi = new float[] { 0,0,bot.getOdomHeadingFromGyroHeading(bot.getInitGyroHeadingRadians())};
+        bot.updateOdometry();
+
+        bot.liftArmDown();
+        sleep(1000);
+        bot.liftArmStop();
+
+        bot.openLowerClamp();
+        bot.openUpperClamp();
+        sleep(500);
+
+        driveDirectionGyro(20, 180, 0, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                if(robotZXPhi[0] < -4){
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        driveDirectionGyro(20, 0, 0, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                if(robotZXPhi[0] > 6){
+                    return true;
+                }
+                return false;
+            }
+        });
+
+
 
         //Forward
 
@@ -759,90 +788,4 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
 
         //Forward again to ram block in?
     }
-
-    public final float MAX_COLLECT_DRIVE_TIME_BEFORE_STRESS = 1750;
-    public final float MIN_COLLECTER_DRIVE_TIME_BEFORE_ARM_CAN_BE_LIFTED = 100;
-
-    public final float COLLECTER_EXTEND_TIME = 250;
-    //Below here will be new arm drive and control functions.
-
-    /*public void extendCollecter(float timeout){
-        bot.driveCollecter(MechBotNickBot.collecterStateValues.OUT);
-        sleep((long)timeout);
-        bot.driveCollecter(MechBotNickBot.collecterStateValues.STOP);
-    }
-    public void retractCollecter(float timeout){
-        bot.driveCollecter(MechBotNickBot.collecterStateValues.IN);
-        sleep((long)timeout);
-        bot.driveCollecter(MechBotNickBot.collecterStateValues.STOP);
-    }
-
-    public void extendCollecterToMax(){
-        ElapsedTime et = new ElapsedTime();
-        bot.driveCollecter(MechBotNickBot.collecterStateValues.OUT);
-        while (opModeIsActive()){
-            telemetry.addData("Timer: ", et.milliseconds());
-            telemetry.update();
-        }
-    }
-
-    public final float MAX_ARM_RAISE_TIME_BEFORE_STRESS = 2000; //Untested just assumed.
-
-    public final float ARM_RAISE_TIME_FOR_GLYPH= 1000; //Test about 19 inches
-
-    public final float ARM_RAISE_TIME_PRE_DRIVE = 250;
-    //500 ms run up == 9.5 inchs raise height.
-    //1000 ms run up == 19 inches raise height.
-
-    public void raiseArm(float timeout){
-        bot.driveArm(MechBotNickBot.armStateValues.UP);
-        sleep((long)timeout);
-        bot.driveArm(MechBotNickBot.armStateValues.STOP);
-    }
-
-    public void lowerArm(float timeout){
-        bot.driveArm(MechBotNickBot.armStateValues.DOWN);
-        sleep((long)timeout);
-        bot.driveArm(MechBotNickBot.armStateValues.STOP);
-    }
-
-    final double RAMP_LOWERED = 0.135;
-    final double RAMP_UP = 0.34;
-
-    public void lowerRamp(){
-        bot.slideServo.setPosition(RAMP_LOWERED);
-    }
-    public void raiseRamp(){
-        bot.slideServo.setPosition(RAMP_UP);
-    }
-
-
-    public void kickBlock(){
-        bot.kickerServo.setPosition(-.85);
-    }
-    public void resetKicker(){
-        bot.kickerServo.setPosition(7);
-    }
-
-    public void scoreGlyph(){
-        extendCollecter(MIN_COLLECTER_DRIVE_TIME_BEFORE_ARM_CAN_BE_LIFTED); //Locks thread
-
-        raiseArm(ARM_RAISE_TIME_FOR_GLYPH + 200); //Locks thread
-
-        //Servo methods do not lock thread.
-        lowerRamp();
-        kickBlock();
-
-        sleep(400);
-        resetKicker();
-        sleep(1250);
-
-        kickBlock();
-        sleep(1500);
-
-        raiseRamp();
-        sleep(750);
-    }
-    */
-
 }

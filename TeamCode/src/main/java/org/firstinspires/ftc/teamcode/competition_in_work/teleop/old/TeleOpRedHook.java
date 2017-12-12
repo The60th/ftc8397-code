@@ -49,30 +49,25 @@ public class TeleOpRedHook extends LoggingLinearOpMode {
                 mechBotDriveControls.joyStickMecnumDriveComp(new float[6]);
 
 
-                if(gamepad1.dpad_right){
-                    bot.closeLowerClamp();
-                }
-                else if(gamepad1.a){
+
+
+
+                if(gamepad1.a){
                     bot.openLowerClamp();
                 }
                 else if(gamepad1.b){
-                    bot.midPosLowerClamp();
-                }
-                else if(gamepad1.right_bumper){
-                    bot.midPosExtraLowerClamp();
+                    bot.closeLowerClamp();
                 }
 
 
-                if(gamepad1.dpad_left){
-                    bot.closeUpperClamp();
-                }
-                else if(gamepad1.x){
+                if(gamepad1.x){
                     bot.openUpperClamp();
                 }
-                else if(gamepad1.y){
+                else if(gamepad1.y) {
+                    bot.closeUpperClamp();
+                }else if(gamepad1.right_bumper || gamepad1.left_bumper){
                     bot.midPosUpperClamp();
-                }else if(gamepad1.left_bumper){
-                    bot.midPosExtraUpperClamp();
+                    bot.midPosLowerClamp();
                 }
 
 
@@ -87,12 +82,10 @@ public class TeleOpRedHook extends LoggingLinearOpMode {
                 }
 
 
-                if(gamepad1.right_stick_y > .5){
+                if(gamepad1.right_stick_y > .5){ //up
                     bot.lowerJewelArm();
-                }else if(gamepad1.right_stick_y < -.5){
+                }else if(gamepad1.right_stick_y < -.5){ //down
                     bot.raiseJewelArm();
-                }else{
-                    bot.breakJewelArm();
                 }
             }
         }

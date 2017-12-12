@@ -40,7 +40,7 @@ public class PreMatchRobotAlignment extends LoggingLinearOpMode {
         //CameraDevice.getInstance().setFlashTorchMode(true);
 
         waitForStart();
-
+        CameraDevice.getInstance().setFlashTorchMode(true);
         int blobSizeThreshhold = 400; //Blobs smaller than this will be discarded
         int sampleRatio = 5; //Number of rows and columns to skip between raw pixels selected for reduced image
 
@@ -130,7 +130,7 @@ public class PreMatchRobotAlignment extends LoggingLinearOpMode {
         }
 
         //Turn flashlight back off before exiting.
-        //CameraDevice.getInstance().setFlashTorchMode(false);
+        CameraDevice.getInstance().setFlashTorchMode(false);
 
     }
 }

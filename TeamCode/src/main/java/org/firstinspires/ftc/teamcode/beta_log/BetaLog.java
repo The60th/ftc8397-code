@@ -29,8 +29,8 @@ public class BetaLog {
         if (bufferedWriter != null) return true;
         elapsedTime = new ElapsedTime();
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
-        String header = String.format("BETA_LOG_INITIALIZED: %d:%d:%d %d:%d:%d:%d",
-                gregorianCalendar.get(Calendar.YEAR), gregorianCalendar.get(Calendar.MONTH),
+        String header = String.format("BETA_LOG_INITIALIZED: %04d:%02d:%02d %02d:%02d:%02d:%03d",
+                gregorianCalendar.get(Calendar.YEAR), gregorianCalendar.get(Calendar.MONTH)+1,
                 gregorianCalendar.get(Calendar.DAY_OF_MONTH), gregorianCalendar.get(Calendar.HOUR_OF_DAY),
                 gregorianCalendar.get(Calendar.MINUTE), gregorianCalendar.get(Calendar.SECOND),
                 gregorianCalendar.get(Calendar.MILLISECOND));

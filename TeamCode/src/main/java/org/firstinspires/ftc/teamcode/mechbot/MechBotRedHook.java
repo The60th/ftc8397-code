@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class MechBotRedHook extends MechBotSensor{
     private DcMotor leftLinearSlide, rightLinearSlide;
-    private CRServo jewelArm;
+    private Servo jewelArm;
     public Servo leftLowerClamp, leftUpperClamp, rightLowerClamp, rightUpperClamp;
 
     //May need different pos sets for servos depending on side.
@@ -28,7 +28,13 @@ public class MechBotRedHook extends MechBotSensor{
 
     public void init(HardwareMap ahwMap) {
         super.init(ahwMap);
-
+        initHw();
+    }
+    public void init(HardwareMap ahwMap, float initGyroHeadingDegrees){
+        super.init(ahwMap, initGyroHeadingDegrees);
+        initHw();
+    }
+    private void initHw(){
         leftLinearSlide = hardwareMap.dcMotor.get("leftLinearSlide");
         rightLinearSlide = hardwareMap.dcMotor.get("rightLinearSlide");
 
@@ -38,8 +44,7 @@ public class MechBotRedHook extends MechBotSensor{
         rightLowerClamp = hardwareMap.servo.get("rightLowerClamp");
         rightUpperClamp = hardwareMap.servo.get("rightUpperClamp");
 
-        jewelArm = hardwareMap.crservo.get("jewelArm");
-
+        jewelArm = hardwareMap.servo.get("jewelArm");
     }
 
     public void closeLowerClamp(){
@@ -51,12 +56,8 @@ public class MechBotRedHook extends MechBotSensor{
         rightLowerClamp.setPosition(1);
     }
     public void midPosLowerClamp(){
-        leftLowerClamp.setPosition(.6);
-        rightLowerClamp.setPosition(.4);
-    }
-    public void midPosExtraLowerClamp(){
-        leftLowerClamp.setPosition(.40);
-        rightLowerClamp.setPosition(.60);
+        leftLowerClamp.setPosition(.50);
+        rightLowerClamp.setPosition(.50);
     }
 
 
@@ -72,10 +73,7 @@ public class MechBotRedHook extends MechBotSensor{
         leftUpperClamp.setPosition(0.5);
         rightUpperClamp.setPosition(0.5);
     }
-    public void midPosExtraUpperClamp(){
-        leftUpperClamp.setPosition(.60);
-        rightUpperClamp.setPosition(.40);
-    }
+
 
 
 
@@ -93,12 +91,9 @@ public class MechBotRedHook extends MechBotSensor{
         rightLinearSlide.setPower(0);
     }
     public void lowerJewelArm(){
-        jewelArm.setPower(.5);
+        jewelArm.setPosition(.5);
     }
     public void raiseJewelArm(){
-        jewelArm.setPower(-.5);
-    }
-    public void breakJewelArm(){
-        jewelArm.setPower(0);
+        jewelArm.setPosition(0);
     }
 }

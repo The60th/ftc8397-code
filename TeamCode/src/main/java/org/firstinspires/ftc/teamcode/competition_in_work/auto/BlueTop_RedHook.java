@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
  * Created by FTC Team 8397 on 12/8/2017.
  */
 @Autonomous(name = "Blue Top", group = "comp")
-@Disabled
 public class BlueTop_RedHook extends MechBotAutonomous {
     final float[] hsvValues = new float[3];
 

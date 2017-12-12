@@ -271,8 +271,11 @@ public class MechBot
                         deltaRobotPos.get(2), deltaRobotPos.get(3));
             }
 
-            final float sin = (float) (Math.sin((theta + newOdomHeading) / 2.0f));
-            final float cosin = (float) (Math.cos((theta + newOdomHeading) / 2.0f));
+            float headingChange = (float) VuMarkNavigator.NormalizeAngle(newOdomHeading - theta);
+            float averageHeading = theta + headingChange / 2.0f;
+
+            final float sin = (float) (Math.sin(averageHeading));
+            final float cosin = (float) (Math.cos(averageHeading));
 
             float newX = x + deltaRobotPos.get(0) * sin + deltaRobotPos.get(1) * cosin;
             float newY = y + deltaRobotPos.get(1) * sin - deltaRobotPos.get(0) * cosin;

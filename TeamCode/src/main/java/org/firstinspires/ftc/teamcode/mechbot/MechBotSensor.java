@@ -29,7 +29,7 @@ public class MechBotSensor extends MechBot
 
     public float initGyroHeading = 0;
     public float getInitGyroHeadingDegrees(){
-    return this.initGyroHeading *180/(float)Math.PI;
+    return this.initGyroHeading *180.0f/(float)Math.PI;
     }
     public float getInitGyroHeadingRadians(){
         return this.initGyroHeading;

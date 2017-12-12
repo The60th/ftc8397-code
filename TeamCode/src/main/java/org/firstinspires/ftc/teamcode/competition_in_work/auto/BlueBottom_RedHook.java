@@ -37,8 +37,9 @@ public class BlueBottom_RedHook extends MechBotAutonomous {
             @Override
             public boolean isTrue() {
                 Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
+                if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "Driving on stone sats: S: %.2f",hsvValues[1]);
                 if(hsvValues[1] < HSV_SAT_CUT_OFF){
-                    sleep(1250);
+                    sleep(750);
                     return true;
                 }
                 return false;
@@ -52,10 +53,11 @@ public class BlueBottom_RedHook extends MechBotAutonomous {
         //Drive towards the box till the colored tape is detected.
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "driveDirectionGyro 2");
 
-        driveDirectionGyro(25, 90, new Predicate() {
+        driveDirectionGyro(20, 90, new Predicate() {
             @Override
             public boolean isTrue() { // I just changed the speed of this to see if we can get back over the balancing stone it used to be 20. Also if this works change all the other auto programs.
                 Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
+                if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "Driving to line sats: S: %.2f",hsvValues[1]);
                 if(hsvValues[1] > HSV_SAT_CUT_OFF){
                     return true;
                 }
@@ -74,6 +76,7 @@ public class BlueBottom_RedHook extends MechBotAutonomous {
                 @Override
                 public boolean isTrue() {
                     Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
+                    if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "Follow line forward sats: S: %.2f",hsvValues[1]);
                     if(hsvValues[1] > HSV_SAT_CUT_OFF)return true;
                     return false;
                 }
@@ -84,6 +87,7 @@ public class BlueBottom_RedHook extends MechBotAutonomous {
                 @Override
                 public boolean isTrue() {
                     Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
+                    if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "Follow line backwards sats: S: %.2f",hsvValues[1]);
                     return (hsvValues[1] < HSV_SAT_CUT_OFF);
                 }
             });
@@ -92,22 +96,10 @@ public class BlueBottom_RedHook extends MechBotAutonomous {
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "adjust on triangle");
 
         adjustPosOnTriangle(ADUST_POS_TIMEOUT);
-
-        robotZXPhi = new float[] {30,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        final float distanceFromCrptoBoxAfterAdjust = 30;
+        robotZXPhi = new float[] {distanceFromCrptoBoxAfterAdjust,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
 
-
-        //Code above here works well new testing changes are being done below.
-        driveDirectionGyro(10, -90, new Predicate() {
-            @Override
-            public boolean isTrue() { //Way to far of left shift? //Encoders counting incorrectly? //because odom is already tracking encoder values, so values are incorrect?
-                return robotZXPhi[1] < -4;
-            }
-        });
-
-        while (opModeIsActive())
-
-        //18.8 shift.
         switch (this.cryptoKey){
             case LEFT:
                 if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "driveDirectionGyro left");
@@ -143,5 +135,6 @@ public class BlueBottom_RedHook extends MechBotAutonomous {
         telemetry.addData("Auto data: ","Vumark target: " + cryptoKey + " target jewel side: " + targetSide);
         telemetry.update();
 
+        scoreGylph();
     }
 }
