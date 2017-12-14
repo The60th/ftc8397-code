@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.competition_in_work.auto;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
 import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
@@ -26,8 +25,7 @@ public class BlueTop_RedHook extends MechBotAutonomous {
 
         if (BLUE_TOP_START_LOG) BetaLog.dd(BLUE_TOP_START_TAG, "initAuto");
         initAuto(TeamColor.BLUE, VUMARK_KEY_SCAN_TIME, JEWEL_SCAN_TIME); //Find the targetJewl side and the target crypto key.
-
-        BetaLog.dd(BLUE_TOP_START_TAG, "knockJewel");
+        if (BLUE_TOP_START_LOG) BetaLog.dd(BLUE_TOP_START_TAG, "knockJewel");
         knockJewelWithBalanceTurn(this.targetSide);
 
         //Assume the robot is facing the wall once again still on the balance stone and the wall is a heading of 0.
@@ -62,7 +60,7 @@ public class BlueTop_RedHook extends MechBotAutonomous {
 
         if (BLUE_TOP_START_LOG) BetaLog.dd(BLUE_TOP_START_TAG, "driveDirectionGyro2");
 
-        driveDirectionGyro(25, 90, new Predicate() {
+        driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, 90, new Predicate() {
             @Override
             public boolean isTrue() {
                 Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
@@ -102,13 +100,16 @@ public class BlueTop_RedHook extends MechBotAutonomous {
 
         if (BLUE_TOP_START_LOG) BetaLog.dd(BLUE_TOP_START_TAG, "adjust on triangle");
 
-        adjustPosOnTriangle(ADUST_POS_TIMEOUT);
 
-
-        //18.8 shift.
-        robotZXPhi = new float[]{30, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        prepareToScoreGlyph();
+        scoreGylph();
+        /*adjustPosOnTriangle(ADJUST_POS_TIMEOUT);
+        final float distanceFromCrptoBoxAfterAdjust = 30;
+        robotZXPhi = new float[] {distanceFromCrptoBoxAfterAdjust,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
-        switch (this.cryptoKey) {
+
+
+        switch (this.cryptoKey){
             case LEFT:
                 if (BLUE_TOP_START_LOG) BetaLog.dd(BLUE_TOP_START_TAG, "driveDirectionGyro left");
                 driveDirectionGyro(10, -90, new Predicate() {
@@ -131,18 +132,19 @@ public class BlueTop_RedHook extends MechBotAutonomous {
             case UNKNOWN:
         }
 
-        if (BLUE_TOP_START_LOG) BetaLog.dd(BLUE_TOP_START_TAG, "driveDirectionGyro3");
+        if (BLUE_TOP_START_LOG) BetaLog.dd(BLUE_TOP_START_TAG, "driveDirectionGyro 3");
+
         driveDirectionGyro(10, 180, new Predicate() {
             @Override
             public boolean isTrue() {
-                return robotZXPhi[0] < CRYPTO_BOX_FOWARD_SHIFT_VALUE;
+                return robotZXPhi[0] < CRYPTO_BOX_FOWARD_SHIFT_VALUE; //Z is at 30 robot cords here, we have to move forward now so lower Z.
             }
         });
 
-        telemetry.addData("Auto data: ", "Vumark target: " + cryptoKey + " target jewel side: " + targetSide);
+        telemetry.addData("Auto data: ","Vumark target: " + cryptoKey + " target jewel side: " + targetSide);
         telemetry.update();
 
-        //scoreGlyph();
+        scoreGylph();*/
     }
 }
 

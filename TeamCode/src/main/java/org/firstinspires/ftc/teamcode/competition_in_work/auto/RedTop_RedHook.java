@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
  * Created by FTC Team 8397 on 11/22/2017.
  */
 @Autonomous(name="Red Top",group = "comp")
-@Disabled
 public class RedTop_RedHook extends MechBotAutonomous {
     final float[] hsvValues = new float[3];
 
@@ -36,7 +35,7 @@ public class RedTop_RedHook extends MechBotAutonomous {
         driveDirectionGyro(20, 180, 90, new Predicate() {
             @Override
             public boolean isTrue() {
-                Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
+                Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
                 if(hsvValues[1] < HSV_SAT_CUT_OFF){
                     sleep(250);
                     return true;
@@ -62,7 +61,7 @@ public class RedTop_RedHook extends MechBotAutonomous {
 
         if (RED_START_TOP_LOG) BetaLog.dd(RED_START_TOP_TAG, "driveDirectionGyro2");
 
-        driveDirectionGyro(25, -90, new Predicate() {
+        driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, -90, new Predicate() {
             @Override
             public boolean isTrue() {
                 Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
@@ -101,7 +100,11 @@ public class RedTop_RedHook extends MechBotAutonomous {
 
         if (RED_START_TOP_LOG) BetaLog.dd(RED_START_TOP_TAG, "adjust on triangle");
 
-        adjustPosOnTriangle(ADUST_POS_TIMEOUT);
+
+        prepareToScoreGlyph();
+        scoreGylph();
+        /*
+        adjustPosOnTriangle(ADJUST_POS_TIMEOUT);
 
 
         //18.8 shift.
@@ -142,5 +145,7 @@ public class RedTop_RedHook extends MechBotAutonomous {
         telemetry.update();
 
         //scoreGlyph();
+
+        */
     }
 }

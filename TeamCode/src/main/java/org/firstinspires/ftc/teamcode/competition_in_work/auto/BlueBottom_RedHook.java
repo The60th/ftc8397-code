@@ -53,7 +53,7 @@ public class BlueBottom_RedHook extends MechBotAutonomous {
         //Drive towards the box till the colored tape is detected.
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "driveDirectionGyro 2");
 
-        driveDirectionGyro(20, 90, new Predicate() {
+        driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, 90, new Predicate() {
             @Override
             public boolean isTrue() { // I just changed the speed of this to see if we can get back over the balancing stone it used to be 20. Also if this works change all the other auto programs.
                 Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
@@ -95,7 +95,11 @@ public class BlueBottom_RedHook extends MechBotAutonomous {
 
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "adjust on triangle");
 
-        adjustPosOnTriangle(ADUST_POS_TIMEOUT);
+        prepareToScoreGlyph();
+        scoreGylph();
+        /*
+        adjustPosOnTriangle(ADJUST_POS_TIMEOUT);
+
         final float distanceFromCrptoBoxAfterAdjust = 30;
         robotZXPhi = new float[] {distanceFromCrptoBoxAfterAdjust,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
@@ -134,7 +138,8 @@ public class BlueBottom_RedHook extends MechBotAutonomous {
 
         telemetry.addData("Auto data: ","Vumark target: " + cryptoKey + " target jewel side: " + targetSide);
         telemetry.update();
-
         scoreGylph();
+
+        */
     }
 }

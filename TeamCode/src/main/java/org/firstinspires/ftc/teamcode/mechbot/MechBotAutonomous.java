@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.vuforia.CameraDevice;
 
+import org.firstinspires.ftc.robotcore.external.matrices.MatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -42,6 +43,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
     private final float LINE_FOLLOW_SPEED = 10.0f; //10 centimeters per second.
     private final float LINE_FOLLOW_ANGLE_FACTOR = 30.0f * ((float)Math.PI/180.0f); //30.0 Degrees converted to radians.
     private final float HEADING_CORECTION_FACTOR = 2.0f;
+    public final float DRIVE_TOWARDS_TRIANGLE_SPEED = 20.0f;
     public enum JewelSide {BLUE_LEFT,RED_LEFT,UNKNOWN}
     public enum TeamColor {BLUE,RED}
     public enum Side{LEFT,RIGHT,UNKNOWN}
@@ -65,6 +67,9 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
     protected final String ADJUST_POS_TAG = "ADJUST_POSITION";
     protected final boolean ADJUST_POS_LOG = true;
 
+    final String PREPARE_SCORE_TAG = "PREP_SCORE";
+    final boolean PREPARE_SCORE_LOG = true;
+
     final String AUTO_POS_TAG = "AUTO_POS_TAG";
     final boolean AUTO_POS_DEBUG = true;
 
@@ -75,12 +80,13 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         CameraDevice.getInstance().setFlashTorchMode(false);
     }
 
-    public Side targetSide;
-    public RelicRecoveryVuMark cryptoKey;
+    public Side targetSide = Side.UNKNOWN;
+    public RelicRecoveryVuMark cryptoKey = RelicRecoveryVuMark.UNKNOWN;
     public TeamColor teamColor;
 
-    public float initRoll;
+    public float initRoll; //orientation.secondAngle + ROLL_ADJUSTMENT_DEGREES * (float)Math.PI/180.0f;
     public float initPitch;
+    private final float ADJUST_INIT_ROLL_DEG = 1.5f;
 
     public final float GLOBAL_STANDERD_TOLERANCE = 2f; //Degrees
     public final float GLOBAL_STANDERD_LATENCY = 0.3f; //Seconds
@@ -93,7 +99,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
 
     public final float CRYPTO_BOX_FOWARD_SHIFT_VALUE = 27;
 
-    public final float ADUST_POS_TIMEOUT = 2000;
+    public final float ADJUST_POS_TIMEOUT = 2000;
 
     private void followLineProportionateOLD(LineFollowSide side, ColorSensor colorSensor){
         float[] hsvValues = new float[3];
@@ -171,7 +177,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
 
         final float vaMin = 1.5f * tolerance / latency;
         final float C = 0.75f / latency;
-        final float vaMax = 0.2f * (float)Math.PI;
+        final float vaMax = 0.3f * (float)Math.PI;
         float heading = bot.getHeadingRadians();
         float targetHeading = heading + angle;
         float offset = (float) VuMarkNavigator.NormalizeAngle(targetHeading - heading);
@@ -197,7 +203,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
 
         final float vaMin = 1.5f * tolerance / latency;
         final float C = 0.75f / latency;
-        final float vaMax = 0.2f * (float)Math.PI;
+        final float vaMax = 0.3f * (float)Math.PI;
         float heading;
         float offset;
         while (opModeIsActive()) {
@@ -483,7 +489,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         orientation = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS); //WAS ZYX
 
         this.initPitch = orientation.thirdAngle;
-        this.initRoll = orientation.secondAngle;
+        this.initRoll = orientation.secondAngle + ADJUST_INIT_ROLL_DEG* (float)Math.PI/180.0f;
 
         waitForStart();
 
@@ -727,23 +733,27 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
     }
     public void prepGlyphForDrive(){
         bot.closeLowerClamp();
-        bot.closeUpperClamp();
+        bot.openUpperClamp();
         sleep(1000);
         bot.liftArmUp();
         robotZXPhi = new float[] { 0,0,bot.getOdomHeadingFromGyroHeading(bot.getInitGyroHeadingRadians())};
         bot.updateOdometry();
-        driveDirectionGyro(20, 0, 180, new Predicate() {
+        driveDirectionGyro(20, (float)VuMarkNavigator.NormalizeAngle(((bot.getInitGyroHeadingDegrees() +180.0f) * (float)Math.PI/180.0f)) * 180.0f/ (float) Math.PI
+                , bot.getInitGyroHeadingDegrees(), new Predicate() {
             @Override
-            public boolean isTrue() {
-                if(robotZXPhi[0] >4){
+            public boolean isTrue() { //Was 20 0 180, updating to 20 -> init heading, because on top side it did not work.
+
+                if((robotZXPhi[0]*robotZXPhi[0] + robotZXPhi[1] * robotZXPhi[1]) > 16.0f){
                     return true;
                 }
                 return false;
             }
         });
+        //Top 20, 90, -90
         bot.liftArmStop();
 
     }
+
     public void scoreGylph(){
         robotZXPhi = new float[] { 0,0,bot.getOdomHeadingFromGyroHeading(bot.getInitGyroHeadingRadians())};
         bot.updateOdometry();
@@ -753,7 +763,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         bot.liftArmStop();
 
         bot.openLowerClamp();
-        bot.openUpperClamp();
+        bot.closeUpperClamp();
         sleep(500);
 
         driveDirectionGyro(20, 180, 0, new Predicate() {
@@ -775,17 +785,52 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
                 return false;
             }
         });
-
-
-
-        //Forward
-
-        //Release
-
-        //forward
-
-        //backwards
-
-        //Forward again to ram block in?
     }
+
+
+    public void prepareToScoreGlyph(){
+        adjustPosOnTriangle(ADJUST_POS_TIMEOUT);
+
+        final float distanceFromCrptoBoxAfterAdjust = 30;
+        robotZXPhi = new float[] {distanceFromCrptoBoxAfterAdjust,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+
+        switch (this.cryptoKey){
+            case LEFT:
+                if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro left");
+                driveDirectionGyro(10, -90, new Predicate() {
+                    @Override
+                    public boolean isTrue() {
+                        return robotZXPhi[1] < -CRYPTO_BOX_SIDE_SHIFT_VALUE;
+                    }
+                });
+                break;
+            case RIGHT:
+                if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro right");
+                driveDirectionGyro(10, 90, new Predicate() {
+                    @Override
+                    public boolean isTrue() {
+                        return robotZXPhi[1] > CRYPTO_BOX_SIDE_SHIFT_VALUE;
+                    }
+                });
+                break;
+            case CENTER:
+            case UNKNOWN:
+        }
+
+        if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro 3");
+
+        driveDirectionGyro(10, 180, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                return robotZXPhi[0] < CRYPTO_BOX_FOWARD_SHIFT_VALUE; //Z is at 30 robot cords here, we have to move forward now so lower Z.
+            }
+        });
+
+        telemetry.addData("Auto data: ","Vumark target: " + cryptoKey + " target jewel side: " + targetSide);
+        telemetry.update();
+    }
+
+
+
 }

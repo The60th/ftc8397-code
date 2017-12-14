@@ -61,10 +61,10 @@ public class TeleOpRedHook extends LoggingLinearOpMode {
 
 
                 if(gamepad1.x){
-                    bot.openUpperClamp();
+                    bot.closeUpperClamp();
                 }
                 else if(gamepad1.y) {
-                    bot.closeUpperClamp();
+                    bot.openUpperClamp();
                 }else if(gamepad1.right_bumper || gamepad1.left_bumper){
                     bot.midPosUpperClamp();
                     bot.midPosLowerClamp();

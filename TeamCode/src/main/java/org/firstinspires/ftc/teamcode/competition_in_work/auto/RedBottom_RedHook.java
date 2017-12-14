@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.competition_in_work.auto;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
 import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
@@ -52,7 +51,7 @@ public class RedBottom_RedHook extends MechBotAutonomous {
         //Drive towards the box till the colored tape is detected.
         if (RED_BOTTOM_START_LOG)  BetaLog.dd(RED_BOTTOM_START_TAG, "driveDirectionGyro2");
 
-        driveDirectionGyro(25, -90, new Predicate() {
+        driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, -90, new Predicate() {
             @Override
             public boolean isTrue() {
                 Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
@@ -90,8 +89,9 @@ public class RedBottom_RedHook extends MechBotAutonomous {
         }
 
         if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "adjust on triangle");
-
-        adjustPosOnTriangle(ADUST_POS_TIMEOUT);
+        prepareToScoreGlyph();
+        scoreGylph();
+       /* adjustPosOnTriangle(ADJUST_POS_TIMEOUT);
         final float distanceFromCrptoBoxAfterAdjust = 30;
         robotZXPhi = new float[] {distanceFromCrptoBoxAfterAdjust,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
@@ -130,7 +130,6 @@ public class RedBottom_RedHook extends MechBotAutonomous {
 
         telemetry.addData("Auto data: ","Vumark target: " + cryptoKey + " target jewel side: " + targetSide);
         telemetry.update();
-
-        scoreGylph();
+*/
     }
 }
