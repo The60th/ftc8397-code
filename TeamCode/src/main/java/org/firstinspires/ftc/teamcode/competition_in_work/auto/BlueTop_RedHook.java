@@ -34,7 +34,7 @@ public class BlueTop_RedHook extends MechBotAutonomous {
             @Override
             public boolean isTrue() {
                 Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
-                if (hsvValues[1] < HSV_SAT_CUT_OFF) {
+                if (hsvValues[1] < HSV_SAT_CUT_OFF_STONE) {
                     sleep(250);
                     return true;
                 }

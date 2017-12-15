@@ -30,19 +30,23 @@ public class RedTop_RedHook extends MechBotAutonomous {
         if (RED_START_TOP_LOG) BetaLog.dd(RED_START_TOP_TAG, "knockJewel");
         knockJewelWithBalanceTurn(this.targetSide);
 
+        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+
         //Assume the robot is facing the wall once again still on the balance stone and the wall is a heading of 0.
         if (RED_START_TOP_LOG) BetaLog.dd(RED_START_TOP_TAG, "driveDirectionGyro1");
         driveDirectionGyro(20, 180, 90, new Predicate() {
             @Override
             public boolean isTrue() {
                 Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
-                if(hsvValues[1] < HSV_SAT_CUT_OFF){
+                if (RED_START_TOP_LOG) BetaLog.dd(RED_START_TOP_TAG, "Driving on stone sats: S: %.2f",hsvValues[1]);
+                if(hsvValues[1] < HSV_SAT_CUT_OFF_STONE){
                     sleep(250);
                     return true;
                 }
                 return false;
             }
         });
+
 
         if (RED_START_TOP_LOG) BetaLog.dd(RED_START_TOP_TAG, "turnToheadingGyro");
 

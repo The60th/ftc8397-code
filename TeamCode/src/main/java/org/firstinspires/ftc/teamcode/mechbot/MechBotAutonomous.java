@@ -91,9 +91,10 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
     public final float GLOBAL_STANDERD_TOLERANCE = 2f; //Degrees
     public final float GLOBAL_STANDERD_LATENCY = 0.3f; //Seconds
     public final float HSV_SAT_CUT_OFF = .5f;
+    public final float HSV_SAT_CUT_OFF_STONE = .40f;
 
-    public final float JEWEL_SCAN_TIME = 2000;
-    public final float VUMARK_KEY_SCAN_TIME = 2000;
+    public final float JEWEL_SCAN_TIME = 500;
+    public final float VUMARK_KEY_SCAN_TIME = 500;
 
     public final float CRYPTO_BOX_SIDE_SHIFT_VALUE = 18.6f;
 
@@ -232,7 +233,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
 
         final float vaMin = 1.5f * tolerance / latency;
         final float C = 0.75f / latency;
-        final float vaMax = 0.3f * (float)Math.PI; //Was .2
+        final float vaMax = 0.5f * (float)Math.PI; //Was .3
         float heading;
         float offset;
         while (opModeIsActive()) {

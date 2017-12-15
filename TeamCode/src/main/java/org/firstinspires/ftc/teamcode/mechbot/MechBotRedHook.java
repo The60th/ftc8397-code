@@ -70,8 +70,8 @@ public class MechBotRedHook extends MechBotSensor{
         rightUpperClamp.setPosition(1);
     }
     public void midPosUpperClamp(){
-        leftUpperClamp.setPosition(0.55);
-        rightUpperClamp.setPosition(0.45);
+        leftUpperClamp.setPosition(0.35);
+        rightUpperClamp.setPosition(0.55);
     }
 
 
