@@ -760,7 +760,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         bot.updateOdometry();
 
         bot.liftArmDown();
-        sleep(1000);
+        sleep(750);
         bot.liftArmStop();
 
         bot.openLowerClamp();
@@ -770,7 +770,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         driveDirectionGyro(20, 180, 0, new Predicate() {
             @Override
             public boolean isTrue() {
-                if(robotZXPhi[0] < -4){
+                if(robotZXPhi[0] < -6){
                     return true;
                 }
                 return false;

@@ -34,23 +34,14 @@ public class TeleOpRedHook extends LoggingLinearOpMode {
         waitForStart();
         telemetry.addData("Started TeleOp","");
         telemetry.update();
-
+        bot.raiseJewelArm();
         while (opModeIsActive()){
             mechBotDriveControls.refreshGamepads(gamepad1,gamepad2);
             mechBotDriveControls.joyStickMecnumDriveComp(driveData); //Do an array fill by passing the array in, to prevent recreating the array.
 
-
             telemetry.addData("Joystick input: ","X: %.2f Y: %.2f A: %.2f", driveData[0],driveData[1],driveData[2]);
             telemetry.addData("Drive speeds input: ","X: %.2f Y: %.2f A: %.2f", driveData[3],driveData[4],driveData[5]);
             telemetry.update();
-
-            while (opModeIsActive()){
-                mechBotDriveControls.refreshGamepads(gamepad1,gamepad2);
-                mechBotDriveControls.joyStickMecnumDriveComp(new float[6]);
-
-
-
-
 
                 if(gamepad1.a){
                     bot.openLowerClamp();
@@ -71,10 +62,10 @@ public class TeleOpRedHook extends LoggingLinearOpMode {
                 }
 
 
-                if (gamepad2.dpad_up){
+                if (gamepad2.dpad_up || gamepad1.dpad_up){
                     bot.liftArmUp();
                 }
-                else if (gamepad2.dpad_down){
+                else if (gamepad2.dpad_down || gamepad1.dpad_down){
                     bot.liftArmDown();
                 }
                 else{
@@ -94,5 +85,5 @@ public class TeleOpRedHook extends LoggingLinearOpMode {
         }
 
 
-    }
+
 

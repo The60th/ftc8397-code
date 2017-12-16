@@ -53,7 +53,7 @@ public class MechBotDriveControls {
     }
 
     public void joyStickMecnumDriveComp(float[] data){
-        float scaler = 2;
+        float scaler = 1.0f;
         if(!this.gamepadRefreshed){
             data = null;
         }

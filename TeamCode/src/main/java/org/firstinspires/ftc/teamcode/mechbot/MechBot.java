@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.mechbot;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -31,7 +32,10 @@ public class MechBot
     /**
      * Final constant equal to the number of ticks per motor rotation with a NeverRest Motor, using a 1-40 Gearbox reduction.
      */
-    public final double TICKS_PER_MOTOR_ROTATION = 560; // With a 1 to 40 gearbox.
+    public final double TICKS_PER_MOTOR_ROTATION_20 = 560;
+    public final double TICKS_PER_MOTOR_ROTATION_40 = 1120; //Ticks per 40.
+
+
 
     /**
      * Final constant equal to current robot wheel circumference in cm. Measurement is in inches then convented to centimeters with the value 2.54
@@ -41,7 +45,7 @@ public class MechBot
     /**
      * Final constant equal to our robots encoder ticks per centimeter. Found by taking ticks per motor rotations times gear ratio divided by wheel diameter.
      */
-    public final double TICKS_PER_CM = TICKS_PER_MOTOR_ROTATION/WHEEL_Circumference;
+    public final double TICKS_PER_CM = TICKS_PER_MOTOR_ROTATION_40/WHEEL_Circumference; //Changing to 40 numbers becauase of hardware change.
     public final double MAX_TICKS_PER_SEC = 2500;
 
     /**
@@ -121,9 +125,11 @@ public class MechBot
         three = hardwareMap.dcMotor.get("M3");
         four = hardwareMap.dcMotor.get("M4");
 
-        one.setDirection(DcMotor.Direction.REVERSE);
-        two.setDirection(DcMotor.Direction.REVERSE);
+       // one.setDirection(DcMotor.Direction.REVERSE); //Set up for 20 drive motors.
+        //two.setDirection(DcMotor.Direction.REVERSE);
 
+        three.setDirection(DcMotorSimple.Direction.REVERSE);
+        four.setDirection(DcMotorSimple.Direction.REVERSE);
         /**
          * Call our setDriveMode function and pass it the constant DcMotor.RunMode.Run_Using_Encoder so it sets all drive train motors to use encoders.
          *

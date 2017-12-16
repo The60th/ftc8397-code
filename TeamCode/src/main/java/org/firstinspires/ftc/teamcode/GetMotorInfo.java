@@ -17,19 +17,17 @@ import java.util.ArrayList;
  */
 
 @Autonomous(name = "GetMotorInfo", group = "Test")
-@Disabled
 
 public class GetMotorInfo extends LinearOpMode {
 
-    MechBot bot = new MechBotSensor();
-
+DcMotor one;
     @Override
     public void runOpMode()  {
+        one = hardwareMap.dcMotor.get("one");
 
-        bot.init(hardwareMap);
 
-        DcMotor[] motors = new DcMotor[]{bot.one, bot.two, bot.three, bot.four};
-        for (int motor = 0; motor<4; motor++){
+        DcMotor[] motors = new DcMotor[]{one};
+        for (int motor = 0; motor<motors.length; motor++){
             DcMotorController controller = motors[motor].getController();
             MotorConfigurationType mType = controller.getMotorType(motor);
             double ticksPerRev = mType.getTicksPerRev();
