@@ -45,6 +45,7 @@ public class MechBotRedHook extends MechBotSensor{
         rightUpperClamp = hardwareMap.servo.get("rightUpperClamp");
 
         jewelArm = hardwareMap.servo.get("jewelArm");
+
     }
 
     public void closeLowerClamp(){

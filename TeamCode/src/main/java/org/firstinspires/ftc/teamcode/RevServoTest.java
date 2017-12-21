@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
@@ -11,20 +12,39 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class RevServoTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Servo servo;
-        servo = hardwareMap.servo.get("servo");
+        CRServo leftLow, leftTop;
+        CRServo rightLow, rightTop;
 
+        leftLow = hardwareMap.crservo.get("leftLow");
+        leftTop = hardwareMap.crservo.get("leftTop");
 
-         waitForStart();
+        rightLow = hardwareMap.crservo.get("rightLow");
+        rightTop = hardwareMap.crservo.get("rightTop");
+
+        waitForStart();
+
         while (opModeIsActive()) {
-            if (gamepad1.dpad_up) {
-                servo.setPosition(1);
-            } else if (gamepad1.dpad_down) {
-                servo.setPosition(0);
-            } else if (gamepad1.dpad_left) {
-                servo.setPosition(.5);
+            if(gamepad1.dpad_left){
+                leftTop.setPower(1);
+            }
+            else if(gamepad1.dpad_down){
+                leftLow.setPower(1);
+            }
+            else{
+                leftLow.setPower(0);
+                leftTop.setPower(0);
             }
 
+            if(gamepad1.y){
+                rightTop.setPower(1);
+            }
+            else if(gamepad1.a){
+                rightLow.setPower(1);
+            }
+            else{
+                rightTop.setPower(0);
+                rightLow.setPower(0);
+            }
         }
     }
 }
