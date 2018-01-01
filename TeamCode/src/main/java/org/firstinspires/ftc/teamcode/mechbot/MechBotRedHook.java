@@ -14,7 +14,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class MechBotRedHook extends MechBotSensor{
     private DcMotor leftLinearSlide, rightLinearSlide;
     private Servo jewelArm;
-    public Servo leftLowerClamp, leftUpperClamp, rightLowerClamp, rightUpperClamp;
+    public Servo leftLowerClamp, leftUpperClamp, rightLowerClamp, rightUpperClamp, relicClamp;
+    public DcMotor relicArm, liftArm;
 
     //May need different pos sets for servos depending on side.
     private final double CLAMP_CLOSE_POSITION = 1;
@@ -46,6 +47,10 @@ public class MechBotRedHook extends MechBotSensor{
 
         jewelArm = hardwareMap.servo.get("jewelArm");
 
+        relicArm = hardwareMap.dcMotor.get("relicArm");
+        liftArm = hardwareMap.dcMotor.get("liftArm");
+        relicClamp = hardwareMap.servo.get("relicClamp");
+
     }
 
     public void closeLowerClamp(){
@@ -53,8 +58,8 @@ public class MechBotRedHook extends MechBotSensor{
         rightLowerClamp.setPosition(0);
     }
     public void openLowerClamp(){
-        leftLowerClamp.setPosition(0);
-        rightLowerClamp.setPosition(1);
+        leftLowerClamp.setPosition(.45);
+        rightLowerClamp.setPosition(.75);
     }
     public void midPosLowerClamp(){
         leftLowerClamp.setPosition(0.55);
@@ -67,8 +72,8 @@ public class MechBotRedHook extends MechBotSensor{
         rightUpperClamp.setPosition(0);
     }
     public void openUpperClamp(){
-        leftUpperClamp.setPosition(0);
-        rightUpperClamp.setPosition(1);
+        leftUpperClamp.setPosition(.2); 
+        rightUpperClamp.setPosition(.8);
     }
     public void midPosUpperClamp(){
         leftUpperClamp.setPosition(0.35);
@@ -95,5 +100,35 @@ public class MechBotRedHook extends MechBotSensor{
     }
     public void raiseJewelArm(){
         jewelArm.setPosition(0);
+    }
+
+    public void relicArmOut(){
+        relicArm.setPower(1);
+    }
+    public void relicArmIn(){
+        relicArm.setPower(-1);
+    }
+    public void relicArmStop(){
+        relicArm.setPower(0);
+    }
+
+    public void liftRelicArmUp(){
+        liftArm.setPower(-.3);
+    }
+    public void liftRelicArmDown(){
+        liftArm.setPower(.3);
+    }
+    public void liftRelicArmStop(){
+        liftArm.setPower(0);
+    }
+
+    public void relicClampClose(){
+        relicClamp.setPosition(.85);
+    }
+    public void relicClampOpen(){
+        relicClamp.setPosition(0);
+    }
+    public void relicClampMid(){
+        relicClamp.setPosition(.5);
     }
 }
