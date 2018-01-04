@@ -5,14 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
+import org.firstinspires.ftc.teamcode.mechbot.MechBotRedHook;
 
 /**
  * Created by FTC Team 8397 on 12/5/2017.
  */
 @TeleOp(name="Servo tests",group = "Testing")
-@Disabled
 public class ServoTests extends LoggingLinearOpMode {
-    private Servo leftLowerClamp, leftUpperClamp, rightLowerClamp, rightUpperClamp;
+    public Servo leftLowerClamp, leftUpperClamp, rightLowerClamp, rightUpperClamp;
     @Override
     public void runLoggingOpmode() throws InterruptedException {
         leftLowerClamp = hardwareMap.servo.get("leftLowerClamp");
@@ -20,9 +20,6 @@ public class ServoTests extends LoggingLinearOpMode {
 
         rightLowerClamp = hardwareMap.servo.get("rightLowerClamp");
         rightUpperClamp = hardwareMap.servo.get("rightUpperClamp");
-
-        rightLowerClamp.setDirection(Servo.Direction.REVERSE);
-        rightUpperClamp.setDirection(Servo.Direction.REVERSE);
         waitForStart();
 
         while (opModeIsActive()){
@@ -49,35 +46,35 @@ public class ServoTests extends LoggingLinearOpMode {
     }
 
 
-
-
     public void closeLowerClamp(){
-        leftLowerClamp.setPosition(1);
+        leftLowerClamp.setPosition(1); // This was changed to work with a wheeled intake.
+        rightLowerClamp.setPosition(0); // was 0
+    }
+    public void openLowerClamp(){
+        leftLowerClamp.setPosition(0); // was 0 // This was changed to work with a wheeled intake.
         rightLowerClamp.setPosition(1);
     }
-
-    public void openLowerClamp(){
-        leftLowerClamp.setPosition(0);
-        rightLowerClamp.setPosition(0);
-    }
     public void midPosLowerClamp(){
-        leftLowerClamp.setPosition(.5);
-        rightLowerClamp.setPosition(.5);
+        //leftLowerClamp.setPosition(0.55);
+        //rightLowerClamp.setPosition(0.45);
     }
+    /*public void stopLowerClamp(){
+        leftLowerClamp.setPower(0);
+        rightLowerClamp.setPower(0);
+    }*/
+
 
     public void closeUpperClamp(){
-        leftUpperClamp.setPosition(1);
+        leftUpperClamp.setPosition(1); // This was changed to work with a wheeled intake.
+        rightUpperClamp.setPosition(0); // was 0
+    }
+    public void openUpperClamp(){
+        leftUpperClamp.setPosition(0); // was 0 // This was changed to work with a wheeled intake.
         rightUpperClamp.setPosition(1);
     }
-
-    public void openUpperClamp(){
-        leftUpperClamp.setPosition(0);
-        rightUpperClamp.setPosition(0);
-    }
-
     public void midPosUpperClamp(){
-        leftUpperClamp.setPosition(0.5);
-        rightUpperClamp.setPosition(0.5);
+        leftUpperClamp.setPosition(0.35);
+        rightUpperClamp.setPosition(0.55);
     }
 
 }

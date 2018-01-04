@@ -32,7 +32,7 @@ public class MechBot
     /**
      * Final constant equal to the number of ticks per motor rotation with a NeverRest Motor, using a 1-40 Gearbox reduction.
      */
-    public final double TICKS_PER_MOTOR_ROTATION_20 = 560;
+    public final double TICKS_PER_MOTOR_ROTATION_20 = 560; //Ticks per 20.
     public final double TICKS_PER_MOTOR_ROTATION_40 = 1120; //Ticks per 40.
 
 
@@ -45,7 +45,7 @@ public class MechBot
     /**
      * Final constant equal to our robots encoder ticks per centimeter. Found by taking ticks per motor rotations times gear ratio divided by wheel diameter.
      */
-    public final double TICKS_PER_CM = TICKS_PER_MOTOR_ROTATION_40/WHEEL_Circumference; //Changing to 40 numbers becauase of hardware change.
+    public final double TICKS_PER_CM = TICKS_PER_MOTOR_ROTATION_20/WHEEL_Circumference; //Changing to 40 numbers becauase of hardware change.
     public final double MAX_TICKS_PER_SEC = 2500;
 
     /**

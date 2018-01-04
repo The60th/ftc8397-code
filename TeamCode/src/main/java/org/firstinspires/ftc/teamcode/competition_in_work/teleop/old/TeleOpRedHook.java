@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotDriveControls;
 import org.firstinspires.ftc.teamcode.mechbot.MechBotNickBot;
 import org.firstinspires.ftc.teamcode.mechbot.MechBotRedHook;
 import org.firstinspires.ftc.teamcode.mechbot.MechBotSensor;
+import org.firstinspires.ftc.teamcode.third_party_libs.UTILToggle;
 
 /**
  * Created by FTC Team 8397 on 12/5/2017.
@@ -19,6 +20,17 @@ public class TeleOpRedHook extends LoggingLinearOpMode {
     private MechBotRedHook bot = new MechBotRedHook();
     private MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1,gamepad2,bot);
     private float[] driveData = new float[6];
+    UTILToggle topToggle = new UTILToggle();    // Slows down drivetrain when on
+    boolean topStatus = false;
+    GrabberState topState = GrabberState.OPEN;
+    UTILToggle bottomToggle = new UTILToggle();    // Slows down drivetrain when on
+    boolean bottomStatus = false;
+    GrabberState bottomState = GrabberState.OPEN;
+
+    enum GrabberState{CLOSED,OPEN}
+    //Button logic.
+    //Bottom can't close till top opens.
+    //Top can't close till bottom closes.
 
     @Override
     public void runLoggingOpmode() throws InterruptedException {
@@ -35,50 +47,91 @@ public class TeleOpRedHook extends LoggingLinearOpMode {
         telemetry.addData("Started TeleOp","");
         telemetry.update();
         bot.raiseJewelArm();
-        while (opModeIsActive()){
-            mechBotDriveControls.refreshGamepads(gamepad1,gamepad2);
-            mechBotDriveControls.joyStickMecnumDriveComp(driveData); //Do an array fill by passing the array in, to prevent recreating the array.
+        bot.openLowerClamp();
+        bot.openUpperClamp();
+        while (opModeIsActive()) {
+            mechBotDriveControls.refreshGamepads(gamepad1, gamepad2);
+            mechBotDriveControls.joyStickMecnumDriveCompQuad(driveData); //Do an array fill by passing the array in, to prevent recreating the array.
 
-            telemetry.addData("Joystick input: ","X: %.2f Y: %.2f A: %.2f", driveData[0],driveData[1],driveData[2]);
-            telemetry.addData("Drive speeds input: ","X: %.2f Y: %.2f A: %.2f", driveData[3],driveData[4],driveData[5]);
+            telemetry.addData("Joystick input: ", "X: %.2f Y: %.2f A: %.2f", driveData[0], driveData[1], driveData[2]);
+            telemetry.addData("Drive speeds input: ", "X: %.2f Y: %.2f A: %.2f", driveData[3], driveData[4], driveData[5]);
             telemetry.update();
 
-                if(gamepad1.a){
-                    bot.openLowerClamp();
-                }
-                else if(gamepad1.b){
-                    bot.closeLowerClamp();
-                }
-
-
-                if(gamepad1.x){
+            if (bottomToggle.status(gamepad1.y) == UTILToggle.Status.COMPLETE) {
+                if(!topStatus) {
                     bot.closeUpperClamp();
+                    topState = GrabberState.CLOSED;
                 }
-                else if(gamepad1.y) {
+                if(topStatus) {
                     bot.openUpperClamp();
-                }else if(gamepad1.right_bumper || gamepad1.left_bumper){
-                    bot.midPosUpperClamp();
-                    bot.midPosLowerClamp();
+                    topState = GrabberState.OPEN;
                 }
-
-
-                if (gamepad2.dpad_up || gamepad1.dpad_up){
-                    bot.liftArmUp();
-                }
-                else if (gamepad2.dpad_down || gamepad1.dpad_down){
-                    bot.liftArmDown();
-                }
-                else{
-                    bot.liftArmStop();
-                }
-
-
-                if(gamepad1.right_stick_y > .5){ //up
-                    bot.lowerJewelArm();
-                }else if(gamepad1.right_stick_y < -.5){ //down
-                    bot.raiseJewelArm();
-                }
+                topStatus = !topStatus;
             }
+
+            if (topToggle.status(gamepad1.a) == UTILToggle.Status.COMPLETE) {
+                if(!bottomStatus) {
+                    bot.closeUpperClamp();
+                    topState = GrabberState.CLOSED;
+                }
+                if(bottomStatus) {
+                    bot.closeLowerClamp();
+                    topState = GrabberState.OPEN;
+                }
+                bottomStatus =!bottomStatus;
+            }
+
+            /*if (gamepad1.y) {
+                bot.closeUpperClamp();
+            } else if (gamepad1.x) {
+                bot.openUpperClamp();
+            } else if (gamepad1.right_bumper || gamepad1.left_bumper) {
+                bot.midPosUpperClamp();
+                bot.midPosLowerClamp();
+            }*/
+
+
+            if (gamepad1.dpad_up) {
+                bot.liftArmUp();
+            } else if (gamepad1.dpad_down) {
+                bot.liftArmDown();
+            } else {
+                bot.liftArmStop();
+            }
+
+
+            if (gamepad1.right_stick_y > .5) { //up
+                bot.lowerJewelArm();
+            } else if (gamepad1.right_stick_y < -.5) { //down
+                bot.raiseJewelArm();
+            }
+
+            if (gamepad2.dpad_up) {
+                bot.relicArmOut();
+            } else if (gamepad1.dpad_down) {
+                bot.relicArmIn();
+
+            } else {
+                bot.relicArmStop();
+            }
+
+            if (gamepad2.right_bumper) {
+                bot.liftRelicArmUp();
+            } else if (gamepad2.right_trigger > .05) {
+                bot.liftRelicArmDown();
+            } else {
+                bot.liftRelicArmStop();
+            }
+            if (gamepad2.left_bumper) {
+                bot.relicClampOpen();
+            }
+            if (gamepad2.left_trigger > .05) {
+                bot.relicClampClose();
+            }
+            if(gamepad2.a) {
+                bot.relicClampMid();
+            }
+        }
         }
 
 

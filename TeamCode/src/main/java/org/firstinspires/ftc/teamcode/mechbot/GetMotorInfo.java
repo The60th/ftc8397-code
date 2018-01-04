@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * Created by JimLori on 11/21/2017.
  */
 
-@Autonomous(name = "GetMotorInfo", group = "Test")
+//@Autonomous(name = "GetMotorInfo", group = "Test")
 
 public class GetMotorInfo extends LinearOpMode {
 

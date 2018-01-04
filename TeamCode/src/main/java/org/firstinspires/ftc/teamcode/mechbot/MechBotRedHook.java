@@ -50,6 +50,7 @@ public class MechBotRedHook extends MechBotSensor{
         relicArm = hardwareMap.dcMotor.get("relicArm");
         liftArm = hardwareMap.dcMotor.get("liftArm");
         relicClamp = hardwareMap.servo.get("relicClamp");
+        liftArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
@@ -72,7 +73,7 @@ public class MechBotRedHook extends MechBotSensor{
         rightUpperClamp.setPosition(0);
     }
     public void openUpperClamp(){
-        leftUpperClamp.setPosition(.2); 
+        leftUpperClamp.setPosition(.2);
         rightUpperClamp.setPosition(.8);
     }
     public void midPosUpperClamp(){
