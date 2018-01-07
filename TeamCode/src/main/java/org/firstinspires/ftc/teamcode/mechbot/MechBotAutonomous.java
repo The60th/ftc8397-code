@@ -733,10 +733,12 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         bot.setDriveSpeed(0,0,0);
     }
     public void prepGlyphForDrive(){
-        bot.closeLowerClamp();
-        bot.openUpperClamp();
-        sleep(1000);
+        bot.liftRelicArmDown();
+        sleep(500);
+        bot.closeUpperClamp();
+        sleep(500);
         bot.liftArmUp();
+        sleep(500);
         robotZXPhi = new float[] { 0,0,bot.getOdomHeadingFromGyroHeading(bot.getInitGyroHeadingRadians())};
         bot.updateOdometry();
         driveDirectionGyro(20, (float)VuMarkNavigator.NormalizeAngle(((bot.getInitGyroHeadingDegrees() +180.0f) * (float)Math.PI/180.0f)) * 180.0f/ (float) Math.PI
@@ -764,7 +766,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         bot.liftArmStop();
 
         bot.openLowerClamp();
-        bot.closeUpperClamp();
+        bot.openUpperClamp();
         sleep(500);
 
         driveDirectionGyro(20, 180, 0, new Predicate() {

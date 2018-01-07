@@ -57,12 +57,21 @@ public class TeleOpRedHook extends LoggingLinearOpMode {
             telemetry.addData("Drive speeds input: ", "X: %.2f Y: %.2f A: %.2f", driveData[3], driveData[4], driveData[5]);
             telemetry.update();
 
+
+            //TODO
+            //REMAP SERVO CONTROLS
+            //Servo controls and servo functions are not reflective of what they really do.
+            //Please test them to fix it.
+
+            //Toggle should be: mid-> close
+            //And secondary button for open
+
             if (bottomToggle.status(gamepad1.y) == UTILToggle.Status.COMPLETE) {
                 if(!topStatus) {
                     bot.closeUpperClamp();
                     topState = GrabberState.CLOSED;
                 }
-                if(topStatus) {
+                else if(topStatus) {
                     bot.openUpperClamp();
                     topState = GrabberState.OPEN;
                 }
@@ -71,29 +80,25 @@ public class TeleOpRedHook extends LoggingLinearOpMode {
 
             if (topToggle.status(gamepad1.a) == UTILToggle.Status.COMPLETE) {
                 if(!bottomStatus) {
-                    bot.closeUpperClamp();
-                    topState = GrabberState.CLOSED;
-                }
-                if(bottomStatus) {
                     bot.closeLowerClamp();
-                    topState = GrabberState.OPEN;
+                    bottomState = GrabberState.CLOSED;
+                }
+                else if(bottomStatus) {
+                    bot.openLowerClamp();
+                    bottomState = GrabberState.OPEN;
                 }
                 bottomStatus =!bottomStatus;
             }
 
-            /*if (gamepad1.y) {
-                bot.closeUpperClamp();
-            } else if (gamepad1.x) {
-                bot.openUpperClamp();
-            } else if (gamepad1.right_bumper || gamepad1.left_bumper) {
-                bot.midPosUpperClamp();
+            if (gamepad1.right_bumper){
                 bot.midPosLowerClamp();
-            }*/
+                bot.midPosUpperClamp();
+            }
 
 
-            if (gamepad1.dpad_up) {
+            if (gamepad1.dpad_up || gamepad2.dpad_up) {
                 bot.liftArmUp();
-            } else if (gamepad1.dpad_down) {
+            } else if (gamepad1.dpad_down || gamepad2.dpad_down) {
                 bot.liftArmDown();
             } else {
                 bot.liftArmStop();
@@ -106,11 +111,10 @@ public class TeleOpRedHook extends LoggingLinearOpMode {
                 bot.raiseJewelArm();
             }
 
-            if (gamepad2.dpad_up) {
+            if (gamepad2.y) {
                 bot.relicArmOut();
-            } else if (gamepad1.dpad_down) {
+            } else if (gamepad2.a) {
                 bot.relicArmIn();
-
             } else {
                 bot.relicArmStop();
             }
