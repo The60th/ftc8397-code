@@ -12,21 +12,25 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 
 public class MechBotRedHook extends MechBotSensor{
-    private DcMotor leftLinearSlide, rightLinearSlide;
-    private Servo jewelArm;
+    public DcMotor leftLinearSlide, rightLinearSlide;
+    public Servo jewelArm;
     public Servo leftLowerClamp, leftUpperClamp, rightLowerClamp, rightUpperClamp, relicClamp;
     public DcMotor relicArm, liftArm;
 
-    //May need different pos sets for servos depending on side.
-    private final double CLAMP_CLOSE_POSITION = 1;
-    private final double CLAMP_OPEN_POSTION = 0;
-    private final double CLAMP_MID_POSTION = .5;
+    public final float BottomLeftClosePos = 1;
+    public final float BottomLeftOpenPos = 0;
 
-    private final double LINEAR_SLIDE_RAISE_POWER = 1;
-    private final double LINEAR_SLIDE_LOWER_POWER = -1;
+    public final float BottomRightClosePos = 0;
+    public final float BottomRightOpenPos = 1;
 
-    private int nullPos = 1;
+    public final float TopLeftClosePos = 1;
+    public final float TopLeftOpenPos = .40f;
 
+    public final float TopRightClosePos = 0; //40
+    public final float TopRightOpenPos =.60f;
+
+    public float leftLowPos = 0;
+    public float rightLowPos = 0;
     public void init(HardwareMap ahwMap) {
         super.init(ahwMap);
         initHw();
@@ -39,11 +43,11 @@ public class MechBotRedHook extends MechBotSensor{
         leftLinearSlide = hardwareMap.dcMotor.get("leftLinearSlide");
         rightLinearSlide = hardwareMap.dcMotor.get("rightLinearSlide");
 
-        leftLowerClamp = hardwareMap.servo.get("leftLowerClamp");
-        leftUpperClamp = hardwareMap.servo.get("leftUpperClamp");
+        leftUpperClamp = hardwareMap.servo.get("leftLowerClamp");
+        leftLowerClamp = hardwareMap.servo.get("leftUpperClamp");
 
-        rightLowerClamp = hardwareMap.servo.get("rightLowerClamp");
-        rightUpperClamp = hardwareMap.servo.get("rightUpperClamp");
+        rightUpperClamp = hardwareMap.servo.get("rightLowerClamp");
+        rightLowerClamp = hardwareMap.servo.get("rightUpperClamp");
 
         jewelArm = hardwareMap.servo.get("jewelArm");
 
@@ -52,46 +56,50 @@ public class MechBotRedHook extends MechBotSensor{
         relicClamp = hardwareMap.servo.get("relicClamp");
         liftArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         relicArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftLinearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightLinearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        leftLinearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightLinearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void closeUpperClamp(){
-        leftLowerClamp.setPosition(1);
-        rightLowerClamp.setPosition(0);
+        leftUpperClamp.setPosition(TopLeftClosePos);
+        rightUpperClamp.setPosition(TopRightClosePos);
     }
     public void openUpperClamp(){
-        leftLowerClamp.setPosition(.35);
-        rightLowerClamp.setPosition(.75);
+        leftUpperClamp.setPosition(TopLeftOpenPos);
+        rightUpperClamp.setPosition(TopRightOpenPos);
     }
     public void midPosUpperClamp(){
-        leftLowerClamp.setPosition(0.55);
-        rightLowerClamp.setPosition(0.55);
+        leftUpperClamp.setPosition(0.55);
+        rightUpperClamp.setPosition(0.55);
     }
 
 
     public void closeLowerClamp(){
-        leftUpperClamp.setPosition(1);
-        rightUpperClamp.setPosition(0);
+        leftLowerClamp.setPosition(BottomLeftClosePos); //changed this number to fix the servo closing to far.
+        rightLowerClamp.setPosition(BottomRightClosePos);
     }
     public void openLowerClamp(){
-        leftUpperClamp.setPosition(.1);
-        rightUpperClamp.setPosition(.8);
+        leftLowerClamp.setPosition(BottomLeftOpenPos);
+        rightLowerClamp.setPosition(BottomRightOpenPos);
     }
     public void midPosLowerClamp(){
-        leftUpperClamp.setPosition(0.55);
-        rightUpperClamp.setPosition(0.55);
+        leftLowerClamp.setPosition(0.55);
+        rightLowerClamp.setPosition(0.55);
     }
 
 
 
 
     public void liftArmDown(){
-        leftLinearSlide.setPower(-1);
-        rightLinearSlide.setPower(1);
+        leftLinearSlide.setPower(.1);
+        rightLinearSlide.setPower(-.1);
     }
     public void liftArmUp (){
-        leftLinearSlide.setPower(1);
-        rightLinearSlide.setPower(-1);
+        leftLinearSlide.setPower(-.7);
+        rightLinearSlide.setPower(.7);
     }
     public void liftArmStop (){
         leftLinearSlide.setPower(0);

@@ -32,7 +32,7 @@ public class RedBottom_RedHook extends MechBotAutonomous {
 
         //Assume the robot is facing the wall once again still on the balance stone and the wall is a heading of 0.
         if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "driveDirectionGyro 1");
-        driveDirectionGyro(20, -90, 180,new Predicate() {
+        driveDirectionGyro(OFF_STONE_SPEED, -90, 180,new Predicate() {
             @Override
             public boolean isTrue() {
                 Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
@@ -69,7 +69,7 @@ public class RedBottom_RedHook extends MechBotAutonomous {
         //Follow the line depending on how many times it has already been seen.
         if(hsvValues[1] < HSV_SAT_CUT_OFF){
             if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "Line following forward left.");
-            followLineProportionate(LineFollowSide.RIGHT, bot.colorRight, new Predicate() {
+            followLineProportionate(LineFollowSide.RIGHT, bot.colorRight, LINE_FOLLOW_SPEED, new Predicate() {
                 @Override
                 public boolean isTrue() {
                     Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
@@ -79,7 +79,7 @@ public class RedBottom_RedHook extends MechBotAutonomous {
             });
         }else{
             if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "Line following backwards left.");
-            followLineProportionate(LineFollowSide.RIGHT, bot.colorRight, -10, new Predicate() {
+            followLineProportionate(LineFollowSide.RIGHT, bot.colorRight, -LINE_FOLLOW_SPEED, new Predicate() {
                 @Override
                 public boolean isTrue() {
                     Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);

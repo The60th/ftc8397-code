@@ -33,7 +33,7 @@ public class BlueBottom_RedHook extends MechBotAutonomous {
         //Assume the robot is facing the wall once again still on the balance stone and the wall is a heading of 0.
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "driveDirectionGyro 1");
         //added the 180 to this line of code to keep the robot from turning around.
-        driveDirectionGyro(20, 90,180, new Predicate() {
+        driveDirectionGyro(OFF_STONE_SPEED, 90,180, new Predicate() {
             @Override
             public boolean isTrue() {
                 Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
@@ -72,7 +72,7 @@ public class BlueBottom_RedHook extends MechBotAutonomous {
         //Follow the line depending on how many times it has already been seen.
         if(hsvValues[1] < HSV_SAT_CUT_OFF){
             if (BLUE_BOTTOM_START_LOG)  BetaLog.dd(BLUE_BOTTOM_START_TAG, "Line following forward left.");
-            followLineProportionate(LineFollowSide.LEFT, bot.colorLeft, new Predicate() {
+            followLineProportionate(LineFollowSide.LEFT, bot.colorLeft, LINE_FOLLOW_SPEED, new Predicate() {
                 @Override
                 public boolean isTrue() {
                     Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
@@ -83,7 +83,7 @@ public class BlueBottom_RedHook extends MechBotAutonomous {
             });
         }else{
             if (BLUE_BOTTOM_START_LOG)  BetaLog.dd(BLUE_BOTTOM_START_TAG, "Line following backwards left.");
-            followLineProportionate(LineFollowSide.LEFT, bot.colorLeft, -10, new Predicate() {
+            followLineProportionate(LineFollowSide.LEFT, bot.colorLeft, -LINE_FOLLOW_SPEED, new Predicate() {
                 @Override
                 public boolean isTrue() {
                     Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
@@ -95,8 +95,9 @@ public class BlueBottom_RedHook extends MechBotAutonomous {
 
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "adjust on triangle");
 
-        prepareToScoreGlyph();
-        scoreGylph();
+        prepareToScoreGlyph(); //TODO
+        scoreGylph(); //TODO
+
         /*
         adjustPosOnTriangle(ADJUST_POS_TIMEOUT);
 

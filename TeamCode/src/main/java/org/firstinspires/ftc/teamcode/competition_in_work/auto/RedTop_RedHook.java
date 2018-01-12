@@ -34,7 +34,7 @@ public class RedTop_RedHook extends MechBotAutonomous {
 
         //Assume the robot is facing the wall once again still on the balance stone and the wall is a heading of 0.
         if (RED_START_TOP_LOG) BetaLog.dd(RED_START_TOP_TAG, "driveDirectionGyro1");
-        driveDirectionGyro(20, 180, 90, new Predicate() {
+        driveDirectionGyro(OFF_STONE_SPEED, 180, 90, new Predicate() {
             @Override
             public boolean isTrue() {
                 Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
@@ -55,7 +55,7 @@ public class RedTop_RedHook extends MechBotAutonomous {
         driveDirectionGyro(20, 180, 90, new Predicate() {
             @Override
             public boolean isTrue() {
-                return robotZXPhi[0] < -10;
+                return robotZXPhi[0] < -8; //Was -10 on 1/11/18
             }
         });
 
@@ -83,7 +83,7 @@ public class RedTop_RedHook extends MechBotAutonomous {
         //Follow the line depending on how many times it has already been seen.
         if(hsvValues[1] < HSV_SAT_CUT_OFF){
             if (RED_START_TOP_LOG) BetaLog.dd(RED_START_TOP_TAG, "Line following forward left.");
-            followLineProportionate(LineFollowSide.RIGHT, bot.colorRight, new Predicate() {
+            followLineProportionate(LineFollowSide.RIGHT, bot.colorRight, LINE_FOLLOW_SPEED, new Predicate() {
                 @Override
                 public boolean isTrue() {
                     Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
@@ -93,7 +93,7 @@ public class RedTop_RedHook extends MechBotAutonomous {
             });
         }else{
             if (RED_START_TOP_LOG) BetaLog.dd(RED_START_TOP_TAG, "Line following backwards left.");
-            followLineProportionate(LineFollowSide.RIGHT, bot.colorRight, -10, new Predicate() {
+            followLineProportionate(LineFollowSide.RIGHT, bot.colorRight, -LINE_FOLLOW_SPEED, new Predicate() {
                 @Override
                 public boolean isTrue() {
                     Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);

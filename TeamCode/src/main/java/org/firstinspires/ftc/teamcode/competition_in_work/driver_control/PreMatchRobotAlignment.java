@@ -1,6 +1,9 @@
-package org.firstinspires.ftc.teamcode.competition_in_work.auto;
+package org.firstinspires.ftc.teamcode.competition_in_work.driver_control;
+
+import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.vuforia.CameraDevice;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -22,7 +25,7 @@ import java.util.concurrent.BlockingQueue;
  * Created by JimLori on 11/30/2017.
  */
 
-@Autonomous(name = "PreMatchRobotAlignment", group = "Set up")
+@TeleOp(name = "PreMatchRobotAlignment", group = "Set up")
 public class PreMatchRobotAlignment extends LoggingLinearOpMode {
 
     enum JewelSide {BLUE_LEFT, RED_LEFT, UNKNOWN}
@@ -124,7 +127,11 @@ public class PreMatchRobotAlignment extends LoggingLinearOpMode {
                 telemetry.addData("Roll degrees: ",orientation.secondAngle);
                 telemetry.addData("Pitch degrees: ", orientation.thirdAngle);
             }
-
+            float[] HSV = new float[3];
+            Color.RGBToHSV(bot.colorLeft.red(), bot.colorLeft.green(), bot.colorLeft.blue(),HSV);
+            telemetry.addData("Color left", "H = %.2f S = %.2f V = %.2f", HSV[0],HSV[1],HSV[2]);
+            Color.RGBToHSV(bot.colorRight.red(), bot.colorRight.green(), bot.colorRight.blue(),HSV);
+            telemetry.addData("Color right", "H = %.2f S = %.2f V = %.2f", HSV[0],HSV[1],HSV[2]);
             telemetry.update();
 
         }

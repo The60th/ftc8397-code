@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 /**
  * Created by FTC Team 8397 on 12/11/2017.
  */
-@TeleOp(name = "rev",group = "rev")
+//@TeleOp(name = "rev",group = "rev")
 public class RevServoTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

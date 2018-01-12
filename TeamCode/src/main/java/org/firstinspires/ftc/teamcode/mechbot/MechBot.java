@@ -51,6 +51,7 @@ public class MechBot
     /**
      * Final constant equal to robot length in centimeters.
      */
+    //TODO This should be remesured for the newest robot design.
     public final double LENGTH = 33.0;
 
     /**

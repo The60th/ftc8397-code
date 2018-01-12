@@ -16,7 +16,7 @@ import java.util.Locale;
 /**
  * Created by FTC Team 8397 on 1/5/2018.
  */
-@Autonomous(name = "AutoDemo",group = "Demo")
+//@Autonomous(name = "AutoDemo",group = "Demo")
 public class AutoTest extends MechBotAutonomous {
     boolean speaking;
     TextToSpeech Tts = null;

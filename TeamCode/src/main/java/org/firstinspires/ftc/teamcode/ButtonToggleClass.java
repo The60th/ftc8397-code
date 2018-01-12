@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.third_party_libs.UTILToggle;
 /**
  * Created by FTC Team 8397 on 1/3/2018.
  */
-@TeleOp(group = "Demo",name = "Toggle")
+//@TeleOp(group = "Demo",name = "Toggle")
 public class ButtonToggleClass extends LinearOpMode {
     UTILToggle slowToggle = new UTILToggle();    // Slows down drivetrain when on
     boolean demo = false;

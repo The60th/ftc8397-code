@@ -38,9 +38,10 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
     //public MechBotNickBot bot = new MechBotNickBot(); I changed this so it would run with the new hardware map. We are now using MechBotRedHook.
     public MechBotRedHook bot = new MechBotRedHook();
     public enum LineFollowSide {LEFT,RIGHT}
+    public final float OFF_STONE_SPEED = 25.0f;
     private final float INNER_TAPE_ANGLE = 33.70f;
     private final float INNER_TAPE_ANGLE_RADS = INNER_TAPE_ANGLE * ((float)Math.PI/180.0f);
-    private final float LINE_FOLLOW_SPEED = 10.0f; //10 centimeters per second.
+    public final float LINE_FOLLOW_SPEED = 15.0f; //10 centimeters per second.
     private final float LINE_FOLLOW_ANGLE_FACTOR = 30.0f * ((float)Math.PI/180.0f); //30.0 Degrees converted to radians.
     private final float HEADING_CORECTION_FACTOR = 2.0f;
     public final float DRIVE_TOWARDS_TRIANGLE_SPEED = 20.0f;
@@ -97,6 +98,8 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
     public final float VUMARK_KEY_SCAN_TIME = 500;
 
     public final float CRYPTO_BOX_SIDE_SHIFT_VALUE = 18.6f;
+
+    public final float CRYPTO_BOX_CENTER_SHIFT_VALUE = 0.5f; //was 1.0f on 1/11/18 bottom left over shot some changing to test.
 
     public final float CRYPTO_BOX_FOWARD_SHIFT_VALUE = 27;
 
@@ -233,7 +236,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
 
         final float vaMin = 1.5f * tolerance / latency;
         final float C = 0.75f / latency;
-        final float vaMax = 0.5f * (float)Math.PI; //Was .3
+        final float vaMax = 0.6f * (float)Math.PI; //Was .5 on 1/11/18
         float heading;
         float offset;
         while (opModeIsActive()) {
@@ -733,25 +736,33 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         bot.setDriveSpeed(0,0,0);
     }
     public void prepGlyphForDrive(){
-        bot.liftRelicArmDown();
-        sleep(500);
         bot.closeUpperClamp();
-        sleep(500);
+        sleep(1500);
+        //Hacky Et array stuff for something.
+        ElapsedTime et = new ElapsedTime();
+        final ElapsedTime[] finalET = new ElapsedTime[1];
+        finalET[0] = et;
         bot.liftArmUp();
-        sleep(500);
         robotZXPhi = new float[] { 0,0,bot.getOdomHeadingFromGyroHeading(bot.getInitGyroHeadingRadians())};
         bot.updateOdometry();
-        driveDirectionGyro(20, (float)VuMarkNavigator.NormalizeAngle(((bot.getInitGyroHeadingDegrees() +180.0f) * (float)Math.PI/180.0f)) * 180.0f/ (float) Math.PI
+       /* driveDirectionGyro(20, (float)VuMarkNavigator.NormalizeAngle(((bot.getInitGyroHeadingDegrees() +180.0f) * (float)Math.PI/180.0f)) * 180.0f/ (float) Math.PI
                 , bot.getInitGyroHeadingDegrees(), new Predicate() {
             @Override
             public boolean isTrue() { //Was 20 0 180, updating to 20 -> init heading, because on top side it did not work.
-
-                if((robotZXPhi[0]*robotZXPhi[0] + robotZXPhi[1] * robotZXPhi[1]) > 16.0f){
+                //The 16 is really 4^2.
+                //Changed to Math.pow(centimeters, 2);
+                //The first number is distance in centimeters we want to drive.
+                if(finalET[0].milliseconds() > 250){
+                    bot.liftArmStop();
+                }
+                if((robotZXPhi[0]*robotZXPhi[0] + robotZXPhi[1] * robotZXPhi[1]) > Math.pow(3,2)){ //Was 4 ^2
                     return true;
                 }
                 return false;
             }
-        });
+        });*/
+
+        sleep(250);
         //Top 20, 90, -90
         bot.liftArmStop();
 
@@ -762,7 +773,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         bot.updateOdometry();
 
         bot.liftArmDown();
-        sleep(750);
+        sleep(200);
         bot.liftArmStop();
 
         bot.openLowerClamp();
@@ -793,10 +804,11 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
 
     public void prepareToScoreGlyph(){
         adjustPosOnTriangle(ADJUST_POS_TIMEOUT);
-
         final float distanceFromCrptoBoxAfterAdjust = 30;
         robotZXPhi = new float[] {distanceFromCrptoBoxAfterAdjust,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
+
+
 
         switch (this.cryptoKey){
             case LEFT:
@@ -804,7 +816,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
                 driveDirectionGyro(10, -90, new Predicate() {
                     @Override
                     public boolean isTrue() {
-                        return robotZXPhi[1] < -CRYPTO_BOX_SIDE_SHIFT_VALUE;
+                        return robotZXPhi[1] < -CRYPTO_BOX_SIDE_SHIFT_VALUE+CRYPTO_BOX_CENTER_SHIFT_VALUE;
                     }
                 });
                 break;
@@ -813,12 +825,20 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
                 driveDirectionGyro(10, 90, new Predicate() {
                     @Override
                     public boolean isTrue() {
-                        return robotZXPhi[1] > CRYPTO_BOX_SIDE_SHIFT_VALUE;
+                        return robotZXPhi[1] > CRYPTO_BOX_SIDE_SHIFT_VALUE+CRYPTO_BOX_CENTER_SHIFT_VALUE;
                     }
                 });
                 break;
             case CENTER:
             case UNKNOWN:
+                if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro right");
+                driveDirectionGyro(10, 90, new Predicate() {
+                    @Override
+                    public boolean isTrue() {
+                        return robotZXPhi[1] > CRYPTO_BOX_CENTER_SHIFT_VALUE;
+                    }
+                });
+                break;
         }
 
         if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro 3");
@@ -832,6 +852,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
 
         telemetry.addData("Auto data: ","Vumark target: " + cryptoKey + " target jewel side: " + targetSide);
         telemetry.update();
+
     }
 
 

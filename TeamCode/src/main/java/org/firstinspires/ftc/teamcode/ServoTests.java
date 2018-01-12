@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotRedHook;
 /**
  * Created by FTC Team 8397 on 12/5/2017.
  */
-@TeleOp(name="Servo tests",group = "Testing")
+//@TeleOp(name="Servo tests",group = "Testing")
 public class ServoTests extends LoggingLinearOpMode {
     public Servo leftLowerClamp, leftUpperClamp, rightLowerClamp, rightUpperClamp;
     @Override
