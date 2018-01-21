@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.competition_in_work.driver_control;
 
 
+import android.media.MediaPlayer;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
 import org.firstinspires.ftc.teamcode.mechbot.MechBotDriveControls;
 import org.firstinspires.ftc.teamcode.mechbot.MechBotRedHook;
@@ -18,10 +21,10 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
     private MechBotRedHook bot = new MechBotRedHook();
     private MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1,gamepad2,bot);
     private float[] driveData = new float[6];
-    UTILToggle topToggle = new UTILToggle();    // Slows down drivetrain when on
+    UTILToggle topToggle = new UTILToggle();
     boolean topStatus = false;
     GrabberState topState = GrabberState.OPEN;
-    UTILToggle bottomToggle = new UTILToggle();    // Slows down drivetrain when on
+    UTILToggle bottomToggle = new UTILToggle();
     boolean bottomStatus = false;
     GrabberState bottomState = GrabberState.OPEN;
 
@@ -34,6 +37,9 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
     public void runLoggingOpmode() throws InterruptedException {
         bot.init(hardwareMap);
 
+        //TODO
+        MediaPlayer mPlayer = MediaPlayer.create(hardwareMap.appContext, R.raw.champions);
+        //TODO
 
         ElapsedTime et = new ElapsedTime();
 
@@ -126,14 +132,12 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
             float checkerValue = ((Math.abs(bot.leftLinearSlide.getCurrentPosition()) + Math.abs(bot.rightLinearSlide.getCurrentPosition()))/2);
             telemetry.addData("Cond value: ", checkerValue);
 
-            if (gamepad1.dpad_up || gamepad2.dpad_up) {
+            if ( gamepad2.dpad_up) {
                 bot.liftArmUp();
-            } else if(gamepad1.b && gamepad1.dpad_down){
-                bot.liftArmDown();
-            } else if(gamepad2.b && gamepad2.dpad_down){
+            } else if(gamepad2.dpad_down && gamepad2.b){
                 bot.liftArmDown();
             }
-            else if (gamepad1.dpad_down || gamepad2.dpad_down) {
+            else if (gamepad2.dpad_down) {
                 if(bot.leftLinearSlide.getCurrentPosition() >= avgStartPos) {
                     bot.liftArmDown();
                 }
@@ -142,11 +146,27 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
                 bot.liftArmStop();
             }
 
+            if(gamepad1.dpad_up){
+                bot.raiseJewelArm();
+            }else if(gamepad1.dpad_down){
+                bot.lowerJewelArm();
+            }
+
+            //TODO
+            if(gamepad1.b){
+                mPlayer.start();
+            }else if(gamepad2.b){
+                mPlayer.pause();
+            }
+            //TODO
+
 
             if (gamepad1.right_stick_y > .5) { //up
-                bot.lowerJewelArm();
+                bot.liftArmUp();
             } else if (gamepad1.right_stick_y < -.5) { //down
-                bot.raiseJewelArm();
+                bot.liftArmDown();
+            }else{
+                bot.liftArmStop();
             }
 
             if (gamepad2.y) {
@@ -176,10 +196,8 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
             telemetry.update();
 
         }
-        }
-
-
-        }
+    }
+}
 
 
 

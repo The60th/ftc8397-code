@@ -482,10 +482,8 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         while (opModeIsActive() && !VuMarkNavigator.isActive){
             sleep(1);
         }
-
-        sleep(1000);
-
         double vuforiaActivateTime = et.milliseconds();
+        et.reset();
         telemetry.addData("Started Vuforia after " + vuforiaActivateTime + " milliseconds.","");
         telemetry.update();
         this.setFlashOn();
@@ -498,12 +496,13 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         waitForStart();
 
         vuMark = findKey(cryptoKeyTimeOut);
-        double vuMarkFindTime = et.milliseconds() - vuforiaActivateTime;
+        double vuMarkFindTime = et.milliseconds();
+        et.reset();
         telemetry.addData("Found vuMark value of " + vuMark.toString() + " after " + vuMarkFindTime + " milliseconds.","");
         this.cryptoKey = vuMark;
 
         jewelSide = findJewel(jewelTimeOut);
-        double jewlFindTime = et.milliseconds() - vuMarkFindTime;
+        double jewlFindTime = et.milliseconds();
         telemetry.addData("Found JewelSide value of " + jewelSide.toString() + " after " + jewlFindTime + " milliseconds.","");
         if(jewelSide == JewelSide.BLUE_LEFT && teamColor == TeamColor.BLUE){
             this.targetSide = Side.RIGHT;
@@ -516,7 +515,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         }else{
             this.targetSide = Side.UNKNOWN;
         }
-        telemetry.addData("Found both the jewel and vuMark in: " + et.milliseconds() + " milliseconds. ","");
+        telemetry.addData("Found both the jewel and vuMark in: " + vuMarkFindTime+jewlFindTime + " milliseconds. ","");
         telemetry.update();
         this.setFlashOff();
 
@@ -653,6 +652,43 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
 
             return true;
         }
+    }
+    public void knockJewelRight(){
+        bot.turnJewelArm.setPosition(.4); // enter position for right turn.
+    }
+    public void knockJewelLeft(){
+        bot.turnJewelArm.setPosition(.6); // enter position for left turn.
+    }
+    public void jewelArmMidPosition(){
+        bot.turnJewelArm.setPosition(.5); // enter position for starting mid.
+    }
+    public boolean knockJewelWithTurnServo(Side side) {
+        if (goForRankingPoints) {
+            //This logic flow, will score the jewel for the ENEMY team.
+            return false;
+        } else {
+            if (side == Side.UNKNOWN) {
+                return false;
+            }
+            bot.lowerJewelArm();
+            sleep(1050);
+            if (side == Side.LEFT) {
+                knockJewelLeft();
+                sleep(500);
+                jewelArmMidPosition();
+                sleep(500);
+                bot.raiseJewelArm();
+                sleep(1050);
+            } else if (side == Side.RIGHT) {
+                knockJewelRight();
+                sleep(500);
+                jewelArmMidPosition();
+                sleep(500);
+                bot.raiseJewelArm();
+                sleep(1050);
+            }
+        }
+        return true;
     }
 
     /*

@@ -9,11 +9,11 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotRedHook;
 import org.firstinspires.ftc.teamcode.third_party_libs.UTILToggle;
 
 /**
- * Created by FTC Team 8397 on 1/11/2018.
+ * Created by FTC Team 8397 on 1/18/2018.
  */
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Albany-TeleOp-Fast", group="Comp")
-public class TeleOpAlbanyFullSpeed extends LoggingLinearOpMode {
 
+public class PaceTele  extends LoggingLinearOpMode {
+    //TODO add swag flags commands.
     private MechBotRedHook bot = new MechBotRedHook();
     private MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1,gamepad2,bot);
     private float[] driveData = new float[6];
@@ -64,7 +64,7 @@ public class TeleOpAlbanyFullSpeed extends LoggingLinearOpMode {
 
         while (opModeIsActive()) {
             mechBotDriveControls.refreshGamepads(gamepad1, gamepad2);
-            mechBotDriveControls.joyStickMecnumDriveCompQuad(driveData); //Do an array fill by passing the array in, to prevent recreating the array.
+            mechBotDriveControls.joyStickMecnumDriveCompQuadSlow(driveData); //Do an array fill by passing the array in, to prevent recreating the array.
 
             telemetry.addData("Joystick input: ", "X: %.2f Y: %.2f A: %.2f", driveData[0], driveData[1], driveData[2]);
             telemetry.addData("Drive speeds input: ", "X: %.2f Y: %.2f A: %.2f", driveData[3], driveData[4], driveData[5]);
@@ -176,6 +176,4 @@ public class TeleOpAlbanyFullSpeed extends LoggingLinearOpMode {
 
         }
     }
-
-
 }

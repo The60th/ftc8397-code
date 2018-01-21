@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class MechBotRedHook extends MechBotSensor{
     public DcMotor leftLinearSlide, rightLinearSlide;
-    public Servo jewelArm;
+    public Servo jewelArm, turnJewelArm;
     public Servo leftLowerClamp, leftUpperClamp, rightLowerClamp, rightUpperClamp, relicClamp;
     public DcMotor relicArm, liftArm;
 
@@ -50,6 +50,7 @@ public class MechBotRedHook extends MechBotSensor{
         rightLowerClamp = hardwareMap.servo.get("rightUpperClamp");
 
         jewelArm = hardwareMap.servo.get("jewelArm");
+        turnJewelArm = hardwareMap.servo.get("turnJewelArm");
 
         relicArm = hardwareMap.dcMotor.get("relicArm");
         liftArm = hardwareMap.dcMotor.get("liftArm");
@@ -133,7 +134,7 @@ public class MechBotRedHook extends MechBotSensor{
     }
 
     public void relicClampClose(){
-        relicClamp.setPosition(.85);
+        relicClamp.setPosition(.95);
     }
     public void relicClampOpen(){
         relicClamp.setPosition(0);
