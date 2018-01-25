@@ -38,7 +38,7 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
         bot.init(hardwareMap);
 
         //TODO
-        MediaPlayer mPlayer = MediaPlayer.create(hardwareMap.appContext, R.raw.champions);
+      //  MediaPlayer mPlayer = MediaPlayer.create(hardwareMap.appContext, R.raw.champions);
         //TODO
 
         ElapsedTime et = new ElapsedTime();
@@ -138,9 +138,15 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
                 bot.liftArmDown();
             }
             else if (gamepad2.dpad_down) {
-                if(bot.leftLinearSlide.getCurrentPosition() >= avgStartPos) {
+                if(bot.leftLinearSlide.getCurrentPosition() <= avgStartPos) {
                     bot.liftArmDown();
                 }
+            }else if (gamepad1.right_stick_y > .5) { //up
+                if(bot.leftLinearSlide.getCurrentPosition() <= avgStartPos) {
+                    bot.liftArmDown();
+                }
+            } else if (gamepad1.right_stick_y < -.5) { //down
+                bot.liftArmUp();
             }
             else {
                 bot.liftArmStop();
@@ -153,21 +159,13 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
             }
 
             //TODO
-            if(gamepad1.b){
-                mPlayer.start();
-            }else if(gamepad2.b){
-                mPlayer.pause();
-            }
+            //if(gamepad1.b){
+              //  mPlayer.start();
+            //}else if(gamepad2.b){
+             //   mPlayer.pause();
+            //}
             //TODO
 
-
-            if (gamepad1.right_stick_y > .5) { //up
-                bot.liftArmUp();
-            } else if (gamepad1.right_stick_y < -.5) { //down
-                bot.liftArmDown();
-            }else{
-                bot.liftArmStop();
-            }
 
             if (gamepad2.y) {
                 bot.relicArmOut();
