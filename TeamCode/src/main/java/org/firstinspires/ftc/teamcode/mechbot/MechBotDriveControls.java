@@ -93,16 +93,16 @@ public class MechBotDriveControls {
             }
         }
         mechBot.setDrivePower(
-                (-(Math.signum(y)*(Math.pow(Math.abs(y),quadFactor))))*.80f,
-                (-(Math.signum(x)*(Math.pow(Math.abs(x),quadFactor))))*.80f,
-                (-(Math.signum(a)*(Math.pow(Math.abs(a),quadFactor))))*.80f
+                (-(Math.signum(y)*(Math.pow(Math.abs(y),quadFactor))))*.650f, //Was .70f
+                (-(Math.signum(x)*(Math.pow(Math.abs(x),quadFactor))))*.650f,
+                (-(Math.signum(a)*(Math.pow(Math.abs(a),quadFactor))))*.650f
         );
         data[0] = y;
         data[1] = x;
         data[2] = a;
-        data[3] = (float)Math.pow(y,quadFactor);
-        data[4] = (float)Math.pow(x,quadFactor);
-        data[5] = (float)Math.pow(a,quadFactor);
+        data[3] = (float)Math.pow(y,quadFactor)*.650f;
+        data[4] = (float)Math.pow(x,quadFactor)*.650f;
+        data[5] = (float)Math.pow(a,quadFactor)*.650f;
 
     }
     public void joyStickMecnumDriveCompQuad(float[] data){

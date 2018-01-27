@@ -57,50 +57,53 @@ public class MechBotRedHook extends MechBotSensor{
         relicClamp = hardwareMap.servo.get("relicClamp");
         liftArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         relicArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftLinearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightLinearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         leftLinearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightLinearSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        leftLinearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightLinearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void closeUpperClamp(){
-        leftUpperClamp.setPosition(TopLeftClosePos);
-        rightUpperClamp.setPosition(TopRightClosePos);
+        leftUpperClamp.setPosition(.37); //Left upper all the way in. 0
+        rightUpperClamp.setPosition(.53);  //Right upper all the way in. 1
     }
     public void openUpperClamp(){
-        leftUpperClamp.setPosition(TopLeftOpenPos);
-        rightUpperClamp.setPosition(TopRightOpenPos);
+        leftUpperClamp.setPosition(.70); //Left upper all the way back. 1
+        rightUpperClamp.setPosition(.20); //Right upper all the way out. 0
     }
     public void midPosUpperClamp(){
-        leftUpperClamp.setPosition(0.55);
-        rightUpperClamp.setPosition(0.55);
+        leftUpperClamp.setPosition(0.45); // This works as of 1/26/18.
+        rightUpperClamp.setPosition(0.45); // This works as of 1/26/18.
     }
 
 
     public void closeLowerClamp(){
-        leftLowerClamp.setPosition(BottomLeftClosePos); //changed this number to fix the servo closing to far.
-        rightLowerClamp.setPosition(BottomRightClosePos);
+        leftLowerClamp.setPosition(.90);  //Left lower all the way in. 1
+        rightLowerClamp.setPosition(.10); //Right lower all the way in. 0
     }
     public void openLowerClamp(){
-        leftLowerClamp.setPosition(BottomLeftOpenPos);
-        rightLowerClamp.setPosition(BottomRightOpenPos);
+        leftLowerClamp.setPosition(0); //Left lower all the way out. 0
+        rightLowerClamp.setPosition(1); //Right lower all the way out. 1
     }
     public void midPosLowerClamp(){
-        leftLowerClamp.setPosition(0.55);
-        rightLowerClamp.setPosition(0.55);
+        leftLowerClamp.setPosition(1.0); // This does not work.
+        rightLowerClamp.setPosition(0.0); // This does not work.
     }
 
 
 
 
     public void liftArmDown(){
-        leftLinearSlide.setPower(.1);
-        rightLinearSlide.setPower(-.1);
+        leftLinearSlide.setPower(-.25);
+        rightLinearSlide.setPower(-.25);
     }
     public void liftArmUp (){
-        leftLinearSlide.setPower(-.7);
-        rightLinearSlide.setPower(.7);
+        leftLinearSlide.setPower(.80);
+        rightLinearSlide.setPower(.80);
     }
     public void liftArmStop (){
         leftLinearSlide.setPower(0);

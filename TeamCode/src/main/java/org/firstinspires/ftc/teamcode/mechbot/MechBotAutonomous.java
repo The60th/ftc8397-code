@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.vuforia.CameraDevice;
 
-import org.firstinspires.ftc.robotcore.external.matrices.MatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -97,9 +96,9 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
     public final float JEWEL_SCAN_TIME = 500;
     public final float VUMARK_KEY_SCAN_TIME = 500;
 
-    public final float CRYPTO_BOX_SIDE_SHIFT_VALUE = 18.6f;
+    public final float CRYPTO_BOX_SIDE_SHIFT_VALUE = 17f; //Was 18.6, but was shifting too far to left and right
 
-    public final float CRYPTO_BOX_CENTER_SHIFT_VALUE = 0.5f; //was 1.0f on 1/11/18 bottom left over shot some changing to test.
+    public final float CRYPTO_BOX_CENTER_SHIFT_VALUE = 0.0f; //was 1.0f on 1/11/18 bottom left over shot some changing to test.
 
     public final float CRYPTO_BOX_FOWARD_SHIFT_VALUE = 27;
 
@@ -495,12 +494,13 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
 
         waitForStart();
 
+        et.reset();
         vuMark = findKey(cryptoKeyTimeOut);
         double vuMarkFindTime = et.milliseconds();
         et.reset();
         telemetry.addData("Found vuMark value of " + vuMark.toString() + " after " + vuMarkFindTime + " milliseconds.","");
         this.cryptoKey = vuMark;
-
+        et.reset();
         jewelSide = findJewel(jewelTimeOut);
         double jewlFindTime = et.milliseconds();
         telemetry.addData("Found JewelSide value of " + jewelSide.toString() + " after " + jewlFindTime + " milliseconds.","");
@@ -519,7 +519,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         telemetry.update();
         this.setFlashOff();
 
-        prepGlyphForDrive(); //New function to score blocks.
+        knockJewelAndPrepGlyph(this.targetSide); //Score the blocks and knock the jewel.
     }
 
     public boolean knockJewel(Side side){
@@ -653,14 +653,14 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
             return true;
         }
     }
-    public void knockJewelRight(){
-        bot.turnJewelArm.setPosition(.4); // enter position for right turn.
+    private void knockJewelRight(){
+        bot.turnJewelArm.setPosition(.3); // enter position for right turn.
     }
-    public void knockJewelLeft(){
-        bot.turnJewelArm.setPosition(.6); // enter position for left turn.
+    private void knockJewelLeft(){
+        bot.turnJewelArm.setPosition(.7); // enter position for left turn.
     }
-    public void jewelArmMidPosition(){
-        bot.turnJewelArm.setPosition(.5); // enter position for starting mid.
+    private void jewelArmMidPosition(){
+        bot.turnJewelArm.setPosition(.57); // enter position for starting mid.
     }
     public boolean knockJewelWithTurnServo(Side side) {
         if (goForRankingPoints) {
@@ -670,22 +670,68 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
             if (side == Side.UNKNOWN) {
                 return false;
             }
+            jewelArmMidPosition();
+            sleep(500);
             bot.lowerJewelArm();
-            sleep(1050);
+            sleep(1500);
             if (side == Side.LEFT) {
                 knockJewelLeft();
                 sleep(500);
+                bot.raiseJewelArm();
+                sleep(200);
                 jewelArmMidPosition();
                 sleep(500);
-                bot.raiseJewelArm();
-                sleep(1050);
             } else if (side == Side.RIGHT) {
                 knockJewelRight();
                 sleep(500);
+                bot.raiseJewelArm();
+                sleep(200);
                 jewelArmMidPosition();
                 sleep(500);
+            }
+        }
+        return true;
+    }
+    private void halfJewelArmDown(){
+        bot.jewelArm.setPosition(.40f);
+    }
+    public boolean knockJewelAndPrepGlyph(Side side){
+        if (goForRankingPoints) {
+            //This logic flow, will score the jewel for the ENEMY team.
+            return false;
+        } else {
+            if (side == Side.UNKNOWN) {
+                return false;
+            }
+            bot.closeUpperClamp();
+            halfJewelArmDown();
+            sleep(200);
+            bot.closeLowerClamp();
+            sleep(300);
+            jewelArmMidPosition();
+            sleep(1000);
+            bot.lowerJewelArm();
+            sleep(500);
+            if (side == Side.LEFT) {
+                bot.liftArmUp();
+                knockJewelLeft();
+                sleep(350);
+                bot.liftArmStop();
+                sleep(150);
                 bot.raiseJewelArm();
-                sleep(1050);
+                sleep(200);
+                jewelArmMidPosition();
+                sleep(500);
+            } else if (side == Side.RIGHT) {
+                bot.liftArmUp();
+                knockJewelRight();
+                sleep(350);
+                bot.liftArmStop();
+                sleep(150);
+                bot.raiseJewelArm();
+                sleep(200);
+                jewelArmMidPosition();
+                sleep(500);
             }
         }
         return true;
@@ -773,14 +819,16 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
     }
     public void prepGlyphForDrive(){
         bot.closeUpperClamp();
+        sleep(200);
+        bot.closeLowerClamp();
         sleep(1500);
         //Hacky Et array stuff for something.
-        ElapsedTime et = new ElapsedTime();
-        final ElapsedTime[] finalET = new ElapsedTime[1];
-        finalET[0] = et;
+        //ElapsedTime et = new ElapsedTime();
+        //final ElapsedTime[] finalET = new ElapsedTime[1];
+        //finalET[0] = et;
         bot.liftArmUp();
-        robotZXPhi = new float[] { 0,0,bot.getOdomHeadingFromGyroHeading(bot.getInitGyroHeadingRadians())};
-        bot.updateOdometry();
+       // robotZXPhi = new float[] { 0,0,bot.getOdomHeadingFromGyroHeading(bot.getInitGyroHeadingRadians())};
+       // bot.updateOdometry();
        /* driveDirectionGyro(20, (float)VuMarkNavigator.NormalizeAngle(((bot.getInitGyroHeadingDegrees() +180.0f) * (float)Math.PI/180.0f)) * 180.0f/ (float) Math.PI
                 , bot.getInitGyroHeadingDegrees(), new Predicate() {
             @Override
@@ -819,7 +867,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         driveDirectionGyro(20, 180, 0, new Predicate() {
             @Override
             public boolean isTrue() {
-                if(robotZXPhi[0] < -6){
+                if(robotZXPhi[0] < -8){
                     return true;
                 }
                 return false;
@@ -829,7 +877,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         driveDirectionGyro(20, 0, 0, new Predicate() {
             @Override
             public boolean isTrue() {
-                if(robotZXPhi[0] > 6){
+                if(robotZXPhi[0] > 8){
                     return true;
                 }
                 return false;
@@ -890,7 +938,4 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         telemetry.update();
 
     }
-
-
-
 }

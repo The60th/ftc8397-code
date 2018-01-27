@@ -126,11 +126,11 @@ public class MechBot
         three = hardwareMap.dcMotor.get("M3");
         four = hardwareMap.dcMotor.get("M4");
 
-        one.setDirection(DcMotor.Direction.REVERSE); //Set up for 20 drive motors.
-        two.setDirection(DcMotor.Direction.REVERSE);
+        //one.setDirection(DcMotor.Direction.REVERSE); //Set up for 20 drive motors.
+       // two.setDirection(DcMotor.Direction.REVERSE);
 
-        //three.setDirection(DcMotorSimple.Direction.REVERSE);
-        //four.setDirection(DcMotorSimple.Direction.REVERSE);
+        three.setDirection(DcMotorSimple.Direction.REVERSE); //Set up for 40 gear boxes and the new orbital 20 gear boxes.
+        four.setDirection(DcMotorSimple.Direction.REVERSE);
         /**
          * Call our setDriveMode function and pass it the constant DcMotor.RunMode.Run_Using_Encoder so it sets all drive train motors to use encoders.
          *

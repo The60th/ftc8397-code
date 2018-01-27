@@ -28,7 +28,6 @@ public class RedBottom_RedHook extends MechBotAutonomous {
 
         if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "knockJewel");
 
-        knockJewelWithBalanceTurn(this.targetSide);
 
         //Assume the robot is facing the wall once again still on the balance stone and the wall is a heading of 0.
         if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "driveDirectionGyro 1");

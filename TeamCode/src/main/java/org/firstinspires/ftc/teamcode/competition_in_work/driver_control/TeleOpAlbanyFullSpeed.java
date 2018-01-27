@@ -124,29 +124,33 @@ public class TeleOpAlbanyFullSpeed extends LoggingLinearOpMode {
 
             float checkerValue = ((Math.abs(bot.leftLinearSlide.getCurrentPosition()) + Math.abs(bot.rightLinearSlide.getCurrentPosition()))/2);
             telemetry.addData("Cond value: ", checkerValue);
-
-            if (gamepad1.dpad_up || gamepad2.dpad_up) {
+            if ( gamepad2.dpad_up) {
                 bot.liftArmUp();
-            } else if(gamepad1.b && gamepad1.dpad_down){
-                bot.liftArmDown();
-            } else if(gamepad2.b && gamepad2.dpad_down){
+            } else if(gamepad2.dpad_down && gamepad2.b){
                 bot.liftArmDown();
             }
-            else if (gamepad1.dpad_down || gamepad2.dpad_down) {
-                if(bot.leftLinearSlide.getCurrentPosition() >= avgStartPos) {
+            else if (gamepad2.dpad_down) {
+                if(bot.leftLinearSlide.getCurrentPosition() <= avgStartPos) {
                     bot.liftArmDown();
                 }
+            }else if (gamepad1.right_stick_y > .5) { //up
+                if(bot.leftLinearSlide.getCurrentPosition() <= avgStartPos) {
+                    bot.liftArmDown();
+                }
+            } else if (gamepad1.right_stick_y < -.5) { //down
+                bot.liftArmUp();
             }
+
             else {
                 bot.liftArmStop();
             }
 
-
-            if (gamepad1.right_stick_y > .5) { //up
-                bot.lowerJewelArm();
-            } else if (gamepad1.right_stick_y < -.5) { //down
+            if(gamepad1.dpad_up){
                 bot.raiseJewelArm();
+            }else if(gamepad1.dpad_down){
+                bot.lowerJewelArm();
             }
+
 
             if (gamepad2.y) {
                 bot.relicArmOut();

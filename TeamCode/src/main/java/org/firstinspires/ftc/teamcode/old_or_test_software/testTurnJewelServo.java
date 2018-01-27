@@ -102,10 +102,10 @@ public class testTurnJewelServo extends LoggingLinearOpMode {
     }
 
     public void knockJewelRight(){
-        bot.turnJewelArm.setPosition(.5); // enter position for right turn.
+        bot.turnJewelArm.setPosition(.55); // enter position for right turn.
     }
     public void knockJewelLeft(){
-        bot.turnJewelArm.setPosition(.7); // enter position for left turn.
+        bot.turnJewelArm.setPosition(.75); // enter position for left turn.
     }
     public void jewelArmMidPosition(){
         bot.turnJewelArm.setPosition(.6); // enter position for starting mid.
@@ -121,20 +121,21 @@ public class testTurnJewelServo extends LoggingLinearOpMode {
                 knockJewelLeft();
                 sleep(500);
                 jewelArmMidPosition();
-                sleep(500);
+                sleep(100);
                 raiseJewelArm();
                 sleep(1050);
             } else if (side == MechBotAutonomous.Side.RIGHT) {
                 knockJewelRight();
                 sleep(500);
                 jewelArmMidPosition();
-                sleep(500);
+                sleep(100);
                 raiseJewelArm();
                 sleep(1050);
             }
         }
         return true;
     }
+
     public void lowerJewelArm(){bot.jewelArm.setPosition(1);}
     public void raiseJewelArm(){bot.jewelArm.setPosition(0);}
 }

@@ -28,8 +28,6 @@ public class RedTop_RedHook extends MechBotAutonomous {
         initAuto(TeamColor.RED,  VUMARK_KEY_SCAN_TIME,JEWEL_SCAN_TIME); //Find the targetJewl side and the target crypto key.
 
         if (RED_START_TOP_LOG) BetaLog.dd(RED_START_TOP_TAG, "knockJewel");
-        knockJewelWithBalanceTurn(this.targetSide);
-
         robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
 
         //Assume the robot is facing the wall once again still on the balance stone and the wall is a heading of 0.
@@ -55,7 +53,7 @@ public class RedTop_RedHook extends MechBotAutonomous {
         driveDirectionGyro(20, 180, 90, new Predicate() {
             @Override
             public boolean isTrue() {
-                return robotZXPhi[0] < -8; //Was -10 on 1/11/18
+                return robotZXPhi[0] < -4; //Was -8 on 1/26/18
             }
         });
 

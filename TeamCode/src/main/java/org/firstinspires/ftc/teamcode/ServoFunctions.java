@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotRedHook;
 /**
  * Created by FTC Team 8397 on 1/10/2018.
  */
-//@TeleOp(group = "ServoFunctions", name = "ServoFunctions")
+@TeleOp(group = "ServoFunctions", name = "ServoFunctions")
 public class ServoFunctions extends LinearOpMode {
     MechBotRedHook bot = new MechBotRedHook();
     @Override
@@ -19,21 +19,21 @@ public class ServoFunctions extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()){
             if(gamepad1.a){
-                bot.leftUpperClamp.setPosition(1);
+                bot.leftUpperClamp.setPosition(.70); //Left upper all the way back. 1
             }else if(gamepad1.b){
-                bot.rightUpperClamp.setPosition(1);
+                bot.rightUpperClamp.setPosition(.53);  //Right upper all the way in. 1
             }else if(gamepad1.x){
-                bot.leftUpperClamp.setPosition(0);
+                bot.leftUpperClamp.setPosition(.37); //Left upper all the way in. 0
             }else if(gamepad1.y){
-                bot.rightUpperClamp.setPosition(0);
+                bot.rightUpperClamp.setPosition(.20); //Right upper all the way out. 0
             }else if(gamepad1.dpad_up){
-                bot.rightLowerClamp.setPosition(1);
+                bot.rightLowerClamp.setPosition(1); //Right lower all the way out. 1
             }else if(gamepad1.dpad_right) {
-                bot.leftLowerClamp.setPosition(1);
+                bot.leftLowerClamp.setPosition(.90);  //Left lower all the way in. 1
             }else if(gamepad1.dpad_down){
-                bot.rightLowerClamp.setPosition(0);
-            }else if(gamepad1.y){
-                bot.leftLowerClamp.setPosition(0);
+                bot.rightLowerClamp.setPosition(.10); //Right lower all the way in. 0
+            }else if(gamepad1.dpad_left){
+                bot.leftLowerClamp.setPosition(0); //Left lower all the way out. 0
             }
 
             if (gamepad1.right_trigger > .05){

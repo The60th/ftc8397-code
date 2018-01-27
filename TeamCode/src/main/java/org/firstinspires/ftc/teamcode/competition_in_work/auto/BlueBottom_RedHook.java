@@ -25,10 +25,8 @@ public class BlueBottom_RedHook extends MechBotAutonomous {
 
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "INITIALIZE AUTO");
         initAuto(TeamColor.BLUE, VUMARK_KEY_SCAN_TIME,JEWEL_SCAN_TIME); //Find the targetJewl side and the target crypto key.
-
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "KNOCK JEWEL");
 
-        knockJewelWithBalanceTurn(this.targetSide);
 
         //Assume the robot is facing the wall once again still on the balance stone and the wall is a heading of 0.
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "driveDirectionGyro 1");
