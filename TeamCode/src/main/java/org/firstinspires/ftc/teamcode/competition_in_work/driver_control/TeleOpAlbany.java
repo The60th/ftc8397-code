@@ -68,6 +68,7 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
         bot.rightLowPos = Math.abs(bot.rightLinearSlide.getCurrentPosition());
 
         float avgStartPos = (bot.leftLowPos + bot.rightLowPos) /2.0f;
+        float avgStopPos = 0;
 
         while (opModeIsActive()) {
             mechBotDriveControls.refreshGamepads(gamepad1, gamepad2);
@@ -82,6 +83,11 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
             telemetry.addData("LeftPos: ", bot.leftLinearSlide.getCurrentPosition());
             telemetry.addData("RightPos: ", bot.rightLinearSlide.getCurrentPosition()); // is -
             telemetry.addData("Avg pos: ", avgStartPos);
+
+            if (gamepad1.right_stick_y <-.05 || gamepad1.right_stick_y >.05){
+                avgStopPos = (Math.abs(bot.leftLinearSlide.getCurrentPosition()) + Math.abs(bot.rightLinearSlide.getCurrentPosition())) /2.0f;
+
+            }
 
 
             //TODO
@@ -129,7 +135,7 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
                 avgStartPos = (bot.leftLowPos + bot.rightLowPos) /2.0f;
             }
 
-            float checkerValue = ((Math.abs(bot.leftLinearSlide.getCurrentPosition()) + Math.abs(bot.rightLinearSlide.getCurrentPosition()))/2);
+            float checkerValue = ((Math.abs(bot.leftLinearSlide.getCurrentPosition()) + Math.abs(bot.rightLinearSlide.getCurrentPosition()))/2f);
             telemetry.addData("Cond value: ", checkerValue);
 
             if ( gamepad2.dpad_up) {
@@ -150,6 +156,9 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
             }
             else {
                 bot.liftArmStop();
+                liftArmHoldPos(avgStopPos);
+
+
             }
 
             if(gamepad1.dpad_up){
@@ -194,6 +203,23 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
             telemetry.update();
 
         }
+    }
+    public void liftArmHoldPos (float avgStopPos){
+        float leftLinearSlidePos = Math.abs(bot.leftLinearSlide.getCurrentPosition());
+        float rightLinearSlidePos = Math.abs(bot.rightLinearSlide.getCurrentPosition());
+        float avgPos = (leftLinearSlidePos+rightLinearSlidePos)/2f;
+        boolean liftStop = (avgPos < avgStopPos-50);
+        while (liftStop){
+            bot.leftLinearSlide.setPower(.50);
+            bot.rightLinearSlide.setPower(.50);
+            avgPos = (Math.abs(bot.leftLinearSlide.getCurrentPosition())+Math.abs(bot.rightLinearSlide.getCurrentPosition()))/2f;
+            liftStop = (avgPos < avgStopPos-50);
+            telemetry.addData("liftTest","avgStopPos"+ avgStopPos);
+            telemetry.addData("liftTest"," avgPos"+ avgPos);
+            telemetry.addData("liftTest","LiftStop" + liftStop);
+            telemetry.update();
+        }
+        bot.liftArmStop();
     }
 }
 

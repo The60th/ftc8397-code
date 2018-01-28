@@ -68,8 +68,8 @@ public class MechBotRedHook extends MechBotSensor{
     }
 
     public void closeUpperClamp(){
-        leftUpperClamp.setPosition(.37); //Left upper all the way in. 0
-        rightUpperClamp.setPosition(.53);  //Right upper all the way in. 1
+        leftUpperClamp.setPosition(.37); //Left upper all the way in. 0 was 39
+        rightUpperClamp.setPosition(.53);  //Right upper all the way in. 1 was 51
     }
     public void openUpperClamp(){
         leftUpperClamp.setPosition(.70); //Left upper all the way back. 1
@@ -90,8 +90,8 @@ public class MechBotRedHook extends MechBotSensor{
         rightLowerClamp.setPosition(1); //Right lower all the way out. 1
     }
     public void midPosLowerClamp(){
-        leftLowerClamp.setPosition(1.0); // This does not work.
-        rightLowerClamp.setPosition(0.0); // This does not work.
+        leftLowerClamp.setPosition(.55); // This Works.
+        rightLowerClamp.setPosition(.40); // This Works.
     }
 
 
@@ -109,6 +109,9 @@ public class MechBotRedHook extends MechBotSensor{
         leftLinearSlide.setPower(0);
         rightLinearSlide.setPower(0);
     }
+
+
+
     public void lowerJewelArm(){
         jewelArm.setPosition(1);
     }
