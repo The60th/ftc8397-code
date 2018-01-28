@@ -120,21 +120,22 @@ public class MechBotRedHook extends MechBotSensor{
     }
 
     public void relicArmOut(){
-        relicArm.setPower(1);
+        relicArm.setPower(-1);
     }
     public void relicArmIn(){
-        relicArm.setPower(-1);
+        relicArm.setPower(1);
     }
     public void relicArmStop(){
         relicArm.setPower(0);
     }
 
     public void liftRelicArmUp(){
-        liftArm.setPower(-.3);
+        liftArm.setPower(-.4/relicArmModify);
     }
     public void liftRelicArmDown(){
-        liftArm.setPower(.3);
+        liftArm.setPower(.4/relicArmModify);
     }
+
     public void liftRelicArmStop(){
         liftArm.setPower(0);
     }
@@ -148,4 +149,6 @@ public class MechBotRedHook extends MechBotSensor{
     public void relicClampMid(){
         relicClamp.setPosition(.5);
     }
+
+    public float relicArmModify = 1.0f;
 }
