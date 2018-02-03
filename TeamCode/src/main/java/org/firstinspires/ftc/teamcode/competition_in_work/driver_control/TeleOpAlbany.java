@@ -28,6 +28,9 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
     boolean bottomStatus = false;
     GrabberState bottomState = GrabberState.OPEN;
 
+    UTILToggle armSlowModeToggle = new UTILToggle();
+    boolean speedToggle = false;
+
     enum GrabberState{CLOSED,OPEN}
     //Button logic.
     //Bottom can't close till top opens.
@@ -157,8 +160,6 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
             else {
                 bot.liftArmStop();
                 liftArmHoldPos(avgStopPos);
-
-
             }
 
             if(gamepad1.dpad_up){
@@ -175,12 +176,23 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
             //}
             //TODO
 
+            if (armSlowModeToggle.status(gamepad2.y) == UTILToggle.Status.COMPLETE) {
+                if(!speedToggle) {
+                    telemetry.addData("Arm Slow Mode: ", true);
+                    bot.relicArmModify = 2.0f;
+                }
+                else if(speedToggle) {
+                    telemetry.addData("Arm Slow Mode: ", false);
+                    bot.relicArmModify = 1;
+                }
+                speedToggle =!speedToggle;
+            }
 
-            if (gamepad2.y) {
+            if(gamepad2.right_stick_y < -.05){
                 bot.relicArmOut();
-            } else if (gamepad2.a) {
+            }else if(gamepad2.right_stick_y > .05){
                 bot.relicArmIn();
-            } else {
+            }else{
                 bot.relicArmStop();
             }
 
@@ -202,14 +214,16 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
             }
             telemetry.update();
 
+
         }
     }
+
     public void liftArmHoldPos (float avgStopPos){
         float leftLinearSlidePos = Math.abs(bot.leftLinearSlide.getCurrentPosition());
         float rightLinearSlidePos = Math.abs(bot.rightLinearSlide.getCurrentPosition());
         float avgPos = (leftLinearSlidePos+rightLinearSlidePos)/2f;
         boolean liftStop = (avgPos < avgStopPos-50);
-        while (liftStop){
+        while (opModeIsActive() && liftStop){
             bot.leftLinearSlide.setPower(.50);
             bot.rightLinearSlide.setPower(.50);
             avgPos = (Math.abs(bot.leftLinearSlide.getCurrentPosition())+Math.abs(bot.rightLinearSlide.getCurrentPosition()))/2f;

@@ -147,7 +147,7 @@ public class MechBotRedHook extends MechBotSensor{
         relicClamp.setPosition(0);
     }
     public void relicClampMid(){
-        relicClamp.setPosition(.5);
+        relicClamp.setPosition(.55);
     }
 
     public float relicArmModify = 1.0f;
