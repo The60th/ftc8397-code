@@ -72,14 +72,17 @@ public class MechBotRedHook extends MechBotSensor{
         rightUpperClamp.setPosition(.53);  //Right upper all the way in. 1 was 51
     }
     public void openUpperClamp(){
-        leftUpperClamp.setPosition(.70); //Left upper all the way back. 1
-        rightUpperClamp.setPosition(.20); //Right upper all the way out. 0
+        leftUpperClamp.setPosition(.50); //Left upper all the way out. 1 //70
+        rightUpperClamp.setPosition(.40); //Right upper all the way out. 0 //20
     }
     public void midPosUpperClamp(){
         leftUpperClamp.setPosition(0.45); // This works as of 1/26/18.
         rightUpperClamp.setPosition(0.45); // This works as of 1/26/18.
     }
-
+    public void fullOpenUpperClamp(){
+        leftUpperClamp.setPosition(.70); //Left upper all the way out. 1 //70
+        rightUpperClamp.setPosition(.20); //Right upper all the way out. 0 //20
+    }
 
     public void closeLowerClamp(){
         leftLowerClamp.setPosition(.90);  //Left lower all the way in. 1
@@ -130,10 +133,10 @@ public class MechBotRedHook extends MechBotSensor{
     }
 
     public void liftRelicArmUp(){
-        liftArm.setPower(-.4/relicArmModify);
+        liftArm.setPower(-.6/relicArmModify);
     }
     public void liftRelicArmDown(){
-        liftArm.setPower(.4/relicArmModify);
+        liftArm.setPower(.6/relicArmModify);
     }
 
     public void liftRelicArmStop(){
@@ -147,7 +150,7 @@ public class MechBotRedHook extends MechBotSensor{
         relicClamp.setPosition(0);
     }
     public void relicClampMid(){
-        relicClamp.setPosition(.55);
+        relicClamp.setPosition(.60);
     }
 
     public float relicArmModify = 1.0f;

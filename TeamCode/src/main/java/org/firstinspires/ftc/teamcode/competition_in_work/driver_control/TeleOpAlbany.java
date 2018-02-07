@@ -131,6 +131,9 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
             if(gamepad1.left_bumper){
                 bot.midPosLowerClamp();
             }
+            if(gamepad1.dpad_right){
+                bot.fullOpenUpperClamp();
+            }
 
             if(gamepad1.x){
                 bot.leftLowPos = bot.leftLinearSlide.getCurrentPosition();
@@ -219,6 +222,7 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
     }
 
     public void liftArmHoldPos (float avgStopPos){
+        final float C_LIFT = 0.01f;
         float leftLinearSlidePos = Math.abs(bot.leftLinearSlide.getCurrentPosition());
         float rightLinearSlidePos = Math.abs(bot.rightLinearSlide.getCurrentPosition());
         float avgPos = (leftLinearSlidePos+rightLinearSlidePos)/2f;
@@ -231,9 +235,24 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
             telemetry.addData("liftTest","avgStopPos"+ avgStopPos);
             telemetry.addData("liftTest"," avgPos"+ avgPos);
             telemetry.addData("liftTest","LiftStop" + liftStop);
-            telemetry.update();
         }
         bot.liftArmStop();
+//        float error = avgStopPos-avgPos;
+//        if(error < 0){error = 0;}
+//
+//        telemetry.addData("SlidePosition","Left: %d  Right: %d",bot.leftLinearSlide.getCurrentPosition(),
+//                bot.rightLinearSlide.getCurrentPosition());
+//        telemetry.addData("AvgSlide","Target: %.0f  Actual: %.0f Error: %.0f", avgStopPos, avgPos, error);
+//
+//        if (error > 10){
+//            float power = C_LIFT*error;
+//            bot.leftLinearSlide.setPower(power);
+//            bot.rightLinearSlide.setPower(power);
+//        }
+//        else{
+//            bot.leftLinearSlide.setPower(0);
+//            bot.rightLinearSlide.setPower(0);
+//        }
     }
 }
 
