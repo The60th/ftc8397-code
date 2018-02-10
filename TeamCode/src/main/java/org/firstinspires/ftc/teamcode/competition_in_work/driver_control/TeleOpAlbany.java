@@ -31,6 +31,8 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
     UTILToggle armSlowModeToggle = new UTILToggle();
     boolean speedToggle = false;
 
+
+
     enum GrabberState{CLOSED,OPEN}
     //Button logic.
     //Bottom can't close till top opens.
@@ -87,7 +89,7 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
             telemetry.addData("RightPos: ", bot.rightLinearSlide.getCurrentPosition()); // is -
             telemetry.addData("Avg pos: ", avgStartPos);
 
-            if (gamepad1.right_stick_y <-.05 || gamepad1.right_stick_y >.05){
+            if (gamepad1.right_stick_y <-.5 || gamepad1.right_stick_y >.5 || gamepad2.dpad_down || gamepad2.dpad_up){
                 avgStopPos = (Math.abs(bot.leftLinearSlide.getCurrentPosition()) + Math.abs(bot.rightLinearSlide.getCurrentPosition())) /2.0f;
 
             }
@@ -161,7 +163,7 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
                 bot.liftArmUp();
             }
             else {
-                bot.liftArmStop();
+                //bot.liftArmStop();
                 liftArmHoldPos(avgStopPos);
             }
 
@@ -226,33 +228,32 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
         float leftLinearSlidePos = Math.abs(bot.leftLinearSlide.getCurrentPosition());
         float rightLinearSlidePos = Math.abs(bot.rightLinearSlide.getCurrentPosition());
         float avgPos = (leftLinearSlidePos+rightLinearSlidePos)/2f;
-        boolean liftStop = (avgPos < avgStopPos-50);
-        while (opModeIsActive() && liftStop){
-            bot.leftLinearSlide.setPower(.50);
-            bot.rightLinearSlide.setPower(.50);
-            avgPos = (Math.abs(bot.leftLinearSlide.getCurrentPosition())+Math.abs(bot.rightLinearSlide.getCurrentPosition()))/2f;
-            liftStop = (avgPos < avgStopPos-50);
-            telemetry.addData("liftTest","avgStopPos"+ avgStopPos);
-            telemetry.addData("liftTest"," avgPos"+ avgPos);
-            telemetry.addData("liftTest","LiftStop" + liftStop);
+//        boolean liftStop = (avgPos < avgStopPos-50);
+//        while (opModeIsActive() && liftStop){
+//            bot.leftLinearSlide.setPower(.50);
+//            bot.rightLinearSlide.setPower(.50);
+//            avgPos = (Math.abs(bot.leftLinearSlide.getCurrentPosition())+Math.abs(bot.rightLinearSlide.getCurrentPosition()))/2f;
+//            liftStop = (avgPos < avgStopPos-50);
+//            telemetry.addData("liftTest","avgStopPos"+ avgStopPos);
+//            telemetry.addData("liftTest"," avgPos"+ avgPos);
+//            telemetry.addData("liftTest","LiftStop" + liftStop);
+//        }
+//        bot.liftArmStop();
+        float error = avgStopPos-avgPos;
+
+        telemetry.addData("SlidePosition","Left: %d  Right: %d",bot.leftLinearSlide.getCurrentPosition(),
+                bot.rightLinearSlide.getCurrentPosition());
+        telemetry.addData("AvgSlide","Target: %.0f  Actual: %.0f Error: %.0f", avgStopPos, avgPos, error);
+
+        if (error > 0){
+            float power = C_LIFT*error;
+            bot.leftLinearSlide.setPower(power);
+            bot.rightLinearSlide.setPower(power);
         }
-        bot.liftArmStop();
-//        float error = avgStopPos-avgPos;
-//        if(error < 0){error = 0;}
-//
-//        telemetry.addData("SlidePosition","Left: %d  Right: %d",bot.leftLinearSlide.getCurrentPosition(),
-//                bot.rightLinearSlide.getCurrentPosition());
-//        telemetry.addData("AvgSlide","Target: %.0f  Actual: %.0f Error: %.0f", avgStopPos, avgPos, error);
-//
-//        if (error > 10){
-//            float power = C_LIFT*error;
-//            bot.leftLinearSlide.setPower(power);
-//            bot.rightLinearSlide.setPower(power);
-//        }
-//        else{
-//            bot.leftLinearSlide.setPower(0);
-//            bot.rightLinearSlide.setPower(0);
-//        }
+        else{
+            bot.leftLinearSlide.setPower(0);
+            bot.rightLinearSlide.setPower(0);
+        }
     }
 }
 

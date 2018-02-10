@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
@@ -12,6 +13,8 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotRedHook;
  */
 
 @Autonomous(name="TestNudgeGlyph", group="Test")
+@Disabled
+
 public class TestNudgeGlyph extends MechBotAutonomous {
 
     private enum Side{LEFT, RIGHT, UNKNOWN};

@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
 public class BlueBottom_State extends MechBotAutonomous {
     private enum State{PRE_INIT,INIT,DRIVING_OFF_STONE,DRIVING_TO_TRIANGLE,LINE_FOLLOW, ADJUST_POSITION,CRYPTO_BOX_SHIFT,SCORING_GLYPH}
     private State state = State.PRE_INIT;
-    final boolean BLUE_BOTTOM_START_LOG = true;
+    final boolean BLUE_BOTTOM_START_LOG = false;
     final String BLUE_BOTTOM_START_TAG = "Blue bottom start Red Hook:";
     @Override
     public void runLoggingOpmode() throws InterruptedException {

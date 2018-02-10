@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -7,6 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * Created by FTC Team 8397 on 1/28/2018.
  */
 @TeleOp(name = "Test", group = "asd")
+@Disabled
+
 public class ThreadTest extends LinearOpMode {
     boolean newThread = false;
     @Override

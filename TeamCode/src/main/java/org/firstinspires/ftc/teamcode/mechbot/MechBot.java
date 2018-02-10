@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 public class MechBot
 {
 
-    protected final boolean LOG_ODOMETRY = true;
+    protected final boolean LOG_ODOMETRY = false;
     protected final String ODOMETRY_TAG = "ODOMETRY";
 
     /**

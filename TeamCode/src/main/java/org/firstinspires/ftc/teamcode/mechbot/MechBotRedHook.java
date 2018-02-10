@@ -105,12 +105,12 @@ public class MechBotRedHook extends MechBotSensor{
         rightLinearSlide.setPower(-.25);
     }
     public void liftArmUp (){
-        leftLinearSlide.setPower(.80);
-        rightLinearSlide.setPower(.80);
+        leftLinearSlide.setPower(1.0);
+        rightLinearSlide.setPower(1.0);
     }
     public void liftArmStop (){
         leftLinearSlide.setPower(0);
-        rightLinearSlide.setPower(0); // 
+        rightLinearSlide.setPower(0); //
     }
 
 

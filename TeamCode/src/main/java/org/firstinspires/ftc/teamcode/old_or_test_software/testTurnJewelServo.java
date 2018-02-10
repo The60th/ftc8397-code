@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.old_or_test_software;
 
 import android.media.MediaPlayer;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -16,6 +18,7 @@ import org.firstinspires.ftc.teamcode.third_party_libs.UTILToggle;
  * Created by FTC Team 8397 on 12/5/2017.
  */
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="testTurnJewelServo", group="Comp")
+@Disabled
 public class testTurnJewelServo extends LoggingLinearOpMode {
 
     private MechBotRedHook bot = new MechBotRedHook();

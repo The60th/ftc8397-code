@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
 
@@ -8,7 +9,9 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
  * Created by JimLori on 2/5/2018.
  */
 
-@Autonomous(name="TestNudgeGlyph", group="Test")
+@Autonomous(name="TestNudgeGlyph2", group="Test")
+@Disabled
+
 public class TestNudgeGlyph2 extends MechBotAutonomous {
 
     private enum Side{LEFT, RIGHT, UNKNOWN};

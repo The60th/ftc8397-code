@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.mechbot;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.mechbot.MechBot;
+import org.firstinspires.ftc.teamcode.third_party_libs.UTILToggle;
 
 /**
  * Created by FTC Team 8397 on 10/6/2017.
@@ -16,6 +17,9 @@ public class MechBotDriveControls {
     private float speedScaler = 1;
     private boolean gamepadRefreshed = false;
     public static enum XYZ {plusX,plusY,plusZ,negX,negY,negZ};
+
+    UTILToggle turnSlowModeToggle = new UTILToggle();
+    boolean turnSlowMode = false;
 
     public MechBotDriveControls(Gamepad gamepad1, Gamepad gamepad2, MechBot mechBot){
         this.gamepad1 = gamepad1;
@@ -51,7 +55,7 @@ public class MechBotDriveControls {
         mechBot.setDrivePower((x/this.speedScaler), (-y/this.speedScaler), (-a/this.speedScaler));
         return true;
     }
-
+    //OLD
     public void joyStickMecnumDriveComp(float[] data){
         float scaler = 1.0f;
         if(!this.gamepadRefreshed){
@@ -82,6 +86,13 @@ public class MechBotDriveControls {
         if(!this.gamepadRefreshed){
             data = null;
         }
+        if(turnSlowModeToggle.status(gamepad1.dpad_left) == UTILToggle.Status.COMPLETE){
+            if(!turnSlowMode){
+                turnSlowMode = true;
+            }else{
+                turnSlowMode = false;
+            }
+        }
         float x = Math.abs(gamepad1.left_stick_x) > 0.05 ? gamepad1.left_stick_x : 0;
         float y = Math.abs(gamepad1.left_stick_y) > 0.05 ? gamepad1.left_stick_y : 0;
         float a = 0;
@@ -92,11 +103,16 @@ public class MechBotDriveControls {
                 a = gamepad1.right_trigger;
             }
         }
+        float modifer = 1.0f;
+        if(turnSlowMode){
+            modifer = 2.0f;
+        }
         mechBot.setDrivePower(
                 (-(Math.signum(y)*(Math.pow(Math.abs(y),quadFactor))))*.800f, //Was .70f
                 (-(Math.signum(x)*(Math.pow(Math.abs(x),quadFactor))))*.800f,
-                (-(Math.signum(a)*(Math.pow(Math.abs(a),quadFactor))))*.800f
+                (-(Math.signum(a)*(Math.pow(Math.abs(a),quadFactor))))*.800f/modifer
         );
+
         data[0] = y;
         data[1] = x;
         data[2] = a;

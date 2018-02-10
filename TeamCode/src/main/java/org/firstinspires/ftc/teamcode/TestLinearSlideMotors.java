@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
@@ -9,6 +10,8 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotRedHook;
  * Created by FTC Team 8397 on 1/23/2018.
  */
 @TeleOp(name = "TestLinearSlideMotors", group = "Test")
+@Disabled
+
 public class TestLinearSlideMotors extends LoggingLinearOpMode {
 
     MechBotRedHook bot = new MechBotRedHook();

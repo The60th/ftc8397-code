@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotRedHook;
  * Created by FTC Team 8397 on 1/10/2018.
  */
 @TeleOp(group = "ServoFunctions", name = "ServoFunctions")
+@Disabled
 public class ServoFunctions extends LinearOpMode {
     MechBotRedHook bot = new MechBotRedHook();
     @Override

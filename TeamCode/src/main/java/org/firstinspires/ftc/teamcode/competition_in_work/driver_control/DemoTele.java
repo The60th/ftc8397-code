@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.competition_in_work.driver_control;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.third_party_libs.UTILToggle;
  * Created by FTC Team 8397 on 1/18/2018.
  */
 @TeleOp(name = "SwagFlag Tester", group = "Comp")
+@Disabled
 public class DemoTele  extends LoggingLinearOpMode {
 
     private MechBotPace bot = new MechBotPace();

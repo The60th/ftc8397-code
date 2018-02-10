@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotRedHook;
 /**
  * Created by JimLori on 1/10/2018.
  */
-@TeleOp(name = "MechBotServoTest", group = "Test")
+//@TeleOp(name = "MechBotServoTest", group = "Test")
 public class MechBotServoTest extends LoggingLinearOpMode {
 
     MechBotRedHook bot = new MechBotRedHook();

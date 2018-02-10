@@ -25,7 +25,7 @@ import java.util.concurrent.BlockingQueue;
  * Created by JimLori on 11/30/2017.
  */
 
-@TeleOp(name = "PreMatchRobotAlignment", group = "Set up")
+@TeleOp(name = "PreMatchRobotAlignment", group = "Debug")
 public class PreMatchRobotAlignment extends LoggingLinearOpMode {
 
     enum JewelSide {BLUE_LEFT, RED_LEFT, UNKNOWN}
@@ -34,16 +34,19 @@ public class PreMatchRobotAlignment extends LoggingLinearOpMode {
     public void runLoggingOpmode() throws InterruptedException {
         MechBotSensor bot = new MechBotSensor();
         bot.init(hardwareMap);
-
+        telemetry.addData("Starting Vuforia: ", "Wait for flash light to start program.");
+        telemetry.update();
         VuMarkNavigator.activate();
 
         //Turn flashlight on. Found I needed this in my office after dark to get adequate read on blue.
         //May not be necessary under normal competition conditions, especially if value and saturation
         //threshholds are set pretty low for blue.
-        //CameraDevice.getInstance().setFlashTorchMode(true);
+        CameraDevice.getInstance().setFlashTorchMode(true);
 
         waitForStart();
-        CameraDevice.getInstance().setFlashTorchMode(true);
+        telemetry.addData("Program started. ", "");
+        telemetry.update();
+        //CameraDevice.getInstance().setFlashTorchMode(true);
         int blobSizeThreshhold = 400; //Blobs smaller than this will be discarded
         int sampleRatio = 5; //Number of rows and columns to skip between raw pixels selected for reduced image
 

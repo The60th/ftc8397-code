@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.third_party_libs.UTILToggle;
  * Created by FTC Team 8397 on 1/26/2018.
  */
 @TeleOp(name = "Jewel arm Tester", group = "Tester")
+@Disabled
 public class JewelArmTester extends LinearOpMode {
     private MechBotRedHook bot = new MechBotRedHook();
     double pos = .50;

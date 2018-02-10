@@ -51,28 +51,34 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
     protected float[] robotZXPhi = null;
 
     protected final String DRIVE_DIRECTION_GYRO_TAG = "DRIVE_DIRECTION_GYRO";
-    protected final boolean DRIVE_DIRECTION_GYRO_LOG = true;
+    protected final boolean DRIVE_DIRECTION_GYRO_LOG = false;
 
     protected final String TURN_ANGLE_TAG = "TURN_ANGLE_TAG";
-    protected final boolean TURN_ANGLE_LOG = true;
+    protected final boolean TURN_ANGLE_LOG = false;
 
     protected final String TURN_TO_HEADING_TAG = "TURN_TO_HEADING";
-    protected final boolean TURN_TO_HEADING_LOG = true;
+    protected final boolean TURN_TO_HEADING_LOG = false;
 
     protected final String DRIVE_GYRO_TIME_TAG = "DRIVE_GYRO_TIME";
-    protected final boolean DRIVE_GYRO_TIME_LOG = true;
+    protected final boolean DRIVE_GYRO_TIME_LOG = false;
 
     protected final String FOLLOW_LINE_PROP_TAG = "FOLLOW_LINE_PROP";
-    protected final boolean FOLLOW_LINE_PROP_LOG = true;
+    protected final boolean FOLLOW_LINE_PROP_LOG = false;
 
     protected final String ADJUST_POS_TAG = "ADJUST_POSITION";
-    protected final boolean ADJUST_POS_LOG = true;
+    protected final boolean ADJUST_POS_LOG = false;
 
     final String PREPARE_SCORE_TAG = "PREP_SCORE";
-    final boolean PREPARE_SCORE_LOG = true;
+    final boolean PREPARE_SCORE_LOG = false;
+
+    final String SCORE_GLYPH_TAG = "SCORE_GLYPH";
+    final boolean SCORE_GLYPH_LOG = true;
 
     final String AUTO_POS_TAG = "AUTO_POS_TAG";
-    final boolean AUTO_POS_DEBUG = true;
+    final boolean AUTO_POS_DEBUG = false;
+
+    protected final String TUCK_GLYPH_TAG = "TUCK_GLYPH";
+    protected final boolean TUCK_GLYPH_LOG = true;
 
     protected void setFlashOn(){
         CameraDevice.getInstance().setFlashTorchMode(true);
@@ -99,11 +105,13 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
 
     public final float CRYPTO_BOX_SIDE_SHIFT_VALUE = 17f; //Was 18.6, but was shifting too far to left and right
 
-    public final float CRYPTO_BOX_CENTER_SHIFT_VALUE = 0.0f; //was 1.0f on 1/11/18 bottom left over shot some changing to test.
+    public final float CRYPTO_BOX_CENTER_SHIFT_VALUE = -1.5f; //was 1.0f on 1/11/18 bottom left over shot some changing to test.
 
     public final float CRYPTO_BOX_FOWARD_SHIFT_VALUE = -10;
 
     public final float ADJUST_POS_TIMEOUT = 4000;
+
+    public ElapsedTime runTime;
 
     private void followLineProportionateOLD(LineFollowSide side, ColorSensor colorSensor){
         float[] hsvValues = new float[3];
@@ -207,7 +215,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
 
         final float vaMin = 1.5f * tolerance / latency;
         final float C = 0.75f / latency;
-        final float vaMax = 0.3f * (float)Math.PI;
+        final float vaMax = 0.6f * (float)Math.PI;
         float heading;
         float offset;
         while (opModeIsActive()) {
@@ -477,6 +485,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         JewelSide jewelSide;
         ElapsedTime et = new ElapsedTime();
         telemetry.addData("Starting Vuforia","");
+        telemetry.addData("Wait for flashlight to be on before starting.","");
         telemetry.update();
         VuMarkNavigator.activate();
         while (opModeIsActive() && !VuMarkNavigator.isActive){
@@ -494,6 +503,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         this.initRoll = orientation.secondAngle + ADJUST_INIT_ROLL_DEG* (float)Math.PI/180.0f;
 
         waitForStart();
+        runTime = new ElapsedTime();
 
         et.reset();
         vuMark = findKey(cryptoKeyTimeOut);
@@ -517,7 +527,6 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
             this.targetSide = Side.UNKNOWN;
         }
         telemetry.addData("Found both the jewel and vuMark in: " + vuMarkFindTime+jewlFindTime + " milliseconds. ","");
-        telemetry.update();
         this.setFlashOff();
 
         knockJewelAndPrepGlyph(this.targetSide); //Score the blocks and knock the jewel.
@@ -866,9 +875,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
     }
 
     public void scoreGylph(){
-        robotZXPhi = new float[] { 0,0,bot.getOdomHeadingFromGyroHeading(bot.getInitGyroHeadingRadians())};
-        bot.updateOdometry();
-
+        boolean didTuckWork = false;
         bot.liftArmDown();
         sleep(200);
         bot.liftArmStop();
@@ -877,31 +884,27 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         bot.fullOpenUpperClamp();
         sleep(750);
 
-        driveDirectionGyro(20, 180, 0, new Predicate() {
-            @Override
-            public boolean isTrue() {
-                if(robotZXPhi[0] < -8){
-                    return true;
-                }
-                return false;
-            }
-        });
+        //Commenting out the initial push, because glyph is already scored.
+//        robotZXPhi = new float[] { 0,0,bot.getOdomHeadingFromGyroHeading(bot.getInitGyroHeadingRadians())};
+//        bot.updateOdometry();
+//
+//        driveDirectionGyro(20, 180, 0, new Predicate() {
+//            @Override
+//            public boolean isTrue() {
+//                if(robotZXPhi[0] < -4){  //Was -8 without tuckInGlyph
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
 
-        nudgeGlyph(Side.RIGHT, 20, 1000);
+        if(runTime.seconds() < 27.4) {
+            didTuckWork = tuckInGlyph();
+        }
+        robotZXPhi = new float[] { 0,0,bot.getOdomHeadingFromGyroHeading(bot.getInitGyroHeadingRadians())};
+        bot.updateOdometry();
 
-        driveDirectionGyro(20, 0, 0, new Predicate() {
-            @Override
-            public boolean isTrue() {
-                if(robotZXPhi[0] > 2){
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        nudgeGlyph(Side.LEFT, 20, 1250);
-
-        driveDirectionGyro(20, 0, 0, new Predicate() {
+        driveDirectionGyro(20, 0, bot.getHeadingRadians()*180.0f/(float)Math.PI, new Predicate() {
             @Override
             public boolean isTrue() {
                 if(robotZXPhi[0] > 8){
@@ -910,6 +913,11 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
                 return false;
             }
         });
+
+        if (SCORE_GLYPH_LOG) BetaLog.dd(SCORE_GLYPH_TAG, "Final Backup Done at: %.3f", runTime.seconds());
+
+        telemetry.addData("Did tuck work? ", didTuckWork);
+        telemetry.update();
     }
 
 
@@ -949,12 +957,22 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
             case CENTER:
             case UNKNOWN:
                 if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro right");
-                driveDirectionGyro(10, 90, new Predicate() {
-                    @Override
-                    public boolean isTrue() {
-                        return robotZXPhi[1] > CRYPTO_BOX_CENTER_SHIFT_VALUE;
-                    }
-                });
+                if (CRYPTO_BOX_CENTER_SHIFT_VALUE > 0) {
+                    driveDirectionGyro(10, 90, new Predicate() {
+                        @Override
+                        public boolean isTrue() {
+                            return robotZXPhi[1] > CRYPTO_BOX_CENTER_SHIFT_VALUE;
+                        }
+                    });
+                }
+                else{
+                    driveDirectionGyro(10, -90, new Predicate() {
+                        @Override
+                        public boolean isTrue() {
+                            return robotZXPhi[1] < CRYPTO_BOX_CENTER_SHIFT_VALUE;
+                        }
+                    });
+                }
                 break;
         }
 
@@ -997,5 +1015,84 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         bot.setDriveSpeed(vx, vy, va);
         sleep(millisec);
         bot.setDriveSpeed(0,0,0);
+    }
+
+    private boolean tuckInGlyph(){
+        final float TUCK_SPEED = 30;
+        final float BACKUP_1 = 1;
+        final float RIGHT = 5;
+        final float FORWARD_1 = 3;
+        final float BACKUP_2 = 5;
+        final float LEFT = 10;
+        final float FORWARD_2 = 8;
+
+        if (TUCK_GLYPH_LOG) BetaLog.dd(TUCK_GLYPH_TAG, "Entering Tuck Glyph at: %.3f", runTime.seconds());
+
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+        driveDirectionGyro(TUCK_SPEED, 0, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                return robotZXPhi[0] > BACKUP_1;
+            }
+        });
+
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+        driveDirectionGyro(TUCK_SPEED, 90, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                return robotZXPhi[1] > RIGHT;
+            }
+        });
+
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+        driveDirectionGyro(TUCK_SPEED, 180, 20, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                return robotZXPhi[0] < -FORWARD_1;
+            }
+        });
+
+        if (TUCK_GLYPH_LOG) BetaLog.dd(TUCK_GLYPH_TAG, "First push done at: %.3f", runTime.seconds());
+
+        if(runTime.seconds() > 26.7){
+            return false;
+        }
+
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+        driveDirectionGyro(TUCK_SPEED, 0, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                return robotZXPhi[0] > BACKUP_2;
+            }
+        });
+
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+        driveDirectionGyro(TUCK_SPEED, -90, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                return robotZXPhi[1] < -LEFT;
+            }
+        });
+
+        if(runTime.seconds() > 29){
+            return false;
+        }
+
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+        driveDirectionGyro(TUCK_SPEED, 180, -20, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                return robotZXPhi[0] < -FORWARD_2;
+            }
+        });
+
+        if (TUCK_GLYPH_LOG) BetaLog.dd(TUCK_GLYPH_TAG, "Second push done at: %.3f", runTime.seconds());
+        return true;
     }
 }
