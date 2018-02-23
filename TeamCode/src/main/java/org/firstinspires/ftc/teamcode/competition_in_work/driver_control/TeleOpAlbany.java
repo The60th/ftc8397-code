@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode.competition_in_work.driver_control;
 
 
+import android.graphics.Color;
 import android.media.MediaPlayer;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
 import org.firstinspires.ftc.teamcode.mechbot.MechBotDriveControls;
@@ -31,7 +36,10 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
     UTILToggle armSlowModeToggle = new UTILToggle();
     boolean speedToggle = false;
 
+    private final boolean AUTOBALANCE_LOG = true;
 
+    private AutoBalance autoBalance = null;
+    private boolean balancing = false;
 
     enum GrabberState{CLOSED,OPEN}
     //Button logic.
@@ -76,6 +84,26 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
         float avgStopPos = 0;
 
         while (opModeIsActive()) {
+            if(balancing){
+                if(gamepad1.b){
+                    balancing = true;
+                    autoBalance.update();
+                    continue;
+                }else{
+                    balancing = false;
+                    autoBalance = null;
+                    bot.setDrivePower(0,0,0);
+                }
+            }else{
+                if(gamepad1.b){
+                    balancing = true;
+                    autoBalance = new AutoBalance(30,0,120,0);
+                    autoBalance.start();
+                    continue;
+                }
+            }
+
+
             mechBotDriveControls.refreshGamepads(gamepad1, gamepad2);
             mechBotDriveControls.joyStickMecnumDriveCompQuadSlow(driveData); //Do an array fill by passing the array in, to prevent recreating the array.
 
@@ -173,13 +201,7 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
                 bot.lowerJewelArm();
             }
 
-            //TODO
-            //if(gamepad1.b){
-              //  mPlayer.start();
-            //}else if(gamepad2.b){
-             //   mPlayer.pause();
-            //}
-            //TODO
+
 
             if (armSlowModeToggle.status(gamepad2.y) == UTILToggle.Status.COMPLETE) {
                 if(!speedToggle) {
@@ -255,6 +277,67 @@ public class TeleOpAlbany extends LoggingLinearOpMode {
             bot.rightLinearSlide.setPower(0);
         }
     }
+
+    private class AutoBalance{
+        private float initSpeed;
+        private float rollCoeff, pitchCoeff, pitchDerivCoeff; //Coefficients for control of pitch and roll
+        private float initPitch, initRoll;  //Base values of pitch and roll, before starting balance operation
+        private ElapsedTime timer;
+        private boolean mounted = false;  //Has bot gotten fully onto the stone yet?
+        private float prevTimeSec, prevPitchRads; //Time in seconds from previous update
+
+        public AutoBalance(float initialSpeed, float rollCoefficient, float pitchCoefficient, float pitchDerivCoefficient){
+            initSpeed = initialSpeed;
+            rollCoeff = rollCoefficient;
+            pitchCoeff = pitchCoefficient;
+            pitchDerivCoeff = pitchDerivCoefficient;
+        }
+
+        public void start(){
+            Orientation angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+            initRoll = angles.secondAngle;
+            initPitch = angles.thirdAngle;
+            timer = new ElapsedTime();
+            prevTimeSec = (float)timer.seconds();
+            prevPitchRads = initPitch;
+            bot.setDriveSpeed(0, initSpeed, 0);
+        }
+
+        public void update(){
+            if (!mounted){
+                int red = bot.colorRight.blue();
+                int green = bot.colorRight.green();
+                int blue = bot.colorRight.blue();
+                float[] hsv = new float[3];
+                Color.RGBToHSV(red, green, blue, hsv);
+                if (hsv[1] > 0.5) {
+                    mounted = true;
+                    pidControlIteration();
+                }
+            }
+            else{
+                pidControlIteration();
+            }
+        }
+
+        private void pidControlIteration(){
+            Orientation angles = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+            float roll = angles.secondAngle;
+            float pitch = angles.thirdAngle;
+
+            float seconds = (float)timer.seconds();
+            float pitchDerivative = (pitch - prevPitchRads) / (seconds - prevTimeSec);
+            float vy = pitchCoeff * (pitch - initPitch) + pitchDerivCoeff * pitchDerivative;
+
+            float vx = rollCoeff * (roll - initRoll);
+
+            prevTimeSec = seconds;
+            prevPitchRads = pitch;
+
+            bot.setDriveSpeed(vx, vy, 0);
+        }
+    }
+
 }
 
 

@@ -12,6 +12,9 @@ import org.firstinspires.ftc.robotcore.external.matrices.MatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
+import org.firstinspires.ftc.teamcode.mechbot.MechBot;
+import org.firstinspires.ftc.teamcode.mechbot.MechBotDriveControls;
+import org.firstinspires.ftc.teamcode.mechbot.MechBotIntake;
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
 
@@ -20,34 +23,34 @@ import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
  */
 @TeleOp(name = "TestNewBot", group = "Tele opmode")
 public class TestNewBot extends LoggingLinearOpMode {
-
-    DcMotor  rightIntake;
-    DcMotor  leftIntake;
+    MechBotIntake bot = new MechBotIntake();
+    private MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1,gamepad2,bot);
 
     public void runLoggingOpmode() throws InterruptedException {
-        rightIntake = hardwareMap.dcMotor.get("RI");
-        leftIntake = hardwareMap.dcMotor.get("LI");
-
-        rightIntake.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        bot.init(hardwareMap);
         waitForStart();
         while(opModeIsActive()){
+            mechBotDriveControls.refreshGamepads(gamepad1, gamepad2);
+            mechBotDriveControls.joyStickMecnumDriveCompQuadSlow(new float[8]);
 
-
-            if (gamepad1.right_stick_y > .05){
-                rightIntake.setPower(-.5);
+            if (gamepad2.right_stick_y > .05){
+                bot.rightIntake.setPower(-.5);
             }
-            else if (gamepad1.right_stick_y < -.05){
-                rightIntake.setPower(.5);
+            else if (gamepad2.right_stick_y < -.05){
+                bot.rightIntake.setPower(.5);
             }
-            else{rightIntake.setPower(0);}
-            if (gamepad1.left_stick_y > .05){
-                leftIntake.setPower(-.5);
+            else{
+                bot.rightIntake.setPower(0);
             }
-            else if (gamepad1.left_stick_y < -.05){
-                leftIntake.setPower(.5);
+            if (gamepad2.left_stick_y > .05){
+                bot.leftIntake.setPower(-.5);
             }
-            else{leftIntake.setPower(0);}
+            else if (gamepad2.left_stick_y < -.05){
+                bot.leftIntake.setPower(.5);
+            }
+            else{
+                bot.leftIntake.setPower(0);
+            }
         }
     }
 }

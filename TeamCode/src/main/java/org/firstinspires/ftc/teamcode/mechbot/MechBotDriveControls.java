@@ -121,6 +121,46 @@ public class MechBotDriveControls {
         data[5] = (float)Math.pow(a,quadFactor)*.800f;
 
     }
+    public void joyStickMecnumDriveCompNewBot(float[] data){
+        float quadFactor = 1.75f;
+        if(!this.gamepadRefreshed){
+            data = null;
+        }
+        if(turnSlowModeToggle.status(gamepad1.dpad_left) == UTILToggle.Status.COMPLETE){
+            if(!turnSlowMode){
+                turnSlowMode = true;
+            }else{
+                turnSlowMode = false;
+            }
+        }
+        float x = Math.abs(gamepad1.left_stick_x) > 0.05 ? gamepad1.left_stick_x : 0;
+        float y = Math.abs(gamepad1.left_stick_y) > 0.05 ? gamepad1.left_stick_y : 0;
+        float a = 0;
+        if (gamepad1.left_trigger > .05 || gamepad1.right_trigger > .05) {
+            if (gamepad1.left_trigger > gamepad1.right_trigger)
+                a = -gamepad1.left_trigger;
+            else {
+                a = gamepad1.right_trigger;
+            }
+        }
+        float modifer = 1.0f;
+        if(turnSlowMode){
+            modifer = 2.0f;
+        }
+        mechBot.setDrivePower(
+                (-(Math.signum(x)*(Math.pow(Math.abs(y),quadFactor))))*.800f, //Was .70f
+                (-(Math.signum(y)*(Math.pow(Math.abs(x),quadFactor))))*.800f,
+                (-(Math.signum(a)*(Math.pow(Math.abs(a),quadFactor))))*.800f/modifer
+        );
+
+        data[0] = y;
+        data[1] = x;
+        data[2] = a;
+        data[3] = (float)Math.pow(y,quadFactor)*.800f;
+        data[4] = (float)Math.pow(x,quadFactor)*.800f;
+        data[5] = (float)Math.pow(a,quadFactor)*.800f;
+
+    }
     public void joyStickMecnumDriveCompQuad(float[] data){
         float quadFactor = 1.75f;
         if(!this.gamepadRefreshed){
