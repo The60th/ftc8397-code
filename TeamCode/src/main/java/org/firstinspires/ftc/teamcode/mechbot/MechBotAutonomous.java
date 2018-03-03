@@ -13,11 +13,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.teamcode.TestNudgeGlyph;
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
 import org.firstinspires.ftc.teamcode.cv_programs.Blob;
 import org.firstinspires.ftc.teamcode.cv_programs.ImgProc;
+import org.firstinspires.ftc.teamcode.mechbot.presupers_bot.MechBotRedHook;
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
 import java.util.ArrayList;
@@ -155,7 +155,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         bot.setDrivePower(0,0,0);
     }
 
-    public void followLineProportionate(LineFollowSide side, ColorSensor colorSensor,float lineFollowSpeed, Predicate finish){
+   /* public void followLineProportionate(LineFollowSide side, ColorSensor colorSensor,float lineFollowSpeed, Predicate finish){
         float[] hsvValues = new float[3];
         final float coeff = 20.0f;
         while (opModeIsActive()){
@@ -177,7 +177,43 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
             bot.setDriveSpeed(vx, vy, va);
         }
         bot.setDrivePower(0,0,0);
+    }*/
+
+    //NEW followLineProportionate: this uses MechBot.getOdomHeadingFromGyroHeading(). It will work properly for different hardware
+    //configurations, as long as we override getOdomHeadingFromGyroHeading in MechBotSensor subclasses, as necessary.
+
+    public void followLineProportionate(LineFollowSide side, ColorSensor colorSensor,float lineFollowSpeed, Predicate finish){
+        float[] hsvValues = new float[3];
+        final float coeff = 20.0f;
+        while (opModeIsActive()){
+            if(finish.isTrue()) break;
+            float heading = bot.getHeadingRadians();
+            Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+            float err = side == LineFollowSide.LEFT? 0.5f - hsvValues[1] : hsvValues[1] - 0.5f;
+            if (err < -0.5) err = -0.4f;
+            else if (err > 0.5) err = 0.4f;
+            if(FOLLOW_LINE_PROP_LOG)BetaLog.dd(FOLLOW_LINE_PROP_TAG,"Heading %.2f Sat %.2f error %.2f",heading,hsvValues[1],err);
+
+//            float angleDiff = side == LineFollowSide.LEFT? heading - INNER_TAPE_ANGLE_RADS : heading + INNER_TAPE_ANGLE_RADS;
+
+            float odomHeading = bot.getOdomHeadingFromGyroHeading(heading);
+            float angleDiff = side == LineFollowSide.LEFT? odomHeading - (float)Math.PI - INNER_TAPE_ANGLE_RADS :
+                    odomHeading - (float)Math.PI + INNER_TAPE_ANGLE_RADS;
+
+//            float vx = lineFollowSpeed * (float)Math.cos(angleDiff)  - coeff*err*(float)Math.sin(angleDiff);
+//            float vy = -lineFollowSpeed * (float)Math.sin(angleDiff) - coeff*err*(float)Math.cos(angleDiff);
+
+            float vx = lineFollowSpeed * (float)Math.sin(angleDiff) + coeff * err * (float)Math.cos(angleDiff);
+            float vy = lineFollowSpeed * (float) Math.cos(angleDiff) - coeff * err * (float)Math.sin(angleDiff);
+
+
+            float va = -heading * HEADING_CORECTION_FACTOR;
+            if(FOLLOW_LINE_PROP_LOG)BetaLog.dd(FOLLOW_LINE_PROP_TAG,"Angle Diff %.2f Vx %.2f Vy %.2f Va %.2f",angleDiff,vx,vy,va);
+            bot.setDriveSpeed(vx, vy, va);
+        }
+        bot.setDrivePower(0,0,0);
     }
+
 
     //Using gyro, turns robot the specified number of degrees (angle), with acceptable error
     //of +/- tolerance degrees, assuming a latency between new gyro readings of "latency" seconds
@@ -593,7 +629,68 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         }
     }
 
+
+    //NEW adjustPosOnTriangle: uses getOdomHeadingFromGyroHeading. It will work as long as we override that method
+    //appropriately in whatever subclass of MechBotSensor we are using. We may also want to modify this to accept arguments
+    //for interSensorDist and sensorOffset, so it can be used with different sensor configurations.
+
     public void adjustPosOnTriangle(double timeOut){
+        if (ADJUST_POS_LOG) BetaLog.dd(ADJUST_POS_TAG,"Entering Adjust Pos on Triangle.");
+        final double interSensorDist = 34;
+        final double sensorOffSet = 10;
+        final double sensorR = Math.sqrt(interSensorDist*interSensorDist/4.0 + sensorOffSet*sensorOffSet);
+        final double sensorAngle = Math.atan(2.0*sensorOffSet/interSensorDist);
+        final float specialCoeff = (float)(sensorR*Math.sin(sensorAngle+INNER_TAPE_ANGLE_RADS)/Math.cos(INNER_TAPE_ANGLE_RADS));
+        final float CAngle = 2.0f;
+        final float CSum = 10.0f;
+        final float CDiff = 10.0f;
+        final float tolAngle = 2.0f*(float)Math.PI/180f;
+        final float tolSum = .2f;
+        final float tolDiff = .2f;
+
+        ElapsedTime time = new ElapsedTime();
+        while(opModeIsActive()&& time.milliseconds() < timeOut){
+            float gyroHeading = bot.getHeadingRadians();
+            float[] hsvRight = new float[3];
+            float[] hsvLeft = new float[3];
+            Color.RGBToHSV(bot.colorRight.red(), bot.colorRight.green(),bot.colorRight.blue(),hsvRight);
+            Color.RGBToHSV(bot.colorLeft.red(), bot.colorLeft.green(),bot.colorLeft.blue(),hsvLeft);
+            float sumSat = hsvRight[1]+hsvLeft[1];
+            float diffSat = hsvRight[1]-hsvLeft[1];
+
+            if(Math.abs(gyroHeading) < tolAngle && Math.abs(sumSat-1.0f) < tolSum && Math.abs(diffSat) < tolDiff) {
+                if(ADJUST_POS_LOG) BetaLog.dd(ADJUST_POS_TAG, "Adjust Pos Succeeded!!!");
+                break;
+            }
+
+            float va = -CAngle * gyroHeading;
+
+
+//            float vx = -CSum*(sumSat-1.0f)*(float)Math.cos(gyroHeading)
+//                    - (CDiff*diffSat + specialCoeff*va)*(float)Math.sin(gyroHeading);
+//
+//            float vy = +CSum*(sumSat-1.0f)*(float)Math.sin(gyroHeading)
+//                    - (CDiff*diffSat + specialCoeff*va)*(float)Math.cos(gyroHeading);
+
+            //Desired robot speeds in field coordinates
+
+            float vxField = CDiff * diffSat + specialCoeff * va;
+            float vzField = CSum * (sumSat - 1.0f);
+
+            //Desired robot speeds in robot coordinates
+
+            float odomHeading = bot.getOdomHeadingFromGyroHeading(gyroHeading);
+
+            float vx = -vxField * (float)Math.cos(odomHeading) + vzField * (float)Math.sin(odomHeading);
+            float vy = vxField * (float)Math.sin(odomHeading) + vzField * (float)Math.cos(odomHeading);
+
+            bot.setDriveSpeed(vx,vy,va);
+        }
+        bot.setDriveSpeed(0,0,0);
+
+    }
+
+    /*public void adjustPosOnTriangle(double timeOut){
         if (ADJUST_POS_LOG) BetaLog.dd(ADJUST_POS_TAG,"Entering Adjust Pos on Triangle.");
         final double interSensorDist = 34;
         final double sensorOffSet = 10;
@@ -634,7 +731,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         }
         bot.setDriveSpeed(0,0,0);
 
-    }
+    }*/
 
 
     public boolean knockJewelWithBalanceTurn(Side side){
@@ -758,12 +855,6 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         }
         return true;
     }
-
-    /*
-        telemetry.addData("Heading degrees: ",orientation.firstAngle);
-            telemetry.addData("Roll degrees: ",orientation.secondAngle);
-            telemetry.addData("Pitch degrees: ", orientation.thirdAngle);
-    */
 
     public void turnToHeadingWhileAutoBalance(float targetHeading, float tolerance, float latency){
         //Tolerance in degrees latency seconds.

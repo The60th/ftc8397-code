@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
-import org.firstinspires.ftc.teamcode.mechbot.MechBotDriveControls;
-import org.firstinspires.ftc.teamcode.mechbot.MechBotNickBot;
+import org.firstinspires.ftc.teamcode.mechbot.utill.MechBotDriveControls;
+import org.firstinspires.ftc.teamcode.mechbot.presupers_bot.MechBotNickBot;
 
 /**
  * Created by FTC Team 8397 on 11/30/2017.

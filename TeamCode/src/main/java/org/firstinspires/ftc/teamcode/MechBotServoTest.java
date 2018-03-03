@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
-import org.firstinspires.ftc.teamcode.mechbot.MechBotRedHook;
+import org.firstinspires.ftc.teamcode.mechbot.presupers_bot.MechBotRedHook;
 
 /**
  * Created by JimLori on 1/10/2018.

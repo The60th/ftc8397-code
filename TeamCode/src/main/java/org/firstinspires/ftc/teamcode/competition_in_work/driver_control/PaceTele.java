@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
-import org.firstinspires.ftc.teamcode.mechbot.MechBotDriveControls;
-import org.firstinspires.ftc.teamcode.mechbot.MechBotRedHook;
+import org.firstinspires.ftc.teamcode.mechbot.utill.MechBotDriveControls;
+import org.firstinspires.ftc.teamcode.mechbot.presupers_bot.MechBotRedHook;
 import org.firstinspires.ftc.teamcode.third_party_libs.UTILToggle;
 
 /**

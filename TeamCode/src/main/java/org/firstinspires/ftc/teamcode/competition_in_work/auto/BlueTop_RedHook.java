@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.competition_in_work.auto;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
 import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
  * Created by FTC Team 8397 on 12/8/2017.
  */
 @Autonomous(name = "Blue Top", group = "comp")
+@Disabled
 public class BlueTop_RedHook extends MechBotAutonomous {
     final float[] hsvValues = new float[3];
 

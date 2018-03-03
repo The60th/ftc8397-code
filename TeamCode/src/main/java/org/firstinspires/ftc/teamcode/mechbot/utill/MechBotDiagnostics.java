@@ -1,23 +1,20 @@
-package org.firstinspires.ftc.teamcode.mechbot;
+package org.firstinspires.ftc.teamcode.mechbot.utill;
 
 import android.graphics.Color;
-
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
+import org.firstinspires.ftc.teamcode.mechbot.presupers_bot.MechBotSensor;
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
 /**
  * Created by JimLori on 11/22/2017.
  */
 
-@TeleOp (name = "MechBotDiagnostics", group = "Debug")
+//@TeleOp (name = "MechBotDiagnostics", group = "Debug")
 public class MechBotDiagnostics extends LoggingLinearOpMode {
 
     MechBotSensor bot = new MechBotSensor();

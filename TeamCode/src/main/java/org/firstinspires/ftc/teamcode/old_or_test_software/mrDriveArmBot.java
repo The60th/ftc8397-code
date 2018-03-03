@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.mechbot.MechBot;
-import org.firstinspires.ftc.teamcode.mechbot.MechBotDriveControls;
+import org.firstinspires.ftc.teamcode.mechbot.utill.MechBotDriveControls;
 
 /**
  * Created by FTC Team 8397 on 9/29/2017.

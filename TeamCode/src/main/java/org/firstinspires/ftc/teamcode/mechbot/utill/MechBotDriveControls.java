@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.mechbot;
+package org.firstinspires.ftc.teamcode.mechbot.utill;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -148,8 +148,8 @@ public class MechBotDriveControls {
             modifer = 2.0f;
         }
         mechBot.setDrivePower(
-                (-(Math.signum(x)*(Math.pow(Math.abs(y),quadFactor))))*.800f, //Was .70f
-                (-(Math.signum(y)*(Math.pow(Math.abs(x),quadFactor))))*.800f,
+                ((Math.signum(x)*(Math.pow(Math.abs(x),quadFactor))))*.800f, //Was .70f
+                (-(Math.signum(y)*(Math.pow(Math.abs(y),quadFactor))))*.800f,
                 (-(Math.signum(a)*(Math.pow(Math.abs(a),quadFactor))))*.800f/modifer
         );
 

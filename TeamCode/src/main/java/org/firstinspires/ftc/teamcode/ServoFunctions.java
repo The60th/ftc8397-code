@@ -4,8 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.mechbot.MechBot;
-import org.firstinspires.ftc.teamcode.mechbot.MechBotRedHook;
+import org.firstinspires.ftc.teamcode.mechbot.presupers_bot.MechBotRedHook;
 
 /**
  * Created by FTC Team 8397 on 1/10/2018.

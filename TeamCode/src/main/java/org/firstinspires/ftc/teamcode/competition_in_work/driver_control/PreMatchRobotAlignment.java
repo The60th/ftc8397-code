@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.competition_in_work.driver_control;
 
 import android.graphics.Color;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.vuforia.CameraDevice;
 
@@ -15,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
 import org.firstinspires.ftc.teamcode.cv_programs.Blob;
 import org.firstinspires.ftc.teamcode.cv_programs.ImgProc;
-import org.firstinspires.ftc.teamcode.mechbot.MechBotSensor;
+import org.firstinspires.ftc.teamcode.mechbot.presupers_bot.MechBotSensor;
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
 import java.util.ArrayList;

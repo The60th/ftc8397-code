@@ -1,11 +1,6 @@
 package org.firstinspires.ftc.teamcode.debug_programs;
 
-        import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
-        import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
         import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
-        import org.firstinspires.ftc.teamcode.mechbot.MechBotSensor;
 
 /**
  * Created by FTC Team 8397 on 10/27/2017.

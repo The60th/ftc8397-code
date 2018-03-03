@@ -1,12 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
-import org.firstinspires.ftc.teamcode.mechbot.MechBot;
-import org.firstinspires.ftc.teamcode.mechbot.MechBotDriveControls;
-import org.firstinspires.ftc.teamcode.mechbot.MechBotNickBot;
+import org.firstinspires.ftc.teamcode.mechbot.presupers_bot.MechBotNickBot;
 
 /**
  * Created by FTC Team 8397 on 11/30/2017.

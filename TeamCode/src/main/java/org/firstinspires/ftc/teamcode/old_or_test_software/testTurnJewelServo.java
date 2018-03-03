@@ -3,15 +3,14 @@ package org.firstinspires.ftc.teamcode.old_or_test_software;
 import android.media.MediaPlayer;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
 import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
-import org.firstinspires.ftc.teamcode.mechbot.MechBotDriveControls;
-import org.firstinspires.ftc.teamcode.mechbot.MechBotRedHook;
+import org.firstinspires.ftc.teamcode.mechbot.utill.MechBotDriveControls;
+import org.firstinspires.ftc.teamcode.mechbot.presupers_bot.MechBotRedHook;
 import org.firstinspires.ftc.teamcode.third_party_libs.UTILToggle;
 
 /**

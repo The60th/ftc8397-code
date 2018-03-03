@@ -2,13 +2,12 @@ package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Color;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.teamcode.mechbot.MechBotSensor;
+import org.firstinspires.ftc.teamcode.mechbot.presupers_bot.MechBotSensor;
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
 /**

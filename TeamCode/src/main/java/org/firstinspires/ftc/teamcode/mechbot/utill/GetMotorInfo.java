@@ -1,16 +1,9 @@
-package org.firstinspires.ftc.teamcode.mechbot;
+package org.firstinspires.ftc.teamcode.mechbot.utill;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.configuration.MotorConfigurationType;
-
-import org.firstinspires.ftc.teamcode.mechbot.MechBot;
-import org.firstinspires.ftc.teamcode.mechbot.MechBotSensor;
-
-import java.util.ArrayList;
 
 /**
  * Created by JimLori on 11/21/2017.

@@ -1,7 +1,5 @@
-package org.firstinspires.ftc.teamcode.mechbot;
+package org.firstinspires.ftc.teamcode.mechbot.presupers_bot;
 
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;

@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.debug_programs;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.mechbot.MechBotSensor;
+import org.firstinspires.ftc.teamcode.mechbot.presupers_bot.MechBotSensor;
 
 /**
  * Created by FTC Team 8397 on 10/27/2017.

@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.mechbot.MechBotSensor;
+import org.firstinspires.ftc.teamcode.mechbot.presupers_bot.MechBotSensor;
 
 /**
  * Created by FTC Team 8397 on 11/4/2017.

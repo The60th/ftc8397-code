@@ -1,26 +1,24 @@
-package org.firstinspires.ftc.teamcode.mechbot;
-
+package org.firstinspires.ftc.teamcode.mechbot.supers_bot;
 
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.i2c.BNO055Enhanced;
 import org.firstinspires.ftc.teamcode.i2c.BNO055EnhancedImpl;
+import org.firstinspires.ftc.teamcode.mechbot.MechBot;
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
+/**
+ * Created by FTC Team 8397 on 3/1/2018.
+ */
 
-@SuppressWarnings("all")
-
-public class MechBotSensor extends MechBot
-{
-    public final double MAX_SENSOR_VALUES = 255.0;
-    //public float last_Gyro_Theta = 0;
-
+public class MechBotSensorScranton extends MechBot {
 
     public ColorSensor colorLeft, colorRight;
 
@@ -29,7 +27,7 @@ public class MechBotSensor extends MechBot
 
     public float initGyroHeading = 0;
     public float getInitGyroHeadingDegrees(){
-    return this.initGyroHeading *180.0f/(float)Math.PI;
+        return this.initGyroHeading *180.0f/(float)Math.PI;
     }
     public float getInitGyroHeadingRadians(){
         return this.initGyroHeading;
@@ -57,12 +55,8 @@ public class MechBotSensor extends MechBot
 
         //colorRight.setI2cAddress(I2cAddr.create8bit(0x70));
 
-        colorRight = hardwareMap.get(ColorSensor.class, "sensor_color");
-        colorLeft = hardwareMap.get(ColorSensor.class, "sensor_color2");
-
-        colorLeft.setI2cAddress(I2cAddr.create8bit(0x70));
-
-
+        colorRight = hardwareMap.get(ColorSensor.class, "colorRight");
+        colorLeft = hardwareMap.get(ColorSensor.class, "colorLeft");
 
         imu = hardwareMap.get(BNO055EnhancedImpl.class, "imu");
         BNO055Enhanced.Parameters parameters = new BNO055Enhanced.Parameters();
@@ -70,8 +64,8 @@ public class MechBotSensor extends MechBot
         parameters.accelUnit = BNO055Enhanced.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BN055Cali.json"; // see the calibration sample opmode
         parameters.loggingTag = "IMU";
-        parameters.axesMap = BNO055Enhanced.AxesMap.ZYX;  //Swap X and Z axe
-        parameters.axesSign = BNO055Enhanced.AxesSign.PPN;
+        parameters.axesMap = BNO055Enhanced.AxesMap.XYZ;
+        parameters.axesSign = BNO055Enhanced.AxesSign.PPP;
         imu.initialize(parameters);
     }
     public void init(HardwareMap ahwMap, float initGyroHeadingDegrees){
@@ -80,9 +74,21 @@ public class MechBotSensor extends MechBot
     }
 
     public float getHeadingRadians(){
-        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.RADIANS);
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
         float heading = angles.firstAngle + this.initGyroHeading;
         return (float) VuMarkNavigator.NormalizeAngle(heading);
     }
-}
+    public void gyroTelemetry(Telemetry telemetry){
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        telemetry.addData("ZYX: ","Z: " + String.format("%.2f",angles.firstAngle) + " Y " + String.format("%.2f",angles.secondAngle) + " X " + String.format("%.2f",angles.thirdAngle));
+    }
 
+    @Override
+    public float getOdomHeadingFromGyroHeading(float gyroHeading){
+        return (float) VuMarkNavigator.NormalizeAngle(gyroHeading - (float)Math.PI);
+    }
+    @Override
+    public float getGyroHeadingFromOdomHeading(float odomHeading){
+        return (float)VuMarkNavigator.NormalizeAngle(odomHeading + (float)Math.PI);
+    }
+}

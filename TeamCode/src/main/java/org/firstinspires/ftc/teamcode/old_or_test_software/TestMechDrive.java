@@ -6,7 +6,7 @@ package org.firstinspires.ftc.teamcode.old_or_test_software;
         import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
         import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-        import org.firstinspires.ftc.teamcode.mechbot.MechBotSensor;
+        import org.firstinspires.ftc.teamcode.mechbot.presupers_bot.MechBotSensor;
 
 
 /**
