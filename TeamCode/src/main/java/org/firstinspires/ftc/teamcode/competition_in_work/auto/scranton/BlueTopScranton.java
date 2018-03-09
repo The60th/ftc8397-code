@@ -5,22 +5,21 @@ import android.graphics.Color;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
-import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
 import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotAutonomousScranton;
 
 /**
- * Created by FTC Team 8397 on 3/1/2018.
+ * Created by FTC Team 8397 on 3/6/2018.
  */
-@Autonomous(name = "Blue Bottom Demo",group = "Auto")
-public class SampleBlueBottom extends MechBotAutonomousScranton {
+@Autonomous(name = "Blue Top", group = "Auto")
+public class BlueTopScranton extends MechBotAutonomousScranton {
     final float[] hsvValues = new float[3];
 
     final boolean BLUE_BOTTOM_START_LOG = true;
-    final String BLUE_BOTTOM_START_TAG = "Blue bottom start Red Hook:";
+    final String BLUE_BOTTOM_START_TAG = "Blue Top start Red Hook:";
 
     @Override
     public void runLoggingOpmode() throws InterruptedException {
-        bot.init(hardwareMap,-90); //The starting value of the gyro heading comapred to the wall.
+        bot.init(hardwareMap,0); //The starting value of the gyro heading comapred to the wall.
 
         //The starting angle is the gyro heading relative to the crypto box.
         robotZXPhi = new float[3];
@@ -33,7 +32,7 @@ public class SampleBlueBottom extends MechBotAutonomousScranton {
         //Assume the robot is facing the wall once again still on the balance stone and the wall is a heading of 0.
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "driveDirectionGyro 1");
         //added the 180 to this line of code to keep the robot from turning around.
-        driveDirectionGyro(OFF_STONE_SPEED, 90,-90, new Predicate() {
+        driveDirectionGyro(OFF_STONE_SPEED, 180,0, new Predicate() {
             @Override
             public boolean isTrue() {
                 Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
@@ -49,22 +48,19 @@ public class SampleBlueBottom extends MechBotAutonomousScranton {
         });
         robotZXPhi = new float[]{0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         //Robot is now partly off the stone. Just the front color sensors are off, time to drive the rest of the robot off the stone.
-        driveDirectionGyro(OFF_STONE_SPEED, 90, -90, new Predicate() {
+        driveDirectionGyro(OFF_STONE_SPEED, 180, 0, new Predicate() {
             @Override
             public boolean isTrue() {
-                return robotZXPhi[1] > 32; //Need a constant defined here.
+                return robotZXPhi[0] < -38; //Need a constant defined here.
             }
         });
 
         //Robot is now all the way off the balance stone and ready to turn towards the crypto box.
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "turnToheadingGyro");
 
-
-        turnToHeadingGyro(0,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY, RotationDirection.COUNTER_CLOCK); //Turn to face the wall.
-
-       // while (opModeIsActive()){
-            //This stops the robot with the right color sensor just before the line.
-       // }
+        // while (opModeIsActive()){
+        //This stops the robot with the right color sensor just before the line.
+        // }
 
         //Drive towards the box till the colored tape is detected.
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "driveDirectionGyro 2");
@@ -83,7 +79,7 @@ public class SampleBlueBottom extends MechBotAutonomousScranton {
         });
 
         //while (opModeIsActive()){
-            //This stops the robot with both color sensors on the line.
+        //This stops the robot with both color sensors on the line.
         //}
 
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "Checking pre line follow.");
@@ -117,12 +113,7 @@ public class SampleBlueBottom extends MechBotAutonomousScranton {
 
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "adjust on triangle");
 
-
-
-
-
-
-
+        prepareToScoreGlyph();
 
     }
 }

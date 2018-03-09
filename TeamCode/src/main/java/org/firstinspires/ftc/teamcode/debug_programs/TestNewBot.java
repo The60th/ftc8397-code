@@ -3,9 +3,8 @@ package org.firstinspires.ftc.teamcode.debug_programs;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
-import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotGyro;
+import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotScranton;
 import org.firstinspires.ftc.teamcode.mechbot.utill.MechBotDriveControls;
-import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotFlip;
 
 
 /**
@@ -13,7 +12,7 @@ import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotFlip;
  */
 @TeleOp(name = "ESR Bot", group = "Tele opmode")
 public class TestNewBot extends LoggingLinearOpMode {
-    MechBotGyro bot = new MechBotGyro();
+    MechBotScranton bot = new MechBotScranton();
     private MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1,gamepad2,bot);
     private float[] driveData = new float[6];
 
@@ -27,6 +26,8 @@ public class TestNewBot extends LoggingLinearOpMode {
             mechBotDriveControls.joyStickMecnumDriveCompNewBot(driveData);
             telemetry.addData("Joystick input: ", "X: %.2f Y: %.2f A: %.2f", driveData[0], driveData[1], driveData[2]);
             telemetry.addData("Drive speeds input: ", "X: %.2f Y: %.2f A: %.2f", driveData[3], driveData[4], driveData[5]);
+            telemetry.addData("+Left Draw: ", String.format("%.2f", bot.getLeftIntakeCurrentDraw()));
+            telemetry.addData("+Right Draw: ", String.format("%.2f",bot.getRightIntakeCurrentDraw()));
             bot.gyroTelemetry(telemetry);
             telemetry.update();
             /*if (gamepad2.right_stick_y > .05){
@@ -62,21 +63,37 @@ public class TestNewBot extends LoggingLinearOpMode {
          }
 
          if(gamepad1.y){
-             bot.flipPlateUpwards();
+             bot.setFlipPlateUpwards();
          }else if(gamepad1.a){
-             bot.flipPlateDownwards();
+             bot.setFlipPlateDownwards();
          }
 
          if (gamepad2.a){
-             bot.pinchGlyph();
+             bot.setGlyphPincherClosed();
          }
          else if (gamepad2.y){
-             bot.setGlyph();
+             bot.setGlyphPincherMidPos();
          }
-         else if (gamepad2.x){
-             bot.startPos();
+         else if (gamepad2.b){
+             bot.setGlyphPincherStartPos();
          }
+
+            if (gamepad2.right_trigger > .05){bot.setRelicLiftDown();}
+            else if (gamepad2.right_bumper){bot.setRelicLiftUp();}
+            else{bot.setRelicLiftStop();}
+
+            if (gamepad2.left_trigger > .05){bot.setRelicClawClosed();}
+            else if (gamepad2.left_bumper){bot.setRelicClawOpen();}
+            else if (gamepad2.x){bot.setRelicClawMidPos();}
+
+            if (gamepad2.right_stick_y < -.05){bot.setRelicArmOut();}
+            else if (gamepad2.right_stick_y > .05){bot.setRelicArmIn();}
+            else{bot.setRelicArmStop();}
+
         }
+
+
+
 
 
     }

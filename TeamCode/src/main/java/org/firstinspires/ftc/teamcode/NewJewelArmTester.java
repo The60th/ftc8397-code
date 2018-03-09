@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotJewelArm;
+import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotScranton;
 
 /**
  * Created by FTC Team 8397 on 2/28/2018.
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotJewelArm;
 public class NewJewelArmTester extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        MechBotJewelArm bot = new MechBotJewelArm();
+        MechBotScranton bot = new MechBotScranton();
 
         bot.init(hardwareMap);
         waitForStart();

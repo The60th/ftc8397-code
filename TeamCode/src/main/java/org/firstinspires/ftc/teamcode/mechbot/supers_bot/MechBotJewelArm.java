@@ -15,15 +15,20 @@ public class MechBotJewelArm extends MechBotFlip {
 
     public void init(HardwareMap ahwMap) {
         super.init(ahwMap);
-
-        pivot = hardwareMap.servo.get("pivot");
-
-        arm = hardwareMap.servo.get("arm");
+        initHw();
         //Arm max up position is left -- 0
         //Arm downwards position should be around .20 -- testing needed
 
         //Pivot is left for start position
         //Center position -.10ish for middle position.
+    }
+    public void init(HardwareMap ahwMap, float initGyroHeadingDegrees){
+        super.init(ahwMap, initGyroHeadingDegrees);
+        initHw();
+    }
+    public void initHw(){
+        pivot = hardwareMap.servo.get("pivot");
+        arm = hardwareMap.servo.get("arm");
     }
     public void setArmUp(){
         arm.setPosition(0.0);

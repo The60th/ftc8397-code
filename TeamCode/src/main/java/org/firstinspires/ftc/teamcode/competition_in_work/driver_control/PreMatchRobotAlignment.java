@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
 import org.firstinspires.ftc.teamcode.cv_programs.Blob;
 import org.firstinspires.ftc.teamcode.cv_programs.ImgProc;
 import org.firstinspires.ftc.teamcode.mechbot.presupers_bot.MechBotSensor;
+import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotSensorScranton;
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class PreMatchRobotAlignment extends LoggingLinearOpMode {
     Orientation orientation;
     @Override
     public void runLoggingOpmode() throws InterruptedException {
-        MechBotSensor bot = new MechBotSensor();
+        MechBotSensorScranton bot = new MechBotSensorScranton();
         bot.init(hardwareMap);
         telemetry.addData("Starting Vuforia: ", "Wait for flash light to start program.");
         telemetry.update();

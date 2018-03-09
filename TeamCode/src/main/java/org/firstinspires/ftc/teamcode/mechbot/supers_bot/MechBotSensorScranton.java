@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
 import org.firstinspires.ftc.teamcode.i2c.BNO055Enhanced;
 import org.firstinspires.ftc.teamcode.i2c.BNO055EnhancedImpl;
 import org.firstinspires.ftc.teamcode.mechbot.MechBot;
@@ -39,6 +40,7 @@ public class MechBotSensorScranton extends MechBot {
      */
     public void init(HardwareMap ahwMap) {
 
+        BetaLog.dd("MechBotSensorScranton: ","Init this.init HW");
 
         /**
          * Save passed HardwareMap to local class variable HardwareMap.
@@ -69,8 +71,10 @@ public class MechBotSensorScranton extends MechBot {
         imu.initialize(parameters);
     }
     public void init(HardwareMap ahwMap, float initGyroHeadingDegrees){
+        BetaLog.dd("MechBotSensorScranton: ","Init");
         this.init(ahwMap);
         this.initGyroHeading = initGyroHeadingDegrees * (float)Math.PI/180.0f;
+
     }
 
     public float getHeadingRadians(){

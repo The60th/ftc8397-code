@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.mechbot.supers_bot;
 
 import android.graphics.Color;
-import android.util.Log;
 
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.vuforia.CameraDevice;
 
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -19,7 +17,6 @@ import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
 import org.firstinspires.ftc.teamcode.cv_programs.Blob;
 import org.firstinspires.ftc.teamcode.cv_programs.ImgProc;
 import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
-import org.firstinspires.ftc.teamcode.mechbot.presupers_bot.MechBotRedHook;
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
 import java.util.ArrayList;
@@ -36,7 +33,7 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
     public void enableThrowing(){this.goForRankingPoints = true;}
     public void disableThrowing(){this.goForRankingPoints = false;}
 
-    public MechBotSensorScranton bot = new MechBotSensorScranton();
+    public MechBotScranton bot = new MechBotScranton();
 
     public enum LineFollowSide {LEFT,RIGHT}
     public final float OFF_STONE_SPEED = 25.0f;
@@ -105,11 +102,11 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
     public final float JEWEL_SCAN_TIME = 500;
     public final float VUMARK_KEY_SCAN_TIME = 500;
 
-    public final float CRYPTO_BOX_SIDE_SHIFT_VALUE = 17f; //Was 18.6, but was shifting too far to left and right
+    public final float CRYPTO_BOX_SIDE_SHIFT_VALUE = 19f; //Was 18.6, but was shifting too far to left and right
 
-    public final float CRYPTO_BOX_CENTER_SHIFT_VALUE = -1.5f; //was 1.0f on 1/11/18 bottom left over shot some changing to test.
+    public final float CRYPTO_BOX_CENTER_SHIFT_VALUE = -5.0f; //was 1.0f on 1/11/18 bottom left over shot some changing to test.
 
-    public final float CRYPTO_BOX_FOWARD_SHIFT_VALUE = -10;
+    public final float CRYPTO_BOX_FOWARD_SHIFT_VALUE = -8;
 
     public final float ADJUST_POS_TIMEOUT = 4000;
 
@@ -212,6 +209,38 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         bot.setDrivePower(0, 0, 0);
     }
 
+    //Turns robot to a specific integratedZ heading using Gyro, targetHeading in degrees
+    protected void turnToHeadingGyroQuick(float targetHeading, float tolerance, float latency,RotationDirection rotationDirection){
+        //Tolerance in degrees latency seconds.
+        tolerance = tolerance * (float)Math.PI/180f;
+        targetHeading = targetHeading * (float)Math.PI/180f;
+
+        final float vaMin = 1.5f * tolerance / latency;
+        final float C = 0.90f / latency;
+        final float vaMax = 0.6f * (float)Math.PI; //Was .5 on 1/11/18
+        float heading;
+        float offset;
+        while (opModeIsActive()) {
+            heading = bot.getHeadingRadians();
+            offset = (float)VuMarkNavigator.NormalizeAngle(targetHeading - heading);
+            if(Math.abs(offset) <= tolerance) break;
+
+            if(rotationDirection == RotationDirection.COUNTER_CLOCK){
+                if(offset < 0)offset += 2.0f*(float)Math.PI;
+            }else{
+                if(offset > 0)offset -= 2.0f*(float)Math.PI;
+            }
+
+            float absAdjustedOffset = Math.abs(offset) - tolerance;
+            float absVa = vaMin + C * absAdjustedOffset;
+
+            absVa = Math.min(absVa, vaMax);
+            float va = absVa * Math.signum(offset);
+            if(TURN_TO_HEADING_LOG)BetaLog.dd(TURN_TO_HEADING_TAG,"Turning va = %.2f hd = %.0f, off = %.0f absAdjOff = %.0f", va, heading, offset, absAdjustedOffset);
+            bot.setDriveSpeed(0, 0, va);
+        }
+        bot.setDrivePower(0, 0, 0);
+    }
     //VuMark Scan timeout in ms.
     public RelicRecoveryVuMark findKey(double timeOut){
         RelicRecoveryVuMark vuMarkKey = RelicRecoveryVuMark.UNKNOWN;
@@ -442,7 +471,7 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         telemetry.addData("Found both the jewel and vuMark in: " + vuMarkFindTime+jewlFindTime + " milliseconds. ","");
         this.setFlashOff();
 
-        //knockJewelAndPrepGlyph(this.targetSide); //Score the blocks and knock the jewel.
+        knockJewel(this.targetSide); //Score the blocks and knock the jewel.
     }
 
     //NEW adjustPosOnTriangle: uses getOdomHeadingFromGyroHeading. It will work as long as we override that method
@@ -504,4 +533,376 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         bot.setDriveSpeed(0,0,0);
 
     }
+
+
+    public void prepareToScoreGlyph(){
+        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+        switch (this.cryptoKey){
+            case LEFT:
+                if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro left");
+                driveDirectionGyro(10, -90, new Predicate() {
+                    @Override
+                    public boolean isTrue() {
+                        return robotZXPhi[1] < -CRYPTO_BOX_SIDE_SHIFT_VALUE+CRYPTO_BOX_CENTER_SHIFT_VALUE;
+                    }
+                });
+                break;
+            case RIGHT:
+                if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro right");
+                driveDirectionGyro(10, 90, new Predicate() {
+                    @Override
+                    public boolean isTrue() {
+                        return robotZXPhi[1] > CRYPTO_BOX_SIDE_SHIFT_VALUE+CRYPTO_BOX_CENTER_SHIFT_VALUE;
+                    }
+                });
+                break;
+            case CENTER:
+            case UNKNOWN:
+                if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro right");
+                if (CRYPTO_BOX_CENTER_SHIFT_VALUE > 0) {
+                    driveDirectionGyro(10, 90, new Predicate() {
+                        @Override
+                        public boolean isTrue() {
+                            return robotZXPhi[1] > CRYPTO_BOX_CENTER_SHIFT_VALUE;
+                        }
+                    });
+                }
+                else{
+                    driveDirectionGyro(10, -90, new Predicate() {
+                        @Override
+                        public boolean isTrue() {
+                            return robotZXPhi[1] < CRYPTO_BOX_CENTER_SHIFT_VALUE;
+                        }
+                    });
+                }
+                break;
+        }
+
+        bot.setFlipPlateUpwards();
+        sleep(500);
+
+        if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro 3");
+        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+
+        driveDirectionGyro(10, 180, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                return robotZXPhi[0] < CRYPTO_BOX_FOWARD_SHIFT_VALUE;
+            }
+        });
+
+        telemetry.addData("Auto data: ","Vumark target: " + cryptoKey + " target jewel side: " + targetSide);
+        telemetry.update();
+
+        bot.rightIntake.setPower(-1);
+        bot.leftIntake.setPower(-1);
+        sleep(1000);
+
+        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+
+        driveDirectionGyro(10, 0, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                return robotZXPhi[0] > 15;
+            }
+        });
+
+        bot.rightIntake.setPower(0);
+        bot.leftIntake.setPower(0);
+    }
+
+    public void prepareToScoreGlyphQuick(){
+        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+        switch (this.cryptoKey){
+            case LEFT:
+                if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro left");
+                driveDirectionGyro(25, -90, new Predicate() {
+                    @Override
+                    public boolean isTrue() {
+                        return robotZXPhi[1] < -CRYPTO_BOX_SIDE_SHIFT_VALUE+CRYPTO_BOX_CENTER_SHIFT_VALUE;
+                    }
+                });
+                break;
+            case RIGHT:
+                if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro right");
+                driveDirectionGyro(25, 90, new Predicate() {
+                    @Override
+                    public boolean isTrue() {
+                        return robotZXPhi[1] > CRYPTO_BOX_SIDE_SHIFT_VALUE+CRYPTO_BOX_CENTER_SHIFT_VALUE;
+                    }
+                });
+                break;
+            case CENTER:
+            case UNKNOWN:
+                if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro right");
+                if (CRYPTO_BOX_CENTER_SHIFT_VALUE > 0) {
+                    driveDirectionGyro(25, 90, new Predicate() {
+                        @Override
+                        public boolean isTrue() {
+                            return robotZXPhi[1] > CRYPTO_BOX_CENTER_SHIFT_VALUE;
+                        }
+                    });
+                }
+                else{
+                    driveDirectionGyro(25, -90, new Predicate() {
+                        @Override
+                        public boolean isTrue() {
+                            return robotZXPhi[1] < CRYPTO_BOX_CENTER_SHIFT_VALUE;
+                        }
+                    });
+                }
+                break;
+        }
+
+        bot.setFlipPlateUpwards();
+        sleep(500);
+
+        if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro 3");
+        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+
+        driveDirectionGyro(25, 180, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                return robotZXPhi[0] < CRYPTO_BOX_FOWARD_SHIFT_VALUE;
+            }
+        });
+
+        telemetry.addData("Auto data: ","Vumark target: " + cryptoKey + " target jewel side: " + targetSide);
+        telemetry.update();
+
+        bot.rightIntake.setPower(-1);
+        bot.leftIntake.setPower(-1);
+        sleep(500);
+
+        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+
+        driveDirectionGyro(25, 0, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                return robotZXPhi[0] > 15;
+            }
+        });
+
+        bot.rightIntake.setPower(0);
+        bot.leftIntake.setPower(0);
+    }
+
+    public boolean knockJewel(Side side){
+        bot.setPivotStart();
+        bot.setArmUp();
+        sleep(250);
+
+        bot.setPivotEnd();
+        sleep(500);
+        bot.setArmDown();
+        sleep(500);
+
+        if(goForRankingPoints){
+            //This logic flow, will score the jewel for the ENEMY team.
+            return true;
+        }else{
+            if(side == Side.UNKNOWN){
+                return false;
+            }
+            else if(side == Side.LEFT){
+                bot.knockPivotLeft();
+                sleep(400);
+            }else if(side == Side.RIGHT){
+                bot.knockPivotRight();
+                sleep(400);
+            }
+
+            bot.setArmUp();
+            sleep(250);
+            bot.setPivotStart();
+            return true;
+        }
+    }
+
+    final boolean[] checkingForStall = new boolean[]{false};
+    final boolean[] unStalling = new boolean[]{false};
+    public void multiGlyph(){
+        checkingForStall[0] = true;
+        checkForStall();
+        final boolean[] inTakeOn = new boolean[]{false};
+        final boolean[] inGlyphPit = new boolean[]{false};
+        final boolean[] glyphsInRobot = new boolean[]{false,false};
+        bot.setGlyphPincherMidPos();
+        bot.setFlipPlateDownwards();
+        quickTelemetry("Starting reverse");
+        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+        driveDirectionGyro(25, 0, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                return robotZXPhi[0] > 15;
+            }
+        });
+        quickTelemetry("Finished reverse, starting turn");
+
+        //Reverse a tad
+        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+        if(this.cryptoKey == RelicRecoveryVuMark.LEFT){
+            turnToHeadingGyroQuick(180,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY, RotationDirection.COUNTER_CLOCK); //Started in front of the left goal.
+        }else{
+            turnToHeadingGyroQuick(180,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY, RotationDirection.CLOCK); //Started in front of the right or center goal..
+        }
+
+        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+
+        quickTelemetry("Driving away from box towards glyphs, gyro setting: " + bot.getHeadingRadians());
+        driveDirectionGyro(40, 0,-180, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                if(!inTakeOn[0] && robotZXPhi[0] > 10){
+                    inTakeOn[0] = true;
+                    inGlyphPit[0] = true;
+                    bot.setIntakeOn();
+                }
+                return robotZXPhi[0] > 30;
+            }
+        });
+
+        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+        turnToHeadingGyroQuick(155,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY,RotationDirection.CLOCK);
+
+        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+
+        driveDirectionGyro(40, 0, -205, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                return robotZXPhi[0] > 10;
+            }
+        });
+
+        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+
+        turnToHeadingGyroQuick(205,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY,RotationDirection.COUNTER_CLOCK);
+        driveDirectionGyro(40, 0, -155, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                return robotZXPhi[0] > 10;
+            }
+        });
+
+        turnToHeadingGyroQuick(180,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY,RotationDirection.CLOCK);
+
+        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+        quickTelemetry("Driving back towards box.");
+        driveDirectionGyro(40, 180,-180, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                if(inTakeOn[0] && robotZXPhi[0] < -40){
+                    inTakeOn[0] = false;
+                    inGlyphPit[0] = false;
+                    bot.setIntakeOff();
+                }
+                return robotZXPhi[0] < -75;
+            }
+        });
+
+        bot.setFlipPlateUpwards();
+
+        sleep(1000);
+
+        bot.setGlyphPincherStartPos();
+
+        sleep(500);
+
+        bot.setGlyphPincherClosed();
+
+        bot.setFlipPlateDownwards();
+
+        sleep(500);
+
+        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+        driveDirectionGyro(40, 180,-180, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                return robotZXPhi[0] < -10;
+            }
+        });
+
+        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
+
+        driveDirectionGyro(40, 0,-180, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                return robotZXPhi[0] > 20;
+            }
+        });
+
+    }
+
+    public void quickTelemetry(String string){
+        telemetry.addData("Debug: ",string);
+        telemetry.update();
+    }
+    public void checkForStall(){
+            new Thread(new Runnable()
+            {
+                ElapsedTime et = new ElapsedTime();
+                @Override
+                public void run()
+                {
+                    while(!isStopRequested()) {
+                        if(!checkingForStall[0]){
+                            return;
+                        }
+                        if(bot.isIntakeStalled() && !unStalling[0]){
+                            unStalling[0] = true;
+                            if(et.milliseconds() > 150 ) {
+                                multiThreadedHandleStall();
+                                et.reset();
+                            }
+                        }
+
+                        if(!bot.isIntakeStalled()) et.reset();
+                    }
+                }
+            }).start();
+    }
+
+    public void multiThreadedHandleStall(){
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    ElapsedTime et = new ElapsedTime();
+                    double reverseIntakeTimeMS = 100;
+                    double reIntakeTimeMS = 250;
+                    while(!isStopRequested()) {
+                        if(et.milliseconds() < reverseIntakeTimeMS){
+                            bot.setIntakeReverse();
+                        }else if(et.milliseconds() > reverseIntakeTimeMS){
+                            reverseIntakeTimeMS = 250;
+                            et.reset();
+                            bot.setIntakeOn();
+                        }else if(et.milliseconds() > reIntakeTimeMS){
+                            unStalling[0] = false;
+                            return;
+                        }
+
+
+                        //End loop under this.
+                    }
+                }
+            }).start();
+    }
+
 }
