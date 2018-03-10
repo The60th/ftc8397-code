@@ -29,23 +29,33 @@ import java.util.concurrent.BlockingQueue;
 public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
 
     private boolean goForRankingPoints = false; // This boolean will control if our software tries to go for ranking points over earning us points.
+
     //This will mostly control the knocking off the jewel, if this is true the program will knock off the enemy jewel, and give them a 30 point lead.
-    public void enableThrowing(){this.goForRankingPoints = true;}
-    public void disableThrowing(){this.goForRankingPoints = false;}
+    public void enableThrowing() {
+        this.goForRankingPoints = true;
+    }
+
+    public void disableThrowing() {
+        this.goForRankingPoints = false;
+    }
 
     public MechBotScranton bot = new MechBotScranton();
 
-    public enum LineFollowSide {LEFT,RIGHT}
+    public enum LineFollowSide {LEFT, RIGHT}
+
     public final float OFF_STONE_SPEED = 25.0f;
-    private final float INNER_TAPE_ANGLE = 33.70f;
-    private final float INNER_TAPE_ANGLE_RADS = INNER_TAPE_ANGLE * ((float)Math.PI/180.0f);
+    protected final float INNER_TAPE_ANGLE = 33.70f;
+    protected final float INNER_TAPE_ANGLE_RADS = INNER_TAPE_ANGLE * ((float) Math.PI / 180.0f);
     public final float LINE_FOLLOW_SPEED = 15.0f; //10 centimeters per second.
-    private final float LINE_FOLLOW_ANGLE_FACTOR = 30.0f * ((float)Math.PI/180.0f); //30.0 Degrees converted to radians.
+    private final float LINE_FOLLOW_ANGLE_FACTOR = 30.0f * ((float) Math.PI / 180.0f); //30.0 Degrees converted to radians.
     private final float HEADING_CORECTION_FACTOR = 2.0f;
     public final float DRIVE_TOWARDS_TRIANGLE_SPEED = 20.0f;
-    public enum JewelSide {BLUE_LEFT,RED_LEFT,UNKNOWN}
-    public enum TeamColor {BLUE,RED}
-    public enum Side{LEFT,RIGHT,UNKNOWN}
+
+    public enum JewelSide {BLUE_LEFT, RED_LEFT, UNKNOWN}
+
+    public enum TeamColor {BLUE, RED}
+
+    public enum Side {LEFT, RIGHT, UNKNOWN}
 
     protected float[] robotZXPhi = null;
 
@@ -79,10 +89,11 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
     protected final String TUCK_GLYPH_TAG = "TUCK_GLYPH";
     protected final boolean TUCK_GLYPH_LOG = true;
 
-    protected void setFlashOn(){
+    protected void setFlashOn() {
         CameraDevice.getInstance().setFlashTorchMode(true);
     }
-    protected void setFlashOff(){
+
+    protected void setFlashOff() {
         CameraDevice.getInstance().setFlashTorchMode(false);
     }
 
@@ -102,74 +113,105 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
     public final float JEWEL_SCAN_TIME = 500;
     public final float VUMARK_KEY_SCAN_TIME = 500;
 
-    public final float CRYPTO_BOX_SIDE_SHIFT_VALUE = 19f; //Was 18.6, but was shifting too far to left and right
+    public final float CRYPTO_BOX_SIDE_SHIFT_VALUE = 17.5f; //Was 18.6, but was shifting too far to left and right
 
     public final float CRYPTO_BOX_CENTER_SHIFT_VALUE = -5.0f; //was 1.0f on 1/11/18 bottom left over shot some changing to test.
 
-    public final float CRYPTO_BOX_FOWARD_SHIFT_VALUE = -8;
+    public final float CRYPTO_BOX_FORWARD_SHIFT_VALUE = -8;
 
     public final float ADJUST_POS_TIMEOUT = 4000;
 
-    public enum RotationDirection{COUNTER_CLOCK,CLOCK}
+    public enum RotationDirection {COUNTER_CLOCK, CLOCK}
 
     public ElapsedTime runTime;
 
     //NEW followLineProportionate: this uses MechBot.getOdomHeadingFromGyroHeading(). It will work properly for different hardware
     //configurations, as long as we override getOdomHeadingFromGyroHeading in MechBotSensor subclasses, as necessary.
-    public void followLineProportionate(LineFollowSide side, ColorSensor colorSensor, float lineFollowSpeed, Predicate finish){
+    public void followLineProportionate(LineFollowSide side, ColorSensor colorSensor, float lineFollowSpeed, Predicate finish) {
         float[] hsvValues = new float[3];
         final float coeff = 20.0f;
-        while (opModeIsActive()){
-            if(finish.isTrue()) break;
+        while (opModeIsActive()) {
+            if (finish.isTrue()) break;
             float heading = bot.getHeadingRadians();
             Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
-            float err = side == LineFollowSide.LEFT? 0.5f - hsvValues[1] : hsvValues[1] - 0.5f;
+            float err = side == LineFollowSide.LEFT ? 0.5f - hsvValues[1] : hsvValues[1] - 0.5f;
             if (err < -0.5) err = -0.4f;
             else if (err > 0.5) err = 0.4f;
-            if(FOLLOW_LINE_PROP_LOG)BetaLog.dd(FOLLOW_LINE_PROP_TAG,"Heading %.2f Sat %.2f error %.2f",heading,hsvValues[1],err);
+            if (FOLLOW_LINE_PROP_LOG)
+                BetaLog.dd(FOLLOW_LINE_PROP_TAG, "Heading %.2f Sat %.2f error %.2f", heading, hsvValues[1], err);
 
 //            float angleDiff = side == LineFollowSide.LEFT? heading - INNER_TAPE_ANGLE_RADS : heading + INNER_TAPE_ANGLE_RADS;
 
             float odomHeading = bot.getOdomHeadingFromGyroHeading(heading);
-            float angleDiff = side == LineFollowSide.LEFT? odomHeading - (float)Math.PI - INNER_TAPE_ANGLE_RADS :
-                    odomHeading - (float)Math.PI + INNER_TAPE_ANGLE_RADS;
+            float angleDiff = side == LineFollowSide.LEFT ? odomHeading - (float) Math.PI - INNER_TAPE_ANGLE_RADS :
+                    odomHeading - (float) Math.PI + INNER_TAPE_ANGLE_RADS;
 
 //            float vx = lineFollowSpeed * (float)Math.cos(angleDiff)  - coeff*err*(float)Math.sin(angleDiff);
 //            float vy = -lineFollowSpeed * (float)Math.sin(angleDiff) - coeff*err*(float)Math.cos(angleDiff);
 
-            float vx = lineFollowSpeed * (float)Math.sin(angleDiff) + coeff * err * (float)Math.cos(angleDiff);
-            float vy = lineFollowSpeed * (float) Math.cos(angleDiff) - coeff * err * (float)Math.sin(angleDiff);
+            float vx = lineFollowSpeed * (float) Math.sin(angleDiff) + coeff * err * (float) Math.cos(angleDiff);
+            float vy = lineFollowSpeed * (float) Math.cos(angleDiff) - coeff * err * (float) Math.sin(angleDiff);
 
 
             float va = -heading * HEADING_CORECTION_FACTOR;
-            if(FOLLOW_LINE_PROP_LOG)BetaLog.dd(FOLLOW_LINE_PROP_TAG,"Angle Diff %.2f Vx %.2f Vy %.2f Va %.2f",angleDiff,vx,vy,va);
+            if (FOLLOW_LINE_PROP_LOG)
+                BetaLog.dd(FOLLOW_LINE_PROP_TAG, "Angle Diff %.2f Vx %.2f Vy %.2f Va %.2f", angleDiff, vx, vy, va);
             bot.setDriveSpeed(vx, vy, va);
         }
-        bot.setDrivePower(0,0,0);
+        bot.setDrivePower(0, 0, 0);
+    }
+
+    public void followLineProportionate(LineFollowSide side, float tapeAngleRads, ColorSensor colorSensor, float lineFollowSpeed, Predicate finish) {
+        float[] hsvValues = new float[3];
+        final float coeff = 20.0f;
+        while (opModeIsActive()) {
+            if (finish.isTrue()) break;
+            float heading = bot.getHeadingRadians();
+            Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+            float err = side == LineFollowSide.LEFT ? 0.5f - hsvValues[1] : hsvValues[1] - 0.5f;
+            if (err < -0.5) err = -0.4f;
+            else if (err > 0.5) err = 0.4f;
+            if (FOLLOW_LINE_PROP_LOG)
+                BetaLog.dd(FOLLOW_LINE_PROP_TAG, "Heading %.2f Sat %.2f error %.2f", heading, hsvValues[1], err);
+
+            float odomHeading = bot.getOdomHeadingFromGyroHeading(heading);
+            float angleDiff = odomHeading - (float) Math.PI - tapeAngleRads;
+
+            float vx = lineFollowSpeed * (float) Math.sin(angleDiff) + coeff * err * (float) Math.cos(angleDiff);
+            float vy = lineFollowSpeed * (float) Math.cos(angleDiff) - coeff * err * (float) Math.sin(angleDiff);
+
+
+            float va = -heading * HEADING_CORECTION_FACTOR;
+            if (FOLLOW_LINE_PROP_LOG)
+                BetaLog.dd(FOLLOW_LINE_PROP_TAG, "Angle Diff %.2f Vx %.2f Vy %.2f Va %.2f", angleDiff, vx, vy, va);
+            bot.setDriveSpeed(vx, vy, va);
+        }
+        bot.setDrivePower(0, 0, 0);
     }
 
     //Turns robot to a specific integratedZ heading using Gyro, targetHeading in degrees
-    protected void turnToHeadingGyro(float targetHeading, float tolerance, float latency){
+    protected void turnToHeadingGyro(float targetHeading, float tolerance, float latency) {
         //Tolerance in degrees latency seconds.
-        tolerance = tolerance * (float)Math.PI/180f;
-        targetHeading = targetHeading * (float)Math.PI/180f;
+        tolerance = tolerance * (float) Math.PI / 180f;
+        targetHeading = targetHeading * (float) Math.PI / 180f;
 
         final float vaMin = 1.5f * tolerance / latency;
         final float C = 0.75f / latency;
-        final float vaMax = 0.6f * (float)Math.PI;
+        final float vaMax = 0.6f * (float) Math.PI;
         float heading;
         float offset;
         while (opModeIsActive()) {
             heading = bot.getHeadingRadians();
-            offset = (float)VuMarkNavigator.NormalizeAngle(targetHeading - heading);
-            if(Math.abs(offset) <= tolerance) break;
+            offset = (float) VuMarkNavigator.NormalizeAngle(targetHeading - heading);
+            if (Math.abs(offset) <= tolerance) break;
 
             float absAdjustedOffset = Math.abs(offset) - tolerance;
             float absVa = vaMin + C * absAdjustedOffset;
 
             absVa = Math.min(absVa, vaMax);
             float va = absVa * Math.signum(offset);
-            if(TURN_TO_HEADING_LOG)BetaLog.dd(TURN_TO_HEADING_TAG,"Turning va = %.2f hd = %.0f, off = %.0f absAdjOff = %.0f", va, heading, offset, absAdjustedOffset);
+            if (TURN_TO_HEADING_LOG)
+                BetaLog.dd(TURN_TO_HEADING_TAG, "Turning va = %.2f hd = %.0f, off = %.0f absAdjOff = %.0f", va, heading, offset, absAdjustedOffset);
             bot.setDriveSpeed(0, 0, va);
         }
         bot.setDrivePower(0, 0, 0);
@@ -177,25 +219,25 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
 
 
     //Turns robot to a specific integratedZ heading using Gyro, targetHeading in degrees
-    protected void turnToHeadingGyro(float targetHeading, float tolerance, float latency,RotationDirection rotationDirection){
+    protected void turnToHeadingGyro(float targetHeading, float tolerance, float latency, RotationDirection rotationDirection) {
         //Tolerance in degrees latency seconds.
-        tolerance = tolerance * (float)Math.PI/180f;
-        targetHeading = targetHeading * (float)Math.PI/180f;
+        tolerance = tolerance * (float) Math.PI / 180f;
+        targetHeading = targetHeading * (float) Math.PI / 180f;
 
         final float vaMin = 1.5f * tolerance / latency;
         final float C = 0.75f / latency;
-        final float vaMax = 0.6f * (float)Math.PI; //Was .5 on 1/11/18
+        final float vaMax = 0.6f * (float) Math.PI; //Was .5 on 1/11/18
         float heading;
         float offset;
         while (opModeIsActive()) {
             heading = bot.getHeadingRadians();
-            offset = (float)VuMarkNavigator.NormalizeAngle(targetHeading - heading);
-            if(Math.abs(offset) <= tolerance) break;
+            offset = (float) VuMarkNavigator.NormalizeAngle(targetHeading - heading);
+            if (Math.abs(offset) <= tolerance) break;
 
-            if(rotationDirection == RotationDirection.COUNTER_CLOCK){
-                if(offset < 0)offset += 2.0f*(float)Math.PI;
-            }else{
-                if(offset > 0)offset -= 2.0f*(float)Math.PI;
+            if (rotationDirection == RotationDirection.COUNTER_CLOCK) {
+                if (offset < 0) offset += 2.0f * (float) Math.PI;
+            } else {
+                if (offset > 0) offset -= 2.0f * (float) Math.PI;
             }
 
             float absAdjustedOffset = Math.abs(offset) - tolerance;
@@ -203,32 +245,33 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
 
             absVa = Math.min(absVa, vaMax);
             float va = absVa * Math.signum(offset);
-            if(TURN_TO_HEADING_LOG)BetaLog.dd(TURN_TO_HEADING_TAG,"Turning va = %.2f hd = %.0f, off = %.0f absAdjOff = %.0f", va, heading, offset, absAdjustedOffset);
+            if (TURN_TO_HEADING_LOG)
+                BetaLog.dd(TURN_TO_HEADING_TAG, "Turning va = %.2f hd = %.0f, off = %.0f absAdjOff = %.0f", va, heading, offset, absAdjustedOffset);
             bot.setDriveSpeed(0, 0, va);
         }
         bot.setDrivePower(0, 0, 0);
     }
 
     //Turns robot to a specific integratedZ heading using Gyro, targetHeading in degrees
-    protected void turnToHeadingGyroQuick(float targetHeading, float tolerance, float latency,RotationDirection rotationDirection){
+    protected void turnToHeadingGyroQuick(float targetHeading, float tolerance, float latency, RotationDirection rotationDirection) {
         //Tolerance in degrees latency seconds.
-        tolerance = tolerance * (float)Math.PI/180f;
-        targetHeading = targetHeading * (float)Math.PI/180f;
+        tolerance = tolerance * (float) Math.PI / 180f;
+        targetHeading = targetHeading * (float) Math.PI / 180f;
 
         final float vaMin = 1.5f * tolerance / latency;
         final float C = 0.90f / latency;
-        final float vaMax = 0.6f * (float)Math.PI; //Was .5 on 1/11/18
+        final float vaMax = 0.6f * (float) Math.PI; //Was .5 on 1/11/18
         float heading;
         float offset;
         while (opModeIsActive()) {
             heading = bot.getHeadingRadians();
-            offset = (float)VuMarkNavigator.NormalizeAngle(targetHeading - heading);
-            if(Math.abs(offset) <= tolerance) break;
+            offset = (float) VuMarkNavigator.NormalizeAngle(targetHeading - heading);
+            if (Math.abs(offset) <= tolerance) break;
 
-            if(rotationDirection == RotationDirection.COUNTER_CLOCK){
-                if(offset < 0)offset += 2.0f*(float)Math.PI;
-            }else{
-                if(offset > 0)offset -= 2.0f*(float)Math.PI;
+            if (rotationDirection == RotationDirection.COUNTER_CLOCK) {
+                if (offset < 0) offset += 2.0f * (float) Math.PI;
+            } else {
+                if (offset > 0) offset -= 2.0f * (float) Math.PI;
             }
 
             float absAdjustedOffset = Math.abs(offset) - tolerance;
@@ -236,23 +279,25 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
 
             absVa = Math.min(absVa, vaMax);
             float va = absVa * Math.signum(offset);
-            if(TURN_TO_HEADING_LOG)BetaLog.dd(TURN_TO_HEADING_TAG,"Turning va = %.2f hd = %.0f, off = %.0f absAdjOff = %.0f", va, heading, offset, absAdjustedOffset);
+            if (TURN_TO_HEADING_LOG)
+                BetaLog.dd(TURN_TO_HEADING_TAG, "Turning va = %.2f hd = %.0f, off = %.0f absAdjOff = %.0f", va, heading, offset, absAdjustedOffset);
             bot.setDriveSpeed(0, 0, va);
         }
         bot.setDrivePower(0, 0, 0);
     }
+
     //VuMark Scan timeout in ms.
-    public RelicRecoveryVuMark findKey(double timeOut){
+    public RelicRecoveryVuMark findKey(double timeOut) {
         RelicRecoveryVuMark vuMarkKey = RelicRecoveryVuMark.UNKNOWN;
         ElapsedTime et = new ElapsedTime();
-        while(opModeIsActive() && vuMarkKey == RelicRecoveryVuMark.UNKNOWN && et.milliseconds() < timeOut){
+        while (opModeIsActive() && vuMarkKey == RelicRecoveryVuMark.UNKNOWN && et.milliseconds() < timeOut) {
             vuMarkKey = VuMarkNavigator.getRelicRecoveryVumark();
         }
         return vuMarkKey;
     }
 
     //Time out, time in ms.
-    public JewelSide findJewel(double timeOut){
+    public JewelSide findJewel(double timeOut) {
         MechBotAutonomous.JewelSide returnSide;
         int blobSizeThreshhold = 400; //Blobs smaller than this will be discarded
         int sampleRatio = 5; //Number of rows and columns to skip between raw pixels selected for reduced image
@@ -292,23 +337,25 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
             //Get array of RGB565 pixels (two bytes per pixel) from the last frame on the frame queue.
             //If no image is available, keep looping
             boolean gotBytes = VuMarkNavigator.getRGB565Array(frameQueue, imgWidth, imgHeight, imageBytes);
-            if (!gotBytes){
+            if (!gotBytes) {
                 continue;
             }
 
             //First, reduce the imgWidthximgHeight image to reducedImgWidth x reducedImgHeight by skipping rows and columns per sampleRatio
             //From the reduced RGB565 image, obtain the binary images for red and blue blob detection
-            ImgProc.getReducedRangeRGB565(imageBytes,imgWidth,imgHeight,0,y0,croppedImgWidth,croppedImgHeight,reducedImageBytes,sampleRatio);
-            ImgProc.getBinaryImage(reducedImageBytes,345,15,0.7f,1.0f,0.3f,1.0f,binaryRed);
-            ImgProc.getBinaryImage(reducedImageBytes,195,235,0.7f,1.0f,0.2f,1.0f,binaryBlue);
+            ImgProc.getReducedRangeRGB565(imageBytes, imgWidth, imgHeight, 0, y0, croppedImgWidth, croppedImgHeight, reducedImageBytes, sampleRatio);
+            ImgProc.getBinaryImage(reducedImageBytes, 345, 15, 0.7f, 1.0f, 0.3f, 1.0f, binaryRed);
+            ImgProc.getBinaryImage(reducedImageBytes, 195, 235, 0.7f, 1.0f, 0.2f, 1.0f, binaryBlue);
 
             //Get lists of red and blue blobs from the binary images
             redBlobs = Blob.findBlobs(binaryRed, reducedImgWidth, reducedImgHeight);
             blueBlobs = Blob.findBlobs(binaryBlue, reducedImgWidth, reducedImgHeight);
 
             //Filter out small blobs
-            for (int i = redBlobs.size()-1; i >= 0; i--) if (redBlobs.get(i).getNumPts() < blobSizeThreshhold) redBlobs.remove(i);
-            for (int i = blueBlobs.size()-1; i >= 0; i--) if (blueBlobs.get(i).getNumPts() < blobSizeThreshhold) blueBlobs.remove(i);
+            for (int i = redBlobs.size() - 1; i >= 0; i--)
+                if (redBlobs.get(i).getNumPts() < blobSizeThreshhold) redBlobs.remove(i);
+            for (int i = blueBlobs.size() - 1; i >= 0; i--)
+                if (blueBlobs.get(i).getNumPts() < blobSizeThreshhold) blueBlobs.remove(i);
 
             //Take only the right-most red blob. This is to avoid problems with the VuMark, which may match the red range.
             while (redBlobs.size() > 1) {
@@ -317,15 +364,17 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
             }
 
 
-            if (redBlobs.size() > 0 && blueBlobs.size() > 0){
+            if (redBlobs.size() > 0 && blueBlobs.size() > 0) {
                 Blob redBlob = redBlobs.get(0); //There is only one blob left in the red list; this is it.
 
                 //Find the largest blue blob; it will be assumed to be the blue jewel.
                 Blob blueBlob = blueBlobs.get(0);
-                for (int i = 1; i < blueBlobs.size(); i++) if (blueBlobs.get(i).getRectArea() > blueBlob.getRectArea()) blueBlob = blueBlobs.get(i);
+                for (int i = 1; i < blueBlobs.size(); i++)
+                    if (blueBlobs.get(i).getRectArea() > blueBlob.getRectArea())
+                        blueBlob = blueBlobs.get(i);
 
-                if(blueBlob.getAvgX() < redBlob.getAvgX()) return JewelSide.BLUE_LEFT;
-                else return  JewelSide.RED_LEFT;
+                if (blueBlob.getAvgX() < redBlob.getAvgX()) return JewelSide.BLUE_LEFT;
+                else return JewelSide.RED_LEFT;
 
                 //If blueBlob.getAvgX() < redBlob.getAvgX(), the blue blob is on the left
                 // telemetry.addData("Arrangement", "%s", blueBlob.getAvgX()<redBlob.getAvgX()? "BLUE LEFT" : "BLUE RIGHT");
@@ -342,8 +391,9 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         return JewelSide.UNKNOWN;
     }
 
-    public void driveDirectionGyro(float speedCMs, float directionAngleDegrees, Predicate finish){
-        if (DRIVE_DIRECTION_GYRO_LOG) BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "Entering driveDirectionGyro");
+    public void driveDirectionGyro(float speedCMs, float directionAngleDegrees, Predicate finish) {
+        if (DRIVE_DIRECTION_GYRO_LOG)
+            BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "Entering driveDirectionGyro");
         bot.updateOdometry();
         float directionAngleRadians = directionAngleDegrees * (float) Math.PI / 180.0f;
         while (opModeIsActive()) {
@@ -352,7 +402,7 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
 
             if (DRIVE_DIRECTION_GYRO_LOG)
                 BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "gHeading = %.2f  oHeading = %.2f",
-                        gyroHeading * 180.0 / Math.PI , odomHeading * 180.0 / Math.PI); //Fixed convert error
+                        gyroHeading * 180.0 / Math.PI, odomHeading * 180.0 / Math.PI); //Fixed convert error
 
             this.robotZXPhi = bot.updateOdometry(robotZXPhi, odomHeading);
 
@@ -372,12 +422,14 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
             bot.setDriveSpeed(vx, vy, va);
 
         }
-        bot.setDriveSpeed(0,0,0);
+        bot.setDriveSpeed(0, 0, 0);
     }
-    //Robot heading in degrees.
-    public void driveDirectionGyro(float speedCMs, float directionAngleDegrees, float gyroHeadingTargetDegrees, Predicate finish){
 
-        if (DRIVE_DIRECTION_GYRO_LOG) BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "Entering driveDirectionGyro");
+    //Robot heading in degrees.
+    public void driveDirectionGyro(float speedCMs, float directionAngleDegrees, float gyroHeadingTargetDegrees, Predicate finish) {
+
+        if (DRIVE_DIRECTION_GYRO_LOG)
+            BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "Entering driveDirectionGyro");
         bot.updateOdometry();
         float directionAngleRadians = directionAngleDegrees * (float) Math.PI / 180.0f;
         float gyroHeadingTargetRadians = gyroHeadingTargetDegrees * (float) Math.PI / 180.0f;
@@ -388,7 +440,7 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
 
             if (DRIVE_DIRECTION_GYRO_LOG)
                 BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "gHeading = %.2f  oHeading = %.2f",
-                        gyroHeading * 180.0 / Math.PI , odomHeading * 180.0 / Math.PI); //Fixed convert error
+                        gyroHeading * 180.0 / Math.PI, odomHeading * 180.0 / Math.PI); //Fixed convert error
 
             this.robotZXPhi = bot.updateOdometry(robotZXPhi, odomHeading);
 
@@ -400,11 +452,13 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
 
             float vx = -speedCMs * (float) Math.sin(directionAngleRadians - odomHeading);
             float vy = speedCMs * (float) Math.cos(directionAngleRadians - odomHeading);
-            if (DRIVE_DIRECTION_GYRO_LOG)BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "gHeading = %.3f gH Target = %.3f",gyroHeading, gyroHeadingTargetRadians);
+            if (DRIVE_DIRECTION_GYRO_LOG)
+                BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "gHeading = %.3f gH Target = %.3f", gyroHeading, gyroHeadingTargetRadians);
 
 
-            float headingError = (float)VuMarkNavigator.NormalizeAngle(gyroHeading - gyroHeadingTargetRadians);
-            if (DRIVE_DIRECTION_GYRO_LOG)BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "HeadingError = %.3f ", headingError);
+            float headingError = (float) VuMarkNavigator.NormalizeAngle(gyroHeading - gyroHeadingTargetRadians);
+            if (DRIVE_DIRECTION_GYRO_LOG)
+                BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "HeadingError = %.3f ", headingError);
             float va = -HEADING_CORECTION_FACTOR * headingError;
 
             if (DRIVE_DIRECTION_GYRO_LOG)
@@ -413,62 +467,64 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
             bot.setDriveSpeed(vx, vy, va);
 
         }
-        bot.setDrivePower(0,0,0);
+        bot.setDrivePower(0, 0, 0);
     }
-    protected interface Predicate{
+
+    protected interface Predicate {
         public boolean isTrue();
     }
 
 
-    public void initAuto(TeamColor teamColor, float cryptoKeyTimeOut, double jewelTimeOut) throws InterruptedException{
+    public void initAuto(TeamColor teamColor, float cryptoKeyTimeOut, double jewelTimeOut) throws InterruptedException {
         Orientation orientation;
         this.teamColor = teamColor;
         RelicRecoveryVuMark vuMark;
         JewelSide jewelSide;
         ElapsedTime et = new ElapsedTime();
-        telemetry.addData("Starting Vuforia","");
-        telemetry.addData("Wait for flashlight to be on before starting.","");
+        telemetry.addData("Starting Vuforia", "");
+        telemetry.addData("Wait for flashlight to be on before starting.", "");
         telemetry.update();
         VuMarkNavigator.activate();
-        while (opModeIsActive() && !VuMarkNavigator.isActive){
+        while (opModeIsActive() && !VuMarkNavigator.isActive) {
             sleep(1);
         }
         double vuforiaActivateTime = et.milliseconds();
         et.reset();
-        telemetry.addData("Started Vuforia after " + vuforiaActivateTime + " milliseconds.","");
+        telemetry.addData("Started Vuforia after " + vuforiaActivateTime + " milliseconds.", "");
         telemetry.update();
         this.setFlashOn();
 
         orientation = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS); //WAS ZYX
 
         this.initPitch = orientation.thirdAngle;
-        this.initRoll = orientation.secondAngle + ADJUST_INIT_ROLL_DEG* (float)Math.PI/180.0f;
+        this.initRoll = orientation.secondAngle + ADJUST_INIT_ROLL_DEG * (float) Math.PI / 180.0f;
 
         waitForStart();
+        bot.setRelicArmStop();
         runTime = new ElapsedTime();
 
         et.reset();
         vuMark = findKey(cryptoKeyTimeOut);
         double vuMarkFindTime = et.milliseconds();
         et.reset();
-        telemetry.addData("Found vuMark value of " + vuMark.toString() + " after " + vuMarkFindTime + " milliseconds.","");
+        telemetry.addData("Found vuMark value of " + vuMark.toString() + " after " + vuMarkFindTime + " milliseconds.", "");
         this.cryptoKey = vuMark;
         et.reset();
         jewelSide = findJewel(jewelTimeOut);
         double jewlFindTime = et.milliseconds();
-        telemetry.addData("Found JewelSide value of " + jewelSide.toString() + " after " + jewlFindTime + " milliseconds.","");
-        if(jewelSide == JewelSide.BLUE_LEFT && teamColor == TeamColor.BLUE){
+        telemetry.addData("Found JewelSide value of " + jewelSide.toString() + " after " + jewlFindTime + " milliseconds.", "");
+        if (jewelSide == JewelSide.BLUE_LEFT && teamColor == TeamColor.BLUE) {
             this.targetSide = Side.RIGHT;
-        }else if(jewelSide == JewelSide.BLUE_LEFT && teamColor == TeamColor.RED){
+        } else if (jewelSide == JewelSide.BLUE_LEFT && teamColor == TeamColor.RED) {
             this.targetSide = Side.LEFT;
-        }else if(jewelSide == JewelSide.RED_LEFT && teamColor == TeamColor.RED){
+        } else if (jewelSide == JewelSide.RED_LEFT && teamColor == TeamColor.RED) {
             this.targetSide = Side.RIGHT;
-        }else if(jewelSide == JewelSide.RED_LEFT && teamColor == TeamColor.BLUE){
+        } else if (jewelSide == JewelSide.RED_LEFT && teamColor == TeamColor.BLUE) {
             this.targetSide = Side.LEFT;
-        }else{
+        } else {
             this.targetSide = Side.UNKNOWN;
         }
-        telemetry.addData("Found both the jewel and vuMark in: " + vuMarkFindTime+jewlFindTime + " milliseconds. ","");
+        telemetry.addData("Found both the jewel and vuMark in: " + vuMarkFindTime + jewlFindTime + " milliseconds. ", "");
         this.setFlashOff();
 
         knockJewel(this.targetSide); //Score the blocks and knock the jewel.
@@ -478,32 +534,32 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
     //appropriately in whatever subclass of MechBotSensor we are using. We may also want to modify this to accept arguments
     //for interSensorDist and sensorOffset, so it can be used with different sensor configurations.
 
-    public void adjustPosOnTriangle(double timeOut){
-        if (ADJUST_POS_LOG) BetaLog.dd(ADJUST_POS_TAG,"Entering Adjust Pos on Triangle.");
+    public void adjustPosOnTriangle(double timeOut) {
+        if (ADJUST_POS_LOG) BetaLog.dd(ADJUST_POS_TAG, "Entering Adjust Pos on Triangle.");
         final double interSensorDist = 34;
         final double sensorOffSet = 10;
-        final double sensorR = Math.sqrt(interSensorDist*interSensorDist/4.0 + sensorOffSet*sensorOffSet);
-        final double sensorAngle = Math.atan(2.0*sensorOffSet/interSensorDist);
-        final float specialCoeff = (float)(sensorR*Math.sin(sensorAngle+INNER_TAPE_ANGLE_RADS)/Math.cos(INNER_TAPE_ANGLE_RADS));
+        final double sensorR = Math.sqrt(interSensorDist * interSensorDist / 4.0 + sensorOffSet * sensorOffSet);
+        final double sensorAngle = Math.atan(2.0 * sensorOffSet / interSensorDist);
+        final float specialCoeff = (float) (sensorR * Math.sin(sensorAngle + INNER_TAPE_ANGLE_RADS) / Math.cos(INNER_TAPE_ANGLE_RADS));
         final float CAngle = 2.0f;
         final float CSum = 10.0f;
         final float CDiff = 10.0f;
-        final float tolAngle = 2.0f*(float)Math.PI/180f;
+        final float tolAngle = 2.0f * (float) Math.PI / 180f;
         final float tolSum = .2f;
         final float tolDiff = .2f;
 
         ElapsedTime time = new ElapsedTime();
-        while(opModeIsActive()&& time.milliseconds() < timeOut){
+        while (opModeIsActive() && time.milliseconds() < timeOut) {
             float gyroHeading = bot.getHeadingRadians();
             float[] hsvRight = new float[3];
             float[] hsvLeft = new float[3];
-            Color.RGBToHSV(bot.colorRight.red(), bot.colorRight.green(),bot.colorRight.blue(),hsvRight);
-            Color.RGBToHSV(bot.colorLeft.red(), bot.colorLeft.green(),bot.colorLeft.blue(),hsvLeft);
-            float sumSat = hsvRight[1]+hsvLeft[1];
-            float diffSat = hsvRight[1]-hsvLeft[1];
+            Color.RGBToHSV(bot.colorRight.red(), bot.colorRight.green(), bot.colorRight.blue(), hsvRight);
+            Color.RGBToHSV(bot.colorLeft.red(), bot.colorLeft.green(), bot.colorLeft.blue(), hsvLeft);
+            float sumSat = hsvRight[1] + hsvLeft[1];
+            float diffSat = hsvRight[1] - hsvLeft[1];
 
-            if(Math.abs(gyroHeading) < tolAngle && Math.abs(sumSat-1.0f) < tolSum && Math.abs(diffSat) < tolDiff) {
-                if(ADJUST_POS_LOG) BetaLog.dd(ADJUST_POS_TAG, "Adjust Pos Succeeded!!!");
+            if (Math.abs(gyroHeading) < tolAngle && Math.abs(sumSat - 1.0f) < tolSum && Math.abs(diffSat) < tolDiff) {
+                if (ADJUST_POS_LOG) BetaLog.dd(ADJUST_POS_TAG, "Adjust Pos Succeeded!!!");
                 break;
             }
 
@@ -525,26 +581,84 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
 
             float odomHeading = bot.getOdomHeadingFromGyroHeading(gyroHeading);
 
-            float vx = -vxField * (float)Math.cos(odomHeading) + vzField * (float)Math.sin(odomHeading);
-            float vy = vxField * (float)Math.sin(odomHeading) + vzField * (float)Math.cos(odomHeading);
+            float vx = -vxField * (float) Math.cos(odomHeading) + vzField * (float) Math.sin(odomHeading);
+            float vy = vxField * (float) Math.sin(odomHeading) + vzField * (float) Math.cos(odomHeading);
 
-            bot.setDriveSpeed(vx,vy,va);
+            bot.setDriveSpeed(vx, vy, va);
         }
-        bot.setDriveSpeed(0,0,0);
+        bot.setDriveSpeed(0, 0, 0);
 
     }
 
 
-    public void prepareToScoreGlyph(){
-        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+    public void adjustPosInsideTriangle(double timeOut) {
+        if (ADJUST_POS_LOG) BetaLog.dd(ADJUST_POS_TAG, "Entering Adjust Pos on Triangle.");
+        final double interSensorDist = 34;
+        final double sensorOffSet = 10;
+        final double sensorR = Math.sqrt(interSensorDist * interSensorDist / 4.0 + sensorOffSet * sensorOffSet);
+        final double sensorAngle = Math.atan(2.0 * sensorOffSet / interSensorDist);
+        final float specialCoeff = (float) (sensorR * Math.sin(sensorAngle + INNER_TAPE_ANGLE_RADS) / Math.cos(INNER_TAPE_ANGLE_RADS));
+        final float CAngle = 2.0f;
+        final float CSum = -10.0f;
+        final float CDiff = -10.0f;
+        final float tolAngle = 2.0f * (float) Math.PI / 180f;
+        final float tolSum = .2f;
+        final float tolDiff = .2f;
+
+        ElapsedTime time = new ElapsedTime();
+        while (opModeIsActive() && time.milliseconds() < timeOut) {
+            float gyroHeading = bot.getHeadingRadians();
+            float[] hsvRight = new float[3];
+            float[] hsvLeft = new float[3];
+            Color.RGBToHSV(bot.colorRight.red(), bot.colorRight.green(), bot.colorRight.blue(), hsvRight);
+            Color.RGBToHSV(bot.colorLeft.red(), bot.colorLeft.green(), bot.colorLeft.blue(), hsvLeft);
+            float sumSat = hsvRight[1] + hsvLeft[1];
+            float diffSat = hsvRight[1] - hsvLeft[1];
+
+            if (Math.abs(gyroHeading) < tolAngle && Math.abs(sumSat - 1.0f) < tolSum && Math.abs(diffSat) < tolDiff) {
+                if (ADJUST_POS_LOG) BetaLog.dd(ADJUST_POS_TAG, "Adjust Pos Succeeded!!!");
+                break;
+            }
+
+            float va = -CAngle * gyroHeading;
+
+
+//            float vx = -CSum*(sumSat-1.0f)*(float)Math.cos(gyroHeading)
+//                    - (CDiff*diffSat + specialCoeff*va)*(float)Math.sin(gyroHeading);
+//
+//            float vy = +CSum*(sumSat-1.0f)*(float)Math.sin(gyroHeading)
+//                    - (CDiff*diffSat + specialCoeff*va)*(float)Math.cos(gyroHeading);
+
+            //Desired robot speeds in field coordinates
+
+            float vxField = CDiff * diffSat + specialCoeff * va;
+            float vzField = CSum * (sumSat - 1.0f);
+
+            //Desired robot speeds in robot coordinates
+
+            float odomHeading = bot.getOdomHeadingFromGyroHeading(gyroHeading);
+
+            float vx = -vxField * (float) Math.cos(odomHeading) + vzField * (float) Math.sin(odomHeading);
+            float vy = vxField * (float) Math.sin(odomHeading) + vzField * (float) Math.cos(odomHeading);
+
+            bot.setDriveSpeed(vx, vy, va);
+        }
+        bot.setDriveSpeed(0, 0, 0);
+
+    }
+
+
+    public void scoreGlyph(boolean insideTriangle ) {
+        final float sideShift = insideTriangle ? CRYPTO_BOX_SIDE_SHIFT_VALUE+6 : CRYPTO_BOX_SIDE_SHIFT_VALUE;
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
-        switch (this.cryptoKey){
+        switch (this.cryptoKey) {
             case LEFT:
                 if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro left");
                 driveDirectionGyro(10, -90, new Predicate() {
                     @Override
                     public boolean isTrue() {
-                        return robotZXPhi[1] < -CRYPTO_BOX_SIDE_SHIFT_VALUE+CRYPTO_BOX_CENTER_SHIFT_VALUE;
+                        return robotZXPhi[1] < -sideShift + CRYPTO_BOX_CENTER_SHIFT_VALUE ;
                     }
                 });
                 break;
@@ -553,7 +667,7 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
                 driveDirectionGyro(10, 90, new Predicate() {
                     @Override
                     public boolean isTrue() {
-                        return robotZXPhi[1] > CRYPTO_BOX_SIDE_SHIFT_VALUE+CRYPTO_BOX_CENTER_SHIFT_VALUE;
+                        return robotZXPhi[1] > sideShift + CRYPTO_BOX_CENTER_SHIFT_VALUE;
                     }
                 });
                 break;
@@ -567,8 +681,7 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
                             return robotZXPhi[1] > CRYPTO_BOX_CENTER_SHIFT_VALUE;
                         }
                     });
-                }
-                else{
+                } else {
                     driveDirectionGyro(10, -90, new Predicate() {
                         @Override
                         public boolean isTrue() {
@@ -580,50 +693,69 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         }
 
         bot.setFlipPlateUpwards();
-        sleep(500);
+        sleep(2000);
 
         if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro 3");
-        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
 
-        driveDirectionGyro(10, 180, new Predicate() {
+        driveDirectionGyro(20, 180, new Predicate() {
             @Override
             public boolean isTrue() {
-                return robotZXPhi[0] < CRYPTO_BOX_FOWARD_SHIFT_VALUE;
+                return robotZXPhi[0] < CRYPTO_BOX_FORWARD_SHIFT_VALUE;
             }
         });
 
-        telemetry.addData("Auto data: ","Vumark target: " + cryptoKey + " target jewel side: " + targetSide);
+        telemetry.addData("Auto data: ", "Vumark target: " + cryptoKey + " target jewel side: " + targetSide);
         telemetry.update();
 
         bot.rightIntake.setPower(-1);
         bot.leftIntake.setPower(-1);
         sleep(1000);
 
-        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
 
-        driveDirectionGyro(10, 0, new Predicate() {
+        driveDirectionGyro(30, 0, new Predicate() {
             @Override
             public boolean isTrue() {
-                return robotZXPhi[0] > 15;
+                return robotZXPhi[0] > 20;
             }
         });
 
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+
+        driveDirectionGyro(30, 180, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                return robotZXPhi[0] < -16;
+            }
+        });
+
+
         bot.rightIntake.setPower(0);
         bot.leftIntake.setPower(0);
+
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        driveDirectionGyro(30, 0, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                return robotZXPhi[0] > 12;
+            }
+        });
+
     }
 
-    public void prepareToScoreGlyphQuick(){
-        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+    public void prepareToScoreGlyphQuick() {
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
-        switch (this.cryptoKey){
+        switch (this.cryptoKey) {
             case LEFT:
                 if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro left");
                 driveDirectionGyro(25, -90, new Predicate() {
                     @Override
                     public boolean isTrue() {
-                        return robotZXPhi[1] < -CRYPTO_BOX_SIDE_SHIFT_VALUE+CRYPTO_BOX_CENTER_SHIFT_VALUE;
+                        return robotZXPhi[1] < -CRYPTO_BOX_SIDE_SHIFT_VALUE + CRYPTO_BOX_CENTER_SHIFT_VALUE;
                     }
                 });
                 break;
@@ -632,7 +764,7 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
                 driveDirectionGyro(25, 90, new Predicate() {
                     @Override
                     public boolean isTrue() {
-                        return robotZXPhi[1] > CRYPTO_BOX_SIDE_SHIFT_VALUE+CRYPTO_BOX_CENTER_SHIFT_VALUE;
+                        return robotZXPhi[1] > CRYPTO_BOX_SIDE_SHIFT_VALUE + CRYPTO_BOX_CENTER_SHIFT_VALUE;
                     }
                 });
                 break;
@@ -646,8 +778,7 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
                             return robotZXPhi[1] > CRYPTO_BOX_CENTER_SHIFT_VALUE;
                         }
                     });
-                }
-                else{
+                } else {
                     driveDirectionGyro(25, -90, new Predicate() {
                         @Override
                         public boolean isTrue() {
@@ -662,30 +793,30 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         sleep(500);
 
         if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro 3");
-        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
 
         driveDirectionGyro(25, 180, new Predicate() {
             @Override
             public boolean isTrue() {
-                return robotZXPhi[0] < CRYPTO_BOX_FOWARD_SHIFT_VALUE;
+                return robotZXPhi[0] < CRYPTO_BOX_FORWARD_SHIFT_VALUE;
             }
         });
 
-        telemetry.addData("Auto data: ","Vumark target: " + cryptoKey + " target jewel side: " + targetSide);
+        telemetry.addData("Auto data: ", "Vumark target: " + cryptoKey + " target jewel side: " + targetSide);
         telemetry.update();
 
         bot.rightIntake.setPower(-1);
         bot.leftIntake.setPower(-1);
         sleep(500);
 
-        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
 
         driveDirectionGyro(25, 0, new Predicate() {
             @Override
             public boolean isTrue() {
-                return robotZXPhi[0] > 15;
+                return robotZXPhi[0] > 6;
             }
         });
 
@@ -693,7 +824,7 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         bot.leftIntake.setPower(0);
     }
 
-    public boolean knockJewel(Side side){
+    public boolean knockJewel(Side side) {
         bot.setPivotStart();
         bot.setArmUp();
         sleep(250);
@@ -703,17 +834,16 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         bot.setArmDown();
         sleep(500);
 
-        if(goForRankingPoints){
+        if (goForRankingPoints) {
             //This logic flow, will score the jewel for the ENEMY team.
             return true;
-        }else{
-            if(side == Side.UNKNOWN){
+        } else {
+            if (side == Side.UNKNOWN) {
                 return false;
-            }
-            else if(side == Side.LEFT){
+            } else if (side == Side.LEFT) {
                 bot.knockPivotLeft();
                 sleep(400);
-            }else if(side == Side.RIGHT){
+            } else if (side == Side.RIGHT) {
                 bot.knockPivotRight();
                 sleep(400);
             }
@@ -725,18 +855,17 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         }
     }
 
-    final boolean[] checkingForStall = new boolean[]{false};
-    final boolean[] unStalling = new boolean[]{false};
-    public void multiGlyph(){
-        checkingForStall[0] = true;
-        checkForStall();
+    boolean checkingForStall = false;
+    boolean unStalling = false;
+
+    public void multiGlyph() {
         final boolean[] inTakeOn = new boolean[]{false};
         final boolean[] inGlyphPit = new boolean[]{false};
-        final boolean[] glyphsInRobot = new boolean[]{false,false};
+        final boolean[] glyphsInRobot = new boolean[]{false, false};
         bot.setGlyphPincherMidPos();
         bot.setFlipPlateDownwards();
         quickTelemetry("Starting reverse");
-        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
         driveDirectionGyro(25, 0, new Predicate() {
             @Override
@@ -747,35 +876,37 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         quickTelemetry("Finished reverse, starting turn");
 
         //Reverse a tad
-        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
-        if(this.cryptoKey == RelicRecoveryVuMark.LEFT){
-            turnToHeadingGyroQuick(180,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY, RotationDirection.COUNTER_CLOCK); //Started in front of the left goal.
-        }else{
-            turnToHeadingGyroQuick(180,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY, RotationDirection.CLOCK); //Started in front of the right or center goal..
+        if (this.cryptoKey == RelicRecoveryVuMark.LEFT) {
+            turnToHeadingGyroQuick(180, GLOBAL_STANDERD_TOLERANCE, GLOBAL_STANDERD_LATENCY, RotationDirection.COUNTER_CLOCK); //Started in front of the left goal.
+        } else {
+            turnToHeadingGyroQuick(180, GLOBAL_STANDERD_TOLERANCE, GLOBAL_STANDERD_LATENCY, RotationDirection.CLOCK); //Started in front of the right or center goal..
         }
 
-        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
 
         quickTelemetry("Driving away from box towards glyphs, gyro setting: " + bot.getHeadingRadians());
-        driveDirectionGyro(40, 0,-180, new Predicate() {
+        driveDirectionGyro(40, 0, -180, new Predicate() {
             @Override
             public boolean isTrue() {
-                if(!inTakeOn[0] && robotZXPhi[0] > 10){
+                if (!inTakeOn[0] && robotZXPhi[0] > 10) {
                     inTakeOn[0] = true;
                     inGlyphPit[0] = true;
                     bot.setIntakeOn();
+                    checkingForStall = true;
+                    checkForStall();
                 }
                 return robotZXPhi[0] > 30;
             }
         });
 
-        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
-        turnToHeadingGyroQuick(155,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY,RotationDirection.CLOCK);
+        turnToHeadingGyroQuick(155, GLOBAL_STANDERD_TOLERANCE, GLOBAL_STANDERD_LATENCY, RotationDirection.CLOCK);
 
-        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
 
         driveDirectionGyro(40, 0, -205, new Predicate() {
@@ -785,10 +916,10 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
             }
         });
 
-        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
 
-        turnToHeadingGyroQuick(205,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY,RotationDirection.COUNTER_CLOCK);
+        turnToHeadingGyroQuick(205, GLOBAL_STANDERD_TOLERANCE, GLOBAL_STANDERD_LATENCY, RotationDirection.COUNTER_CLOCK);
         driveDirectionGyro(40, 0, -155, new Predicate() {
             @Override
             public boolean isTrue() {
@@ -796,18 +927,19 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
             }
         });
 
-        turnToHeadingGyroQuick(180,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY,RotationDirection.CLOCK);
+        turnToHeadingGyroQuick(180, GLOBAL_STANDERD_TOLERANCE, GLOBAL_STANDERD_LATENCY, RotationDirection.CLOCK);
 
-        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
         quickTelemetry("Driving back towards box.");
-        driveDirectionGyro(40, 180,-180, new Predicate() {
+        driveDirectionGyro(40, 180, -180, new Predicate() {
             @Override
             public boolean isTrue() {
-                if(inTakeOn[0] && robotZXPhi[0] < -40){
+                if (inTakeOn[0] && robotZXPhi[0] < -40) {
                     inTakeOn[0] = false;
                     inGlyphPit[0] = false;
                     bot.setIntakeOff();
+                    checkingForStall = false;
                 }
                 return robotZXPhi[0] < -75;
             }
@@ -827,19 +959,19 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
 
         sleep(500);
 
-        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
-        driveDirectionGyro(40, 180,-180, new Predicate() {
+        driveDirectionGyro(40, 180, -180, new Predicate() {
             @Override
             public boolean isTrue() {
                 return robotZXPhi[0] < -10;
             }
         });
 
-        robotZXPhi = new float[] {0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
 
-        driveDirectionGyro(40, 0,-180, new Predicate() {
+        driveDirectionGyro(40, 0, -180, new Predicate() {
             @Override
             public boolean isTrue() {
                 return robotZXPhi[0] > 20;
@@ -848,61 +980,171 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
 
     }
 
-    public void quickTelemetry(String string){
-        telemetry.addData("Debug: ",string);
+    public void quickTelemetry(String string) {
+        telemetry.addData("Debug: ", string);
         telemetry.update();
     }
-    public void checkForStall(){
-            new Thread(new Runnable()
-            {
-                ElapsedTime et = new ElapsedTime();
-                @Override
-                public void run()
-                {
-                    while(!isStopRequested()) {
-                        if(!checkingForStall[0]){
-                            return;
-                        }
-                        if(bot.isIntakeStalled() && !unStalling[0]){
-                            unStalling[0] = true;
-                            if(et.milliseconds() > 150 ) {
-                                multiThreadedHandleStall();
-                                et.reset();
-                            }
-                        }
 
-                        if(!bot.isIntakeStalled()) et.reset();
+    public void checkForStall() {
+        new Thread(new Runnable() {
+            ElapsedTime et = new ElapsedTime();
+
+            @Override
+            public void run() {
+                while (!isStopRequested()) {
+                    if (!checkingForStall) {
+                        return;
                     }
-                }
-            }).start();
-    }
-
-    public void multiThreadedHandleStall(){
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    ElapsedTime et = new ElapsedTime();
-                    double reverseIntakeTimeMS = 100;
-                    double reIntakeTimeMS = 250;
-                    while(!isStopRequested()) {
-                        if(et.milliseconds() < reverseIntakeTimeMS){
-                            bot.setIntakeReverse();
-                        }else if(et.milliseconds() > reverseIntakeTimeMS){
-                            reverseIntakeTimeMS = 250;
+                    if (bot.isIntakeStalled() && !unStalling) {
+                        if (et.milliseconds() > 150) {
+                            multiThreadedHandleStall();
                             et.reset();
-                            bot.setIntakeOn();
-                        }else if(et.milliseconds() > reIntakeTimeMS){
-                            unStalling[0] = false;
-                            return;
+                            unStalling = true;
                         }
-
-
-                        //End loop under this.
                     }
+
+                    if (!bot.isIntakeStalled()) et.reset();
                 }
-            }).start();
+            }
+        }).start();
     }
+
+    public void multiThreadedHandleStall() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ElapsedTime et = new ElapsedTime();
+                double reverseIntakeTimeMS = 100;
+                double reIntakeTimeMS = 250;
+                while (!isStopRequested()) {
+                    if (et.milliseconds() < reverseIntakeTimeMS) {
+                        bot.setIntakeReverse();
+                    } else if (et.milliseconds() > reverseIntakeTimeMS) {
+                        reverseIntakeTimeMS = 250;
+                        et.reset();
+                        bot.setIntakeOn();
+                    } else if (et.milliseconds() > reIntakeTimeMS) {
+                        unStalling = false;
+                        return;
+                    }
+
+
+                    //End loop under this.
+                }
+            }
+        }).start();
+    }
+
+
+    public enum TriangleApproachSide {LEFT, RIGHT}
+
+    public enum TriangleMode {INSIDE, OUTSIDE}
+
+    final float TAPE_WIDTH = 5;
+
+    //Handles navigation of the triangle, including line following, and adjusting position
+    //Assumes that the at the start of execution, the trailing color sensor has just gotten to the triangle
+    //If mode is OUTSIDE, assumes that the leading sensor is either on or has passed over the far side of the triangle
+    //If mode is INSIDE, assumes that the leading sensor is either on or has not yet reached the far side of the triangle
+
+    public void handleTriangle(TriangleApproachSide approachSide, TriangleMode mode) {
+
+        final ColorSensor trailingSensor, leadingSensor;
+        final ColorSensor lineFollowingSensor, controlSensor;
+        LineFollowSide lineFollowSide;
+        float tapeAngleRads;
+        float approachTriangleDirection;
+
+        if (approachSide == TriangleApproachSide.LEFT) {
+            trailingSensor = bot.colorLeft;
+            leadingSensor = bot.colorRight;
+            lineFollowSide = LineFollowSide.LEFT;
+            tapeAngleRads = mode == TriangleMode.OUTSIDE ? INNER_TAPE_ANGLE_RADS : -INNER_TAPE_ANGLE_RADS;
+            approachTriangleDirection = 90;
+        } else {
+            trailingSensor = bot.colorRight;
+            leadingSensor = bot.colorLeft;
+            lineFollowSide = LineFollowSide.RIGHT;
+            tapeAngleRads = mode == TriangleMode.OUTSIDE ? -INNER_TAPE_ANGLE_RADS : INNER_TAPE_ANGLE_RADS;
+            approachTriangleDirection = -90;
+        }
+
+        //If mode == INSIDE, need to drive approachTriangleDirection until the leading sensor is over the far tape, then
+        //the LEADING sensor will become the LINE FOLLOWING sensor and the TRAILING sensor will become the CONTROL sensor.
+        //
+        //If mode == OUTSIDE, no additional drive is needed; the LEADING sensor will become the CONTROL sensor and the
+        //TRAILING sensor will become the LINE FOLLOWING sensor.
+
+        if (mode == TriangleMode.INSIDE) {
+            robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+            driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, approachTriangleDirection, new Predicate() {
+                float[] hsv = new float[3];
+
+                @Override
+                public boolean isTrue() {
+                    Color.RGBToHSV(leadingSensor.red() * 8, leadingSensor.green() * 8, leadingSensor.blue() * 8, hsv);
+                    return hsv[1] > HSV_SAT_CUT_OFF;
+                }
+            });
+            lineFollowingSensor = leadingSensor;
+            controlSensor = trailingSensor;
+        } else {
+            lineFollowingSensor = trailingSensor;
+            controlSensor = leadingSensor;
+        }
+
+        //Determine whether we need to follow line forward (lineFollowSpeed > 0) or reverse (lineFollowSpeed < 0)
+        //Then FOLLOW LINE using previously-determined lineFollowSide, tapeAngleRads, lineFollowingSensor,
+        //lineFollowSpeed; the Predicate will use the controlSensor
+
+        float lineFollowSpeed;
+        float[] hsv = new float[3];
+        Color.RGBToHSV(controlSensor.red(), controlSensor.green(), controlSensor.blue(), hsv);
+        if (hsv[1] < HSV_SAT_CUT_OFF) {
+            lineFollowSpeed = mode == TriangleMode.OUTSIDE ? LINE_FOLLOW_SPEED : -LINE_FOLLOW_SPEED;
+            followLineProportionate(lineFollowSide, tapeAngleRads, lineFollowingSensor, lineFollowSpeed,
+                    new Predicate() {
+                        float[] hsv = new float[3];
+
+                        @Override
+                        public boolean isTrue() {
+                            Color.RGBToHSV(controlSensor.red(), controlSensor.green(), controlSensor.blue(), hsv);
+                            return hsv[1] > HSV_SAT_CUT_OFF;
+                        }
+                    });
+        } else {
+            lineFollowSpeed = mode == TriangleMode.OUTSIDE ? -LINE_FOLLOW_SPEED : LINE_FOLLOW_SPEED;
+            followLineProportionate(lineFollowSide, tapeAngleRads, lineFollowingSensor, lineFollowSpeed,
+                    new Predicate() {
+                        float[] hsv = new float[3];
+
+                        @Override
+                        public boolean isTrue() {
+                            Color.RGBToHSV(controlSensor.red(), controlSensor.green(), controlSensor.blue(), hsv);
+                            return hsv[1] < HSV_SAT_CUT_OFF;
+                        }
+                    });
+        }
+
+        //Now, ADJUST POSITION ON TRIANGLE using the appropriate method
+        //NOTE: for mode = INSIDE, the robot will end up closer to the cryptobox than for mode = OUTSIDE.
+        //Add a driveDirectionGyro statement here to do a short backup ( tape width / sin(INNER_TAPE_ANGLE_RADS) )
+
+        if (mode == TriangleMode.OUTSIDE) {
+            adjustPosInsideTriangle(ADJUST_POS_TIMEOUT);
+        } else {
+            adjustPosInsideTriangle(ADJUST_POS_TIMEOUT);
+            final float backupDistance = TAPE_WIDTH / (float) Math.sin(INNER_TAPE_ANGLE_RADS);
+            robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+            driveDirectionGyro(10, 0, new Predicate() {
+                @Override
+                public boolean isTrue() {
+                    return robotZXPhi[0] >= backupDistance;
+                }
+            });
+        }
+
+    }
+
 
 }

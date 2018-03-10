@@ -140,7 +140,7 @@ public class RedTop_RedHook extends MechBotAutonomous {
         driveDirectionGyro(10, 180, new Predicate() {
             @Override
             public boolean isTrue() {
-                return robotZXPhi[0] < CRYPTO_BOX_FOWARD_SHIFT_VALUE;
+                return robotZXPhi[0] < CRYPTO_BOX_FORWARD_SHIFT_VALUE;
             }
         });
 

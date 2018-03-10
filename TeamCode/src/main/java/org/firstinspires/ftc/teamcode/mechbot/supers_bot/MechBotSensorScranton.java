@@ -27,20 +27,23 @@ public class MechBotSensorScranton extends MechBot {
     public BNO055EnhancedImpl imu;
 
     public float initGyroHeading = 0;
-    public float getInitGyroHeadingDegrees(){
-        return this.initGyroHeading *180.0f/(float)Math.PI;
+
+    public float getInitGyroHeadingDegrees() {
+        return this.initGyroHeading * 180.0f / (float) Math.PI;
     }
-    public float getInitGyroHeadingRadians(){
+
+    public float getInitGyroHeadingRadians() {
         return this.initGyroHeading;
     }
 
     /**
      * Initialize default Hardware interfaces.
+     *
      * @param ahwMap passed HardwareMap
      */
     public void init(HardwareMap ahwMap) {
 
-        BetaLog.dd("MechBotSensorScranton: ","Init this.init HW");
+        BetaLog.dd("MechBotSensorScranton: ", "Init this.init HW");
 
         /**
          * Save passed HardwareMap to local class variable HardwareMap.
@@ -59,6 +62,7 @@ public class MechBotSensorScranton extends MechBot {
 
         colorRight = hardwareMap.get(ColorSensor.class, "colorRight");
         colorLeft = hardwareMap.get(ColorSensor.class, "colorLeft");
+        colorLeft.setI2cAddress(I2cAddr.create8bit(0x70));
 
         imu = hardwareMap.get(BNO055EnhancedImpl.class, "imu");
         BNO055Enhanced.Parameters parameters = new BNO055Enhanced.Parameters();
@@ -70,29 +74,32 @@ public class MechBotSensorScranton extends MechBot {
         parameters.axesSign = BNO055Enhanced.AxesSign.PPP;
         imu.initialize(parameters);
     }
-    public void init(HardwareMap ahwMap, float initGyroHeadingDegrees){
-        BetaLog.dd("MechBotSensorScranton: ","Init");
+
+    public void init(HardwareMap ahwMap, float initGyroHeadingDegrees) {
+        BetaLog.dd("MechBotSensorScranton: ", "Init");
         this.init(ahwMap);
-        this.initGyroHeading = initGyroHeadingDegrees * (float)Math.PI/180.0f;
+        this.initGyroHeading = initGyroHeadingDegrees * (float) Math.PI / 180.0f;
 
     }
 
-    public float getHeadingRadians(){
+    public float getHeadingRadians() {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
         float heading = angles.firstAngle + this.initGyroHeading;
         return (float) VuMarkNavigator.NormalizeAngle(heading);
     }
-    public void gyroTelemetry(Telemetry telemetry){
+
+    public void gyroTelemetry(Telemetry telemetry) {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        telemetry.addData("ZYX: ","Z: " + String.format("%.2f",angles.firstAngle) + " Y " + String.format("%.2f",angles.secondAngle) + " X " + String.format("%.2f",angles.thirdAngle));
+        telemetry.addData("ZYX: ", "Z: " + String.format("%.2f", angles.firstAngle) + " Y " + String.format("%.2f", angles.secondAngle) + " X " + String.format("%.2f", angles.thirdAngle));
     }
 
     @Override
-    public float getOdomHeadingFromGyroHeading(float gyroHeading){
-        return (float) VuMarkNavigator.NormalizeAngle(gyroHeading - (float)Math.PI);
+    public float getOdomHeadingFromGyroHeading(float gyroHeading) {
+        return (float) VuMarkNavigator.NormalizeAngle(gyroHeading - (float) Math.PI);
     }
+
     @Override
-    public float getGyroHeadingFromOdomHeading(float odomHeading){
-        return (float)VuMarkNavigator.NormalizeAngle(odomHeading + (float)Math.PI);
+    public float getGyroHeadingFromOdomHeading(float odomHeading) {
+        return (float) VuMarkNavigator.NormalizeAngle(odomHeading + (float) Math.PI);
     }
 }

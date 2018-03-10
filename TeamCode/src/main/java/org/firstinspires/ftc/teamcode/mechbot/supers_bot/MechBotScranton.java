@@ -19,22 +19,24 @@ public class MechBotScranton extends MechBotSensorScranton {
     public OpenRevDcMotorImplEx leftIntake, rightIntake;
     public DcMotor relicArm;
     Servo leftFlipper, rightFlipper, backStop, pincher, pincher2;
-    Servo pivot, arm,relicClaw;
+    public Servo pivot, arm, relicClaw;
     CRServo relicLift;
     public final double MAX_INTAKE_STALL_CURRENT_THRESHOLD = 6000;
+
     public void init(HardwareMap ahwMap) {
         super.init(ahwMap);
         initHw();
     }
-    public void init(HardwareMap ahwMap, float initGyroHeadingDegrees){
-        BetaLog.dd("MechBotIntake: ","Init");
+
+    public void init(HardwareMap ahwMap, float initGyroHeadingDegrees) {
+        BetaLog.dd("MechBotIntake: ", "Init");
         super.init(ahwMap, initGyroHeadingDegrees);
         initHw();
 
     }
 
-    public void initHw(){
-        BetaLog.dd("MechBotIntake: ","Init HW");
+    public void initHw() {
+        BetaLog.dd("MechBotIntake: ", "Init HW");
 
         leftIntake = new OpenRevDcMotorImplEx((DcMotorImplEx) hardwareMap.dcMotor.get("leftIntake"));
         rightIntake = new OpenRevDcMotorImplEx((DcMotorImplEx) hardwareMap.dcMotor.get("rightIntake"));
@@ -65,75 +67,119 @@ public class MechBotScranton extends MechBotSensorScranton {
 
     float flipUpPos = .55f;
     float flipDownPos = .05f;
-    public void setFlipPlateDownwards(){
+
+    public void setFlipPlateDownwards() {
         leftFlipper.setPosition(flipDownPos);
-        rightFlipper.setPosition(1-flipDownPos);
+        rightFlipper.setPosition(1 - flipDownPos);
         backStop.setPosition(0);
     }
 
-    public void setFlipPlateUpwards(){
+    public void setFlipPlateUpwards() {
         leftFlipper.setPosition(flipUpPos);
-        rightFlipper.setPosition(1-flipUpPos);
+        rightFlipper.setPosition(1 - flipUpPos);
         backStop.setPosition(.45);
 
     }
-    public void setGlyphPincherClosed(){pincher.setPosition(.01);pincher2.setPosition(.99);} // in pos of each servo
-    public void setGlyphPincherMidPos(){pincher.setPosition(.15);pincher2.setPosition(.85);} // out pos of each servo
-    public void setGlyphPincherStartPos(){pincher.setPosition(.45);pincher2.setPosition(.85);} // crypto position
 
-    public void setArmUp(){
+    public void setGlyphPincherClosed() {
+        pincher.setPosition(.01);
+        pincher2.setPosition(.99);
+    } // in pos of each servo
+
+    public void setGlyphPincherMidPos() {
+        pincher.setPosition(.15);
+        pincher2.setPosition(.85);
+    } // out pos of each servo
+
+    public void setGlyphPincherStartPos() {
+        pincher.setPosition(.45);
+        pincher2.setPosition(.85);
+    } // crypto position
+
+    public void setArmUp() {
         arm.setPosition(0.0);
     }
-    public void setArmDown(){
+
+    public void setArmDown() {
         arm.setPosition(.60);
     }
 
-    public void setPivotStart(){
+    public void setPivotStart() {
         pivot.setPosition(0.0);
     }
-    public void setPivotEnd(){
-        pivot.setPosition(0.65);
+
+    public void setPivotEnd() {
+        pivot.setPosition(0.61);
     }
 
-    public void knockPivotLeft(){
+    public void knockPivotLeft() {
         pivot.setPosition(0.50);
     }
-    public void knockPivotRight(){
+
+    public void knockPivotRight() {
         pivot.setPosition(0.80);
     }
 
-    public void setRelicClawClosed(){relicClaw.setPosition(.9);}
-    public void setRelicClawMidPos(){relicClaw.setPosition(.5);}
-    public void setRelicClawOpen(){relicClaw.setPosition(.5);}
+    public void setRelicClawClosed() {
+        relicClaw.setPosition(.9);
+    }
 
-    public void setRelicArmOut(){relicArm.setPower(1);}
-    public void setRelicArmIn(){relicArm.setPower(-1);}
-    public void setRelicArmStop(){relicArm.setPower(0);}
+    public void setRelicClawMidPos() {
+        relicClaw.setPosition(.7);
+    }
 
-    public void setRelicLiftUp(){relicLift.setPower(-1);}
-    public void setRelicLiftDown(){relicLift.setPower(1);}
-    public void setRelicLiftStop(){relicLift.setPower(0);}
+    public void setRelicClawOpen() {
+        relicClaw.setPosition(.7);
+    }
 
-    public void setIntakeOn(){
+    public void setRelicArmOut() {
+        relicArm.setPower(1);
+    }
+
+    public void setRelicArmIn() {
+        relicArm.setPower(-1);
+    }
+
+    public void setRelicArmStop() {
+        relicArm.setPower(0);
+    }
+
+    public void setRelicLiftUp() {
+        relicLift.setPower(-1);
+    }
+
+    public void setRelicLiftDown() {
+        relicLift.setPower(1);
+    }
+
+    public void setRelicLiftStop() {
+        relicLift.setPower(0);
+    }
+
+    public void setIntakeOn() {
         leftIntake.setPower(1);
         rightIntake.setPower(1);
     }
-    public void setIntakeReverse(){
+
+    public void setIntakeReverse() {
         leftIntake.setPower(-1);
         rightIntake.setPower(-1);
     }
-    public void setIntakeOff(){
+
+    public void setIntakeOff() {
         leftIntake.setPower(0);
         rightIntake.setPower(0);
     }
 
-    public double getLeftIntakeCurrentDraw(){ //6000 cut off.
+    public double getLeftIntakeCurrentDraw() { //6000 cut off.
         return leftIntake.getCurrentDraw();
     }
-    public double getRightIntakeCurrentDraw(){
+
+    public double getRightIntakeCurrentDraw() {
         return rightIntake.getCurrentDraw();
     }
-    public boolean isIntakeStalled(){
+
+    public boolean isIntakeStalled() {
         return (getLeftIntakeCurrentDraw() + getRightIntakeCurrentDraw() / 2.0) > MAX_INTAKE_STALL_CURRENT_THRESHOLD;
     }
 }
