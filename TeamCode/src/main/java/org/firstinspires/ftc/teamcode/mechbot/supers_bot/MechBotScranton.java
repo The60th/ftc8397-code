@@ -72,6 +72,8 @@ public class MechBotScranton extends MechBotSensorScranton {
         leftFlipper.setPosition(flipDownPos);
         rightFlipper.setPosition(1 - flipDownPos);
         backStop.setPosition(0);
+        pincher.setPosition(.15);
+        pincher2.setPosition(.85);
     }
 
     public void setFlipPlateUpwards() {
@@ -85,25 +87,35 @@ public class MechBotScranton extends MechBotSensorScranton {
         pincher.setPosition(.01);
         pincher2.setPosition(.99);
     } // in pos of each servo
-
     public void setGlyphPincherMidPos() {
         pincher.setPosition(.15);
         pincher2.setPosition(.85);
     } // out pos of each servo
 
-    public void setGlyphPincherStartPos() {
+    public void setGlyphPincherStartPos() { // this is full flat
+        pincher.setPosition(.45);
+        pincher2.setPosition(.60);
+    } // crypto position
+    public void setGlyphPincher() { // this is full flat
         pincher.setPosition(.45);
         pincher2.setPosition(.85);
     } // crypto position
 
-    public void setArmUp() {
-        arm.setPosition(0.0);
+    public void setArmCube() {
+        arm.setPosition(0.31);
     }
 
-    public void setArmDown() {
+    public void setArmJewel() {
         arm.setPosition(.60);
     }
 
+    public void setArmDrive(){
+        arm.setPosition(.20);
+    }
+
+    public void setPivotDrive(){
+        pivot.setPosition(.69);
+    }
     public void setPivotStart() {
         pivot.setPosition(0.0);
     }
@@ -117,7 +129,7 @@ public class MechBotScranton extends MechBotSensorScranton {
     }
 
     public void knockPivotRight() {
-        pivot.setPosition(0.80);
+        pivot.setPosition(0.70);
     }
 
     public void setRelicClawClosed() {
@@ -125,11 +137,11 @@ public class MechBotScranton extends MechBotSensorScranton {
     }
 
     public void setRelicClawMidPos() {
-        relicClaw.setPosition(.7);
+        relicClaw.setPosition(.3);
     }
 
     public void setRelicClawOpen() {
-        relicClaw.setPosition(.7);
+        relicClaw.setPosition(.3);
     }
 
     public void setRelicArmOut() {
