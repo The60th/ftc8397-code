@@ -80,46 +80,44 @@ public class BlueTopScranton extends MechBotAutonomousScranton {
             }
         });
 
-        //while (opModeIsActive()){
-        //This stops the robot with both color sensors on the line.
-        //}
+        handleTriangle(TriangleApproachSide.LEFT,TriangleMode.OUTSIDE);
+//
+//        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "Checking pre line follow.");
+//
+//        Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
+//        //Follow the line depending on how many times it has already been seen.
+//        if (hsvValues[1] < HSV_SAT_CUT_OFF) {
+//            if (BLUE_BOTTOM_START_LOG)
+//                BetaLog.dd(BLUE_BOTTOM_START_TAG, "Line following forward left.");
+//            followLineProportionate(LineFollowSide.LEFT, bot.colorLeft, LINE_FOLLOW_SPEED, new Predicate() {
+//                @Override
+//                public boolean isTrue() {
+//                    Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
+//                    if (BLUE_BOTTOM_START_LOG)
+//                        BetaLog.dd(BLUE_BOTTOM_START_TAG, "Follow line forward sats: S: %.2f", hsvValues[1]);
+//                    if (hsvValues[1] > HSV_SAT_CUT_OFF) return true;
+//                    return false;
+//                }
+//            });
+//        } else {
+//            if (BLUE_BOTTOM_START_LOG)
+//                BetaLog.dd(BLUE_BOTTOM_START_TAG, "Line following backwards left.");
+//            followLineProportionate(LineFollowSide.LEFT, bot.colorLeft, -LINE_FOLLOW_SPEED, new Predicate() {
+//                @Override
+//                public boolean isTrue() {
+//                    Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
+//                    if (BLUE_BOTTOM_START_LOG)
+//                        BetaLog.dd(BLUE_BOTTOM_START_TAG, "Follow line backwards sats: S: %.2f", hsvValues[1]);
+//                    return (hsvValues[1] < HSV_SAT_CUT_OFF);
+//                }
+//            });
+//        }
+//
+//        adjustPosOnTriangle(ADJUST_POS_TIMEOUT);
+//
+//        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "adjust on triangle");
 
-        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "Checking pre line follow.");
-
-        Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
-        //Follow the line depending on how many times it has already been seen.
-        if (hsvValues[1] < HSV_SAT_CUT_OFF) {
-            if (BLUE_BOTTOM_START_LOG)
-                BetaLog.dd(BLUE_BOTTOM_START_TAG, "Line following forward left.");
-            followLineProportionate(LineFollowSide.LEFT, bot.colorLeft, LINE_FOLLOW_SPEED, new Predicate() {
-                @Override
-                public boolean isTrue() {
-                    Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
-                    if (BLUE_BOTTOM_START_LOG)
-                        BetaLog.dd(BLUE_BOTTOM_START_TAG, "Follow line forward sats: S: %.2f", hsvValues[1]);
-                    if (hsvValues[1] > HSV_SAT_CUT_OFF) return true;
-                    return false;
-                }
-            });
-        } else {
-            if (BLUE_BOTTOM_START_LOG)
-                BetaLog.dd(BLUE_BOTTOM_START_TAG, "Line following backwards left.");
-            followLineProportionate(LineFollowSide.LEFT, bot.colorLeft, -LINE_FOLLOW_SPEED, new Predicate() {
-                @Override
-                public boolean isTrue() {
-                    Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
-                    if (BLUE_BOTTOM_START_LOG)
-                        BetaLog.dd(BLUE_BOTTOM_START_TAG, "Follow line backwards sats: S: %.2f", hsvValues[1]);
-                    return (hsvValues[1] < HSV_SAT_CUT_OFF);
-                }
-            });
-        }
-
-        adjustPosOnTriangle(ADJUST_POS_TIMEOUT);
-
-        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "adjust on triangle");
-
-        scoreGlyph(false);
+        scoreGlyph();
 
     }
 }

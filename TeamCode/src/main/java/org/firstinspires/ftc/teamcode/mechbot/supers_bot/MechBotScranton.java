@@ -66,7 +66,7 @@ public class MechBotScranton extends MechBotSensorScranton {
     }
 
     float flipUpPos = .55f;
-    float flipDownPos = .05f;
+    float flipDownPos = .0f;
 
     public void setFlipPlateDownwards() {
         leftFlipper.setPosition(flipDownPos);
@@ -84,8 +84,8 @@ public class MechBotScranton extends MechBotSensorScranton {
     }
 
     public void setGlyphPincherClosed() {
-        pincher.setPosition(.01);
-        pincher2.setPosition(.99);
+        pincher.setPosition(.0);
+        pincher2.setPosition(1);
     } // in pos of each servo
     public void setGlyphPincherMidPos() {
         pincher.setPosition(.15);

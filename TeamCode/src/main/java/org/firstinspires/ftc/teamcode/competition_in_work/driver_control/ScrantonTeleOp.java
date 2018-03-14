@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode.debug_programs;
+package org.firstinspires.ftc.teamcode.competition_in_work.driver_control;
 
 import android.graphics.Color;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -11,18 +10,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
-import org.firstinspires.ftc.teamcode.competition_in_work.driver_control.AutoBalance;
+import org.firstinspires.ftc.teamcode.debug_programs.TestNewBot;
 import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotScranton;
 import org.firstinspires.ftc.teamcode.mechbot.utill.MechBotDriveControls;
 
-
 /**
- * Created by FTC Team 8397 on 2/20/2018.
+ * Created by FTC Team 8397 on 3/14/2018.
  */
-@TeleOp(name = "ESR Bot", group = "Tele opmode")
-@Disabled
+@TeleOp(name = "TeleOp ", group = "TeleOp")
+public class ScrantonTeleOp extends LoggingLinearOpMode {
 
-public class TestNewBot extends LoggingLinearOpMode {
     MechBotScranton bot = new MechBotScranton();
     private MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1, gamepad2, bot);
     private float[] driveData = new float[6];

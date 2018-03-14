@@ -63,19 +63,17 @@ public class RedTopScranton extends MechBotAutonomousScranton {
 
         turnToHeadingGyro(0, GLOBAL_STANDERD_TOLERANCE, GLOBAL_STANDERD_LATENCY, RotationDirection.CLOCK); //Turn to face the wall.
 
+
         robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
-        driveDirectionGyro(10, 180, new Predicate() {
+        driveDirectionGyro(20, 0, new Predicate() {
             @Override
             public boolean isTrue() {
-                return robotZXPhi[0] < -5f;
+                return robotZXPhi[0] > 10;
             }
         });
 
 
-        //Drive towards the box till the colored tape is detected.
-        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "driveDirectionGyro 2");
-
-        driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, -90, new MechBotAutonomousScranton.Predicate() {
+        driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, -90, new Predicate() {
             @Override
             public boolean isTrue() { // I just changed the speed of this to see if we can get back over the balancing stone it used to be 20. Also if this works change all the other auto programs.
                 Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
@@ -89,60 +87,93 @@ public class RedTopScranton extends MechBotAutonomousScranton {
             }
         });
 
-
-        driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, -90, new MechBotAutonomousScranton.Predicate() {
-            @Override
-            public boolean isTrue() { // I just changed the speed of this to see if we can get back over the balancing stone it used to be 20. Also if this works change all the other auto programs.
-                Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
-                if (BLUE_BOTTOM_START_LOG)
-                    BetaLog.dd(RED_BOTTOM_START_TAG, "Driving to line sats: S: %.2f", hsvValues[1]);
-                if (hsvValues[1] < HSV_SAT_CUT_OFF) {
-                    return true;
-                }
-
-                return false;
-            }
-        });
-
-        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "Checking pre line follow.");
-
-        Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
-        //Follow the line depending on how many times it has already been seen.
-        if (hsvValues[1] < HSV_SAT_CUT_OFF) {
-            quickTelemetry("FOLLOW LINE REVERSE");
-            followLineProportionate(LineFollowSide.LEFT, -INNER_TAPE_ANGLE_RADS, bot.colorRight, -LINE_FOLLOW_SPEED, new Predicate() {
-                @Override
-                public boolean isTrue() {
-                    Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
-                    return hsvValues[1] > HSV_SAT_CUT_OFF;
-                }
-            });
+        //while (opModeIsActive()){
+        //This stops the robot with both color sensors on the line.
+        //}
 
 
-        } else {
-            quickTelemetry("FOLLOW LINE FORWARD");
-            followLineProportionate(LineFollowSide.LEFT, -INNER_TAPE_ANGLE_RADS, bot.colorRight, LINE_FOLLOW_SPEED, new Predicate() {
-                @Override
-                public boolean isTrue() {
-                    Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
-                    return hsvValues[1] < HSV_SAT_CUT_OFF;
-                }
-            });
-        }
-        adjustPosInsideTriangle(ADJUST_POS_TIMEOUT);
+        handleTriangle(TriangleApproachSide.RIGHT, TriangleMode.OUTSIDE);
 
-        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+//        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+//        driveDirectionGyro(10, 180, new Predicate() {
+//            @Override
+//            public boolean isTrue() {
+//                return robotZXPhi[0] < -5f;
+//            }
+//        });
+//
+//
+//        //Drive towards the box till the colored tape is detected.
+//        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "driveDirectionGyro 2");
+//
+//        driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, -90, new MechBotAutonomousScranton.Predicate() {
+//            @Override
+//            public boolean isTrue() { // I just changed the speed of this to see if we can get back over the balancing stone it used to be 20. Also if this works change all the other auto programs.
+//                Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
+//                if (BLUE_BOTTOM_START_LOG)
+//                    BetaLog.dd(RED_BOTTOM_START_TAG, "Driving to line sats: S: %.2f", hsvValues[1]);
+//                if (hsvValues[1] > HSV_SAT_CUT_OFF) {
+//                    return true;
+//                }
+//
+//                return false;
+//            }
+//        });
+//
+//
+//        driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, -90, new MechBotAutonomousScranton.Predicate() {
+//            @Override
+//            public boolean isTrue() { // I just changed the speed of this to see if we can get back over the balancing stone it used to be 20. Also if this works change all the other auto programs.
+//                Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
+//                if (BLUE_BOTTOM_START_LOG)
+//                    BetaLog.dd(RED_BOTTOM_START_TAG, "Driving to line sats: S: %.2f", hsvValues[1]);
+//                if (hsvValues[1] < HSV_SAT_CUT_OFF) {
+//                    return true;
+//                }
+//
+//                return false;
+//            }
+//        });
+//
+//        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "Checking pre line follow.");
+//
+//        Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
+//        //Follow the line depending on how many times it has already been seen.
+//        if (hsvValues[1] < HSV_SAT_CUT_OFF) {
+//            quickTelemetry("FOLLOW LINE REVERSE");
+//            followLineProportionate(LineFollowSide.LEFT, -INNER_TAPE_ANGLE_RADS, bot.colorRight, -LINE_FOLLOW_SPEED, new Predicate() {
+//                @Override
+//                public boolean isTrue() {
+//                    Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
+//                    return hsvValues[1] > HSV_SAT_CUT_OFF;
+//                }
+//            });
+//
+//
+//        } else {
+//            quickTelemetry("FOLLOW LINE FORWARD");
+//            followLineProportionate(LineFollowSide.LEFT, -INNER_TAPE_ANGLE_RADS, bot.colorRight, LINE_FOLLOW_SPEED, new Predicate() {
+//                @Override
+//                public boolean isTrue() {
+//                    Color.RGBToHSV(bot.colorLeft.red() * 8, bot.colorLeft.green() * 8, bot.colorLeft.blue() * 8, hsvValues);
+//                    return hsvValues[1] < HSV_SAT_CUT_OFF;
+//                }
+//            });
+//        }
+//        adjustPosInsideTriangle(ADJUST_POS_TIMEOUT);
+//
+//        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+//
+//        driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, 0, new Predicate() {
+//            @Override
+//            public boolean isTrue() { // I just changed the speed of this to see if we can get back over the balancing stone it used to be 20. Also if this works change all the other auto programs.
+//                return robotZXPhi[0] > 8;
+//            }
+//        });
+//
+//        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "adjust on triangle");
 
-        driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, 0, new Predicate() {
-            @Override
-            public boolean isTrue() { // I just changed the speed of this to see if we can get back over the balancing stone it used to be 20. Also if this works change all the other auto programs.
-                return robotZXPhi[0] > 8;
-            }
-        });
-
-        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "adjust on triangle");
-
-        scoreGlyph(true);
+        scoreGlyph();
 
     }
 }

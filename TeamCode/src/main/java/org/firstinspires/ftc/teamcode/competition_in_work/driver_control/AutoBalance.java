@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.competition_in_work.driver_control;
 
 import android.graphics.Color;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.mechbot.presupers_bot.MechBotSensor;
  * Created by FTC Team 8397 on 2/22/2018.
  */
 @TeleOp(name = "AutoBalance", group = "Rev")
+@Disabled
 public class AutoBalance extends LinearOpMode {
     public MechBotScranton bot = new MechBotScranton();
     public AutoBalancer autoBalancer = null;
@@ -48,7 +50,7 @@ public class AutoBalance extends LinearOpMode {
             }else{
                 if(gamepad1.b){
                     balancing = true;
-                    autoBalancer = new AutoBalancer(-30,-120,0,120,45);
+                    autoBalancer = new AutoBalancer(-30,-120,0,60,0);
                     autoBalancer.start();
                     continue;
                 }

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Color;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -19,6 +20,7 @@ import java.text.DecimalFormat;
  * Created by FTC Team 8397 on 2/28/2018.
  */
 @TeleOp(name = "Sensor debuging", group = "Rev")
+@Disabled
 public class GyroTest extends LinearOpMode {
     MechBotSensorScranton bot = new MechBotSensorScranton();
     private static DecimalFormat df2 = new DecimalFormat(".##");

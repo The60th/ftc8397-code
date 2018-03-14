@@ -8,7 +8,7 @@ package org.firstinspires.ftc.teamcode;
         import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
         import com.qualcomm.robotcore.util.ElapsedTime;
 @TeleOp(name="Color Calibration", group="MRI")
-//@Disabled
+@Disabled
 public class MRI_Color_Sensor_Calibration extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();

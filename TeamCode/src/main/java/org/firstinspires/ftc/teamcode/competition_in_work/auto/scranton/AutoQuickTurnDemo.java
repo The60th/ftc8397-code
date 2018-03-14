@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.competition_in_work.auto.scranton;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotAutonomousScranton;
 
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotAutonomousScrant
  * Created by FTC Team 8397 on 3/8/2018.
  */
 @Autonomous(name = "Crazy stuff", group = "Auto")
+@Disabled
 public class AutoQuickTurnDemo extends MechBotAutonomousScranton {
 
     @Override

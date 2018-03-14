@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.competition_in_work.driver_control;
 
 import android.graphics.Color;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.third_party_libs.UTILToggle;
  * Created by FTC Team 8397 on 12/5/2017.
  */
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Albany-TeleOp-Slow", group="Comp")
+@Disabled
 public class TeleOpAlbany extends LoggingLinearOpMode {
 
     private MechBotRedHook bot = new MechBotRedHook();

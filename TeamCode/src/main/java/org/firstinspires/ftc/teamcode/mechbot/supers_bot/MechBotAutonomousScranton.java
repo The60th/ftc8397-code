@@ -648,26 +648,25 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
     }
 
 
-    public void scoreGlyph(boolean insideTriangle ) {
-        final float sideShift = insideTriangle ? CRYPTO_BOX_SIDE_SHIFT_VALUE+6 : CRYPTO_BOX_SIDE_SHIFT_VALUE;
+    public void scoreGlyph() {
         robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
         bot.updateOdometry();
         switch (this.cryptoKey) {
             case LEFT:
                 if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro left");
-                driveDirectionGyro(10, -90, new Predicate() {
+                driveDirectionGyro(20, -90, new Predicate() {
                     @Override
                     public boolean isTrue() {
-                        return robotZXPhi[1] < -sideShift + CRYPTO_BOX_CENTER_SHIFT_VALUE ;
+                        return robotZXPhi[1] < -CRYPTO_BOX_SIDE_SHIFT_VALUE + CRYPTO_BOX_CENTER_SHIFT_VALUE ;
                     }
                 });
                 break;
             case RIGHT:
                 if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro right");
-                driveDirectionGyro(10, 90, new Predicate() {
+                driveDirectionGyro(20, 90, new Predicate() {
                     @Override
                     public boolean isTrue() {
-                        return robotZXPhi[1] > sideShift + CRYPTO_BOX_CENTER_SHIFT_VALUE;
+                        return robotZXPhi[1] > CRYPTO_BOX_SIDE_SHIFT_VALUE + CRYPTO_BOX_CENTER_SHIFT_VALUE;
                     }
                 });
                 break;
@@ -675,14 +674,14 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
             case UNKNOWN:
                 if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro right");
                 if (CRYPTO_BOX_CENTER_SHIFT_VALUE > 0) {
-                    driveDirectionGyro(10, 90, new Predicate() {
+                    driveDirectionGyro(20, 90, new Predicate() {
                         @Override
                         public boolean isTrue() {
                             return robotZXPhi[1] > CRYPTO_BOX_CENTER_SHIFT_VALUE;
                         }
                     });
                 } else {
-                    driveDirectionGyro(10, -90, new Predicate() {
+                    driveDirectionGyro(20, -90, new Predicate() {
                         @Override
                         public boolean isTrue() {
                             return robotZXPhi[1] < CRYPTO_BOX_CENTER_SHIFT_VALUE;
@@ -826,12 +825,12 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
 
     public boolean knockJewel(Side side) {
         bot.setPivotStart();
-        bot.setArmUp();
+        bot.setArmCube();
         sleep(250);
 
         bot.setPivotEnd();
         sleep(500);
-        bot.setArmDown();
+        bot.setArmJewel();
         sleep(500);
 
         if (goForRankingPoints) {
@@ -848,7 +847,7 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
                 sleep(400);
             }
 
-            bot.setArmUp();
+            bot.setArmCube();
             sleep(250);
             bot.setPivotStart();
             return true;
@@ -1131,12 +1130,12 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         //Add a driveDirectionGyro statement here to do a short backup ( tape width / sin(INNER_TAPE_ANGLE_RADS) )
 
         if (mode == TriangleMode.OUTSIDE) {
-            adjustPosInsideTriangle(ADJUST_POS_TIMEOUT);
+            adjustPosOnTriangle(ADJUST_POS_TIMEOUT);
         } else {
             adjustPosInsideTriangle(ADJUST_POS_TIMEOUT);
             final float backupDistance = TAPE_WIDTH / (float) Math.sin(INNER_TAPE_ANGLE_RADS);
             robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
-            driveDirectionGyro(10, 0, new Predicate() {
+            driveDirectionGyro(25, 0, new Predicate() {
                 @Override
                 public boolean isTrue() {
                     return robotZXPhi[0] >= backupDistance;
