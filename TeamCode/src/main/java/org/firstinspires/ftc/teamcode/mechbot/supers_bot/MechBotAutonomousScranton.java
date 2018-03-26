@@ -48,7 +48,7 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
     protected final float INNER_TAPE_ANGLE_RADS = INNER_TAPE_ANGLE * ((float) Math.PI / 180.0f);
     public final float LINE_FOLLOW_SPEED = 15.0f; //10 centimeters per second.
     private final float LINE_FOLLOW_ANGLE_FACTOR = 30.0f * ((float) Math.PI / 180.0f); //30.0 Degrees converted to radians.
-    private final float HEADING_CORECTION_FACTOR = 2.0f;
+    protected final float HEADING_CORECTION_FACTOR = 2.0f;
     public final float DRIVE_TOWARDS_TRIANGLE_SPEED = 20.0f;
 
     public enum JewelSide {BLUE_LEFT, RED_LEFT, UNKNOWN}
@@ -124,6 +124,8 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
     public enum RotationDirection {COUNTER_CLOCK, CLOCK}
 
     public ElapsedTime runTime;
+
+
 
     //NEW followLineProportionate: this uses MechBot.getOdomHeadingFromGyroHeading(). It will work properly for different hardware
     //configurations, as long as we override getOdomHeadingFromGyroHeading in MechBotSensor subclasses, as necessary.
@@ -202,6 +204,8 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         float offset;
         while (opModeIsActive()) {
             heading = bot.getHeadingRadians();
+            float odomHeading = bot.getOdomHeadingFromGyroHeading(heading);
+            this.robotZXPhi = bot.updateOdometry(robotZXPhi, odomHeading);
             offset = (float) VuMarkNavigator.NormalizeAngle(targetHeading - heading);
             if (Math.abs(offset) <= tolerance) break;
 
@@ -231,6 +235,9 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         float offset;
         while (opModeIsActive()) {
             heading = bot.getHeadingRadians();
+            float odomHeading = bot.getOdomHeadingFromGyroHeading(heading);
+            this.robotZXPhi = bot.updateOdometry(robotZXPhi, odomHeading);
+
             offset = (float) VuMarkNavigator.NormalizeAngle(targetHeading - heading);
             if (Math.abs(offset) <= tolerance) break;
 
@@ -265,6 +272,8 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         float offset;
         while (opModeIsActive()) {
             heading = bot.getHeadingRadians();
+            float odomHeading = bot.getOdomHeadingFromGyroHeading(heading);
+            this.robotZXPhi = bot.updateOdometry(robotZXPhi, odomHeading);
             offset = (float) VuMarkNavigator.NormalizeAngle(targetHeading - heading);
             if (Math.abs(offset) <= tolerance) break;
 
@@ -273,6 +282,36 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
             } else {
                 if (offset > 0) offset -= 2.0f * (float) Math.PI;
             }
+
+            float absAdjustedOffset = Math.abs(offset) - tolerance;
+            float absVa = vaMin + C * absAdjustedOffset;
+
+            absVa = Math.min(absVa, vaMax);
+            float va = absVa * Math.signum(offset);
+            if (TURN_TO_HEADING_LOG)
+                BetaLog.dd(TURN_TO_HEADING_TAG, "Turning va = %.2f hd = %.0f, off = %.0f absAdjOff = %.0f", va, heading, offset, absAdjustedOffset);
+            bot.setDriveSpeed(0, 0, va);
+        }
+        bot.setDrivePower(0, 0, 0);
+    }
+
+    //Turns robot to a specific integratedZ heading using Gyro, targetHeading in degrees
+    protected void turnToHeadingGyroQuick(float targetHeading, float tolerance, float latency) {
+        //Tolerance in degrees latency seconds.
+        tolerance = tolerance * (float) Math.PI / 180f;
+        targetHeading = targetHeading * (float) Math.PI / 180f;
+
+        final float vaMin = 1.5f * tolerance / latency;
+        final float C = 0.90f / latency;
+        final float vaMax = 0.6f * (float) Math.PI;
+        float heading;
+        float offset;
+        while (opModeIsActive()) {
+            heading = bot.getHeadingRadians();
+            float odomHeading = bot.getOdomHeadingFromGyroHeading(heading);
+            this.robotZXPhi = bot.updateOdometry(robotZXPhi, odomHeading);
+            offset = (float) VuMarkNavigator.NormalizeAngle(targetHeading - heading);
+            if (Math.abs(offset) <= tolerance) break;
 
             float absAdjustedOffset = Math.abs(offset) - tolerance;
             float absVa = vaMin + C * absAdjustedOffset;
@@ -394,7 +433,7 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
     public void driveDirectionGyro(float speedCMs, float directionAngleDegrees, Predicate finish) {
         if (DRIVE_DIRECTION_GYRO_LOG)
             BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "Entering driveDirectionGyro");
-        bot.updateOdometry();
+        //bot.updateOdometry(); removed to fix odemtry resteing
         float directionAngleRadians = directionAngleDegrees * (float) Math.PI / 180.0f;
         while (opModeIsActive()) {
             float gyroHeading = bot.getHeadingRadians();
@@ -430,7 +469,7 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
 
         if (DRIVE_DIRECTION_GYRO_LOG)
             BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "Entering driveDirectionGyro");
-        bot.updateOdometry();
+       // bot.updateOdometry();
         float directionAngleRadians = directionAngleDegrees * (float) Math.PI / 180.0f;
         float gyroHeadingTargetRadians = gyroHeadingTargetDegrees * (float) Math.PI / 180.0f;
 
@@ -649,8 +688,9 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
 
 
     public void scoreGlyph() {
-        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
-        bot.updateOdometry();
+        setOdometry(0,0);
+//        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+//        bot.updateOdometry();
         switch (this.cryptoKey) {
             case LEFT:
                 if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro left");
@@ -695,8 +735,10 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         sleep(2000);
 
         if (PREPARE_SCORE_LOG) BetaLog.dd(PREPARE_SCORE_TAG, "driveDirectionGyro 3");
-        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
-        bot.updateOdometry();
+
+        setOdometry(0, 0);
+//        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+//        bot.updateOdometry();
 
         driveDirectionGyro(20, 180, new Predicate() {
             @Override
@@ -711,9 +753,10 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         bot.rightIntake.setPower(-1);
         bot.leftIntake.setPower(-1);
         sleep(1000);
+        setOdometry(0, 0);
 
-        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
-        bot.updateOdometry();
+//        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+//        bot.updateOdometry();
 
         driveDirectionGyro(30, 0, new Predicate() {
             @Override
@@ -721,8 +764,9 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
                 return robotZXPhi[0] > 20;
             }
         });
+        setOdometry(0, 0);
 
-        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+//        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
 
         driveDirectionGyro(30, 180, new Predicate() {
             @Override
@@ -734,8 +778,10 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
 
         bot.rightIntake.setPower(0);
         bot.leftIntake.setPower(0);
+        setOdometry(0, 0);
 
-        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+//        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+
         driveDirectionGyro(30, 0, new Predicate() {
             @Override
             public boolean isTrue() {
@@ -1075,7 +1121,7 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         //TRAILING sensor will become the LINE FOLLOWING sensor.
 
         if (mode == TriangleMode.INSIDE) {
-            robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+            //robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
             driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, approachTriangleDirection, new Predicate() {
                 float[] hsv = new float[3];
 
@@ -1134,7 +1180,8 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         } else {
             adjustPosInsideTriangle(ADJUST_POS_TIMEOUT);
             final float backupDistance = TAPE_WIDTH / (float) Math.sin(INNER_TAPE_ANGLE_RADS);
-            robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+            setOdometry(0, 0);
+            //robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
             driveDirectionGyro(25, 0, new Predicate() {
                 @Override
                 public boolean isTrue() {
@@ -1143,6 +1190,16 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
             });
         }
 
+    }
+
+    protected void setOdometry(float z, float x, float odomHeading){
+        robotZXPhi = new float[] {z, x, odomHeading};
+        bot.updateOdometry();
+    }
+
+    protected void setOdometry(float z, float x){
+        robotZXPhi = new float[] {z, x, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
     }
 
 

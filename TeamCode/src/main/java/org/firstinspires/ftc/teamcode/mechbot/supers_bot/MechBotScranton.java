@@ -18,7 +18,7 @@ import org.openftc.hardware.rev.OpenRevDcMotorImplEx;
 public class MechBotScranton extends MechBotSensorScranton {
     public OpenRevDcMotorImplEx leftIntake, rightIntake;
     public DcMotor relicArm;
-    Servo leftFlipper, rightFlipper, backStop, pincher, pincher2;
+    Servo leftFlipper, rightFlipper, backStop, pincher, pincher2, pincher3, pincher4;
     public Servo pivot, arm, relicClaw;
     CRServo relicLift;
     public final double MAX_INTAKE_STALL_CURRENT_THRESHOLD = 6000;
@@ -54,8 +54,10 @@ public class MechBotScranton extends MechBotSensorScranton {
         leftFlipper = hardwareMap.servo.get("leftFlipper");
         rightFlipper = hardwareMap.servo.get("rightFlipper");
         backStop = hardwareMap.servo.get("backStop");
-        pincher = hardwareMap.servo.get("pincher");
-        pincher2 = hardwareMap.servo.get("pincher2");
+        pincher = hardwareMap.servo.get("pincher"); // back right
+        pincher2 = hardwareMap.servo.get("pincher2"); // back left
+        pincher3 = hardwareMap.servo.get("pincher3"); // front left
+        pincher4 = hardwareMap.servo.get("pincher4"); // front right
 
         pivot = hardwareMap.servo.get("pivot");
         arm = hardwareMap.servo.get("arm");
@@ -65,15 +67,21 @@ public class MechBotScranton extends MechBotSensorScranton {
 
     }
 
-    float flipUpPos = .55f;
-    float flipDownPos = .0f;
+    float flipDownPos = .65f; // down
+    float flipUpPos = .1f; // up
+    float pincherFullClosed = 0f;
+    float pincherIntakePos = .1f;
+    float pincherReleasePos = .1f;
+    float pincherFullFlat = .4f;
 
     public void setFlipPlateDownwards() {
         leftFlipper.setPosition(flipDownPos);
         rightFlipper.setPosition(1 - flipDownPos);
         backStop.setPosition(0);
-        pincher.setPosition(.15);
-        pincher2.setPosition(.85);
+        pincher.setPosition(pincherIntakePos); // .15 less is less
+        pincher2.setPosition(1-pincherIntakePos); // .85 more is less
+        pincher3.setPosition(pincherIntakePos); // .15 less is less
+        pincher4.setPosition(1-pincherIntakePos); // .85 more is less
     }
 
     public void setFlipPlateUpwards() {
@@ -84,22 +92,45 @@ public class MechBotScranton extends MechBotSensorScranton {
     }
 
     public void setGlyphPincherClosed() {
-        pincher.setPosition(.0);
-        pincher2.setPosition(1);
+        pincher.setPosition(pincherFullClosed); // .15 less is less
+        pincher2.setPosition(1-pincherFullClosed); // .85 more is less
+        pincher3.setPosition(pincherFullClosed); // .15 less is less
+        pincher4.setPosition(1-pincherFullClosed); // .85 more is less
     } // in pos of each servo
     public void setGlyphPincherMidPos() {
-        pincher.setPosition(.15);
-        pincher2.setPosition(.85);
-    } // out pos of each servo
+        pincher.setPosition(pincherReleasePos); //more is more
+        pincher2.setPosition(1-pincherReleasePos); // less is more
+        pincher3.setPosition(pincherReleasePos); // more is more
+        pincher4.setPosition(1-pincherReleasePos); // less is more
+    }
 
-    public void setGlyphPincherStartPos() { // this is full flat
-        pincher.setPosition(.45);
-        pincher2.setPosition(.60);
+    public void setGlyphPincherStartPos() { // this is  full flat
+        pincher.setPosition(pincherFullFlat);
+        pincher2.setPosition(1-pincherFullFlat);
+        pincher3.setPosition(pincherFullFlat);
+        pincher4.setPosition(1-pincherFullFlat);
     } // crypto position
-    public void setGlyphPincher() { // this is full flat
+    public void tapGlyphPincher(){
+        pincher.setPosition(pincherIntakePos); // .15 less is less
+        pincher2.setPosition(1-pincherIntakePos); // .85 more is less
+        pincher3.setPosition(pincherIntakePos); // .15 less is less
+        pincher4.setPosition(1-pincherIntakePos); // .85 more is less
+        pincher.setPosition(pincherFullClosed); // .15 less is less
+        pincher2.setPosition(1-pincherFullClosed); // .85 more is less
+        pincher3.setPosition(pincherFullClosed); // .15 less is less
+        pincher4.setPosition(1-pincherFullClosed);
+
+
+
+
+    }
+    /* public void setGlyphPincher() { // this is half flat (no longer used because of always pinching when scoring)
         pincher.setPosition(.45);
         pincher2.setPosition(.85);
-    } // crypto position
+        pincher3.setPosition(.85);
+        pincher4.setPosition(.45);
+    } // crypto position*/
+
 
     public void setArmCube() {
         arm.setPosition(0.31);

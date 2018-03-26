@@ -47,8 +47,8 @@ public class BlueBottomScranton extends MechBotAutonomousScranton {
                 return false;
             }
         });
-        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
-        //Robot is now partly off the stone. Just the front color sensors are off, time to drive the rest of the robot off the stone.
+        setOdometry(0,0);
+    //Robot is now partly off the stone. Just the front color sensors are off, time to drive the rest of the robot off the stone.
         driveDirectionGyro(OFF_STONE_SPEED, 90, -90, new Predicate() {
             @Override
             public boolean isTrue() {
@@ -131,7 +131,7 @@ public class BlueBottomScranton extends MechBotAutonomousScranton {
 //
 //        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "adjust on triangle");
 
-        robotZXPhi = new float[]{0,0,bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        setOdometry(0,0);
         driveDirectionGyro(10, 0, new Predicate() {
             @Override
             public boolean isTrue() {

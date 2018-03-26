@@ -100,6 +100,9 @@ public class MechBot
      */
     public DcMotor one,two,three,four;
 
+    public final float CAMERA_POS_X = -17.7f;
+    public final float CAMERA_POS_Y = -5.0f;
+
     /**
      * Default Constructor hardwareMap for the class.
      * Setting to null because of no use at current time.
@@ -300,5 +303,21 @@ public class MechBot
     public float getGyroHeadingFromOdomHeading(float odomHeading){
         return (float)VuMarkNavigator.NormalizeAngle(odomHeading + (float)Math.PI / 2.0f);
     }
+    public float getCameraHeadingFromGyroHeading(float gyroHeading){
+        return (float)VuMarkNavigator.NormalizeAngle(gyroHeading + Math.PI/2.0f);
+    }
+
+    public float[] getRobotZXfromCameraZX(float[] zxCamera, float gyroHeading ){
+        if (zxCamera == null) return null;
+        float odomHeading = getOdomHeadingFromGyroHeading(gyroHeading);
+        float sin = (float)Math.sin(odomHeading);
+        float cos = (float)Math.cos(odomHeading);
+        float zRobot = zxCamera[0] - CAMERA_POS_X * sin - CAMERA_POS_Y * cos;
+        float xRobot = zxCamera[1] + CAMERA_POS_X * cos - CAMERA_POS_Y * sin;
+        return new float[] {zRobot, xRobot};
+    }
+
+
+
 }
 

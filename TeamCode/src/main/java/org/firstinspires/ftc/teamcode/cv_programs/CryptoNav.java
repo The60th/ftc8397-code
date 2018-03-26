@@ -40,13 +40,13 @@ public class CryptoNav {
 
     //TeamColor enum -- self explanatory
 
-    enum TeamColor {RED, BLUE}
+    public enum TeamColor {RED, BLUE}
 
     //Side enum used for rail initialization. LEFT means that the left-most rail (Rail 0) must be
     //visible at the time that initializeRails is called. RIGHT means that the right-most rail (Rail 3)
     //must be visible at the time that initializeRails is called.
 
-    enum Side {LEFT, RIGHT}
+    public enum Side {LEFT, RIGHT}
 
     //Team Color
 

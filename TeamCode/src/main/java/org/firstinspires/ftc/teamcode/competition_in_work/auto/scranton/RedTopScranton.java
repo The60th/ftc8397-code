@@ -48,7 +48,7 @@ public class RedTopScranton extends MechBotAutonomousScranton {
                 return false;
             }
         });
-        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        setOdometry(0,0);
         //Robot is now partly off the stone. Just the front color sensors are off, time to drive the rest of the robot off the stone.
         driveDirectionGyro(OFF_STONE_SPEED, 180, 180, new MechBotAutonomousScranton.Predicate() {
             @Override
@@ -64,7 +64,7 @@ public class RedTopScranton extends MechBotAutonomousScranton {
         turnToHeadingGyro(0, GLOBAL_STANDERD_TOLERANCE, GLOBAL_STANDERD_LATENCY, RotationDirection.CLOCK); //Turn to face the wall.
 
 
-        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        setOdometry(0,0);
         driveDirectionGyro(20, 0, new Predicate() {
             @Override
             public boolean isTrue() {

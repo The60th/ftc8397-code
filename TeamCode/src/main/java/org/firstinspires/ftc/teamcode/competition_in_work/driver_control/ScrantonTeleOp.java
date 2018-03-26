@@ -107,7 +107,7 @@ public class ScrantonTeleOp extends LoggingLinearOpMode {
             } else if (gamepad2.b) {
                 bot.setGlyphPincherStartPos();
             } else if (gamepad2.x) {
-                bot.setGlyphPincher();
+                bot.tapGlyphPincher();
             }
 
             if (gamepad2.right_trigger > .05) {

@@ -47,7 +47,7 @@ public class BlueTopScranton extends MechBotAutonomousScranton {
                 return false;
             }
         });
-        robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        setOdometry(0,0);
         //Robot is now partly off the stone. Just the front color sensors are off, time to drive the rest of the robot off the stone.
         driveDirectionGyro(OFF_STONE_SPEED, 180, 0, new Predicate() {
             @Override
