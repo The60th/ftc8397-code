@@ -57,34 +57,45 @@ public class RedBottomMG extends MechBotAutonomousScranton {
         //Contains wait for start.
         initAuto(MechBotAutonomousScranton.TeamColor.RED, VUMARK_KEY_SCAN_TIME, JEWEL_SCAN_TIME); //Knocks the jewel off the stone and finds crypto key.
 
-        //Assume the robot is facing the wall once again still on the balance stone and the wall is a heading of 0.
-        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "driveDirectionGyro 1");
-        //added the 180 to this line of code to keep the robot from turning around.
-        driveDirectionGyro(OFF_STONE_SPEED, -90, -90, new MechBotAutonomousScranton.Predicate() {
+        final float OFF_STONE_DISTANCE = 25.0f * 2.54f;
+
+        setOdometry(0,0);
+
+        driveDirectionGyro(50, -90, -90, new Predicate() {
             @Override
             public boolean isTrue() {
-                Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
-
-                if (BLUE_BOTTOM_START_LOG)
-                    BetaLog.dd(RED_BOTTOM_START_TAG, "Driving on stone sats: S: %.2f", hsvValues[1]);
-
-                if (hsvValues[1] < HSV_SAT_CUT_OFF_STONE) {
-                    //Color sensors are off the stone.
-                    return true;
-                }
-                return false;
+                return robotZXPhi[1] < -OFF_STONE_DISTANCE;
             }
         });
 
-        setOdometry(0, 0);
-        //robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
-        //Robot is now partly off the stone. Just the front color sensors are off, time to drive the rest of the robot off the stone.
-        driveDirectionGyro(OFF_STONE_SPEED, -90, -90, new MechBotAutonomousScranton.Predicate() {
-            @Override
-            public boolean isTrue() {
-                return robotZXPhi[1] < -5; //Need a constant defined here.
-            }
-        });
+//        //Assume the robot is facing the wall once again still on the balance stone and the wall is a heading of 0.
+//        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "driveDirectionGyro 1");
+//        //added the 180 to this line of code to keep the robot from turning around.
+//        driveDirectionGyro(OFF_STONE_SPEED, -90, -90, new MechBotAutonomousScranton.Predicate() {
+//            @Override
+//            public boolean isTrue() {
+//                Color.RGBToHSV(bot.colorRight.red() * 8, bot.colorRight.green() * 8, bot.colorRight.blue() * 8, hsvValues);
+//
+//                if (BLUE_BOTTOM_START_LOG)
+//                    BetaLog.dd(RED_BOTTOM_START_TAG, "Driving on stone sats: S: %.2f", hsvValues[1]);
+//
+//                if (hsvValues[1] < HSV_SAT_CUT_OFF_STONE) {
+//                    //Color sensors are off the stone.
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
+//
+//        setOdometry(0, 0);
+//        //robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+//        //Robot is now partly off the stone. Just the front color sensors are off, time to drive the rest of the robot off the stone.
+//        driveDirectionGyro(OFF_STONE_SPEED, -90, -90, new MechBotAutonomousScranton.Predicate() {
+//            @Override
+//            public boolean isTrue() {
+//                return robotZXPhi[1] < -5; //Need a constant defined here.
+//            }
+//        });
 
         //Robot is now all the way off the balance stone and ready to turn towards the crypto box.
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "turnToheadingGyro");
@@ -118,7 +129,7 @@ public class RedBottomMG extends MechBotAutonomousScranton {
             }
         });
 
-        handleTriangle(MechBotAutonomousScranton.TriangleApproachSide.RIGHT, MechBotAutonomousScranton.TriangleMode.OUTSIDE);
+        handleTriangle(TriangleApproachSide.RIGHT,15,10,0,bot.colorLeft,bot.colorRight,2000);
 
         scoreGlyph();
 
@@ -132,7 +143,7 @@ public class RedBottomMG extends MechBotAutonomousScranton {
 
         bot.setFlipPlateDownwards(); //Lower plate
 
-        turnToHeadingGyroQuick(180,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY,RotationDirection.COUNTER_CLOCK);
+        turnToHeadingGyroQuick(180,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY,RotationDirection.CLOCK);
 
         bot.setIntakeOn();
 
@@ -245,21 +256,43 @@ public class RedBottomMG extends MechBotAutonomousScranton {
 
         bot.setIntakeOff();
 
+        if(robotZXPhi[1] > 0){
+            driveDirectionGyro(25, -90, 180, new Predicate() {
+                @Override
+                public boolean isTrue() {
+                    return robotZXPhi[1] <= 0;
+                }
+            });
+        }else {
+            driveDirectionGyro(25, 90, 180, new Predicate() {
+                @Override
+                public boolean isTrue() {
+                    return robotZXPhi[1] >= 0;
+                }
+            });
+        }
+
         driveDirectionGyro(50, 180, 180, new Predicate() {
             @Override
             public boolean isTrue() {
-                return robotZXPhi[0] < 41;
+                return robotZXPhi[0] < 100;
             }
         });
 
-        setOdometry(0,0);
+        handleTriangleFromFront(25,15,10,180,bot.backColorLeft,bot.backColorRight,2000);
 
-        driveDirectionGyro(50, 90, 180, new Predicate() {
-            @Override
-            public boolean isTrue() {
-                return robotZXPhi[1] > -CRYPTO_BOX_CENTER_SHIFT_VALUE*2;
-            }
-        });
+        while (opModeIsActive()){
+            telemetry.addData("Run time: " , runTime.seconds());
+            telemetry.update();
+        }
+       // setOdometry(0,0);
+
+//        driveDirectionGyro(50, 90, 180, new Predicate() {
+//            @Override
+//            public boolean isTrue() {
+//                return robotZXPhi[1] > -CRYPTO_BOX_CENTER_SHIFT_VALUE*2;
+//            }
+//        });
 
 
     }

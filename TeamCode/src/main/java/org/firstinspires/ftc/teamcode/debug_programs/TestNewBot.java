@@ -10,8 +10,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.ButtonToggleClass;
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
-import org.firstinspires.ftc.teamcode.competition_in_work.driver_control.AutoBalance;
 import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotScranton;
 import org.firstinspires.ftc.teamcode.mechbot.utill.MechBotDriveControls;
 
@@ -29,7 +29,6 @@ public class TestNewBot extends LoggingLinearOpMode {
 
     public AutoBalancer autoBalancer = null;
     boolean balancing = false;
-
     public void runLoggingOpmode() throws InterruptedException {
         bot.init(hardwareMap);
         telemetry.addData("Ready to start TeleOp, waiting for starting button.", "");
@@ -110,7 +109,7 @@ public class TestNewBot extends LoggingLinearOpMode {
             } else if (gamepad2.b) {
                 bot.setGlyphPincherStartPos();
             } else if (gamepad2.x) {
-                bot.tapGlyphPincher();
+                bot.setKickGlyph();
             }
 
             if (gamepad2.right_trigger > .05) {

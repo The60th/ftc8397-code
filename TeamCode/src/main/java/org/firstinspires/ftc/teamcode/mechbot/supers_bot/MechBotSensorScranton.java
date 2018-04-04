@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.mechbot.supers_bot;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cAddr;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -21,8 +22,7 @@ import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
 public class MechBotSensorScranton extends MechBot {
 
-    public ColorSensor colorLeft, colorRight;
-
+    public ColorSensor colorLeft, colorRight, backColorRight, backColorLeft;
     //Change to our custom BNO055 class.
     public BNO055EnhancedImpl imu;
 
@@ -62,6 +62,10 @@ public class MechBotSensorScranton extends MechBot {
 
         colorRight = hardwareMap.get(ColorSensor.class, "colorRight");
         colorLeft = hardwareMap.get(ColorSensor.class, "colorLeft");
+
+        backColorRight = hardwareMap.get(ColorSensor.class, "backColorRight");
+        backColorLeft = hardwareMap.get(ColorSensor.class, "backColorLeft");
+
         colorLeft.setI2cAddress(I2cAddr.create8bit(0x70));
 
         imu = hardwareMap.get(BNO055EnhancedImpl.class, "imu");

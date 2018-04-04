@@ -191,6 +191,41 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         bot.setDrivePower(0, 0, 0);
     }
 
+
+    //New followLineProportionate overload. This one accepts a gyroHeadingTargetDegrees. Using 180 degrees will
+    //allow line following with the glyph intake pointed away from the cryptobox.
+    public void followLineProportionate(LineFollowSide side, float tapeAngleRads, ColorSensor colorSensor,
+                                        float lineFollowSpeed, float gyroHeadingTargetDegrees, Predicate finish) {
+        float[] hsvValues = new float[3];
+        final float coeff = 20.0f;
+        float gyroHeadingTargetRadians = gyroHeadingTargetDegrees * (float)Math.PI / 180.0f;
+        while (opModeIsActive()) {
+            if (finish.isTrue()) break;
+            float heading = bot.getHeadingRadians();
+            Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+            float err = side == LineFollowSide.LEFT ? 0.5f - hsvValues[1] : hsvValues[1] - 0.5f;
+            if (err < -0.5) err = -0.4f;
+            else if (err > 0.5) err = 0.4f;
+            if (FOLLOW_LINE_PROP_LOG)
+                BetaLog.dd(FOLLOW_LINE_PROP_TAG, "Heading %.2f Sat %.2f error %.2f", heading, hsvValues[1], err);
+
+            float odomHeading = bot.getOdomHeadingFromGyroHeading(heading);
+            float angleDiff = odomHeading - (float) Math.PI - tapeAngleRads;
+
+            float vx = lineFollowSpeed * (float) Math.sin(angleDiff) + coeff * err * (float) Math.cos(angleDiff);
+            float vy = lineFollowSpeed * (float) Math.cos(angleDiff) - coeff * err * (float) Math.sin(angleDiff);
+
+
+            float va = -(float)VuMarkNavigator.NormalizeAngle(heading - gyroHeadingTargetRadians) * HEADING_CORECTION_FACTOR;
+
+            if (FOLLOW_LINE_PROP_LOG)
+                BetaLog.dd(FOLLOW_LINE_PROP_TAG, "Angle Diff %.2f Vx %.2f Vy %.2f Va %.2f", angleDiff, vx, vy, va);
+            bot.setDriveSpeed(vx, vy, va);
+        }
+        bot.setDrivePower(0, 0, 0);
+    }
+
+
     //Turns robot to a specific integratedZ heading using Gyro, targetHeading in degrees
     protected void turnToHeadingGyro(float targetHeading, float tolerance, float latency) {
         //Tolerance in degrees latency seconds.
@@ -630,6 +665,59 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
     }
 
 
+    //Overload of adjustPosOnTriangle. This one allows any desired speed, and any desired target gyroHeading.
+    //Pass in the color sensors that will be to the right and left of the line.
+    public void adjustPosOnTriangle(float speed, float gyroHeadingTargetDegrees, ColorSensor colorRight,
+                                    ColorSensor colorLeft, double timeOut) {
+        if (ADJUST_POS_LOG) BetaLog.dd(ADJUST_POS_TAG, "Entering Adjust Pos on Triangle.");
+        final double interSensorDist = 34;
+        final double sensorOffSet = 10;
+        final double sensorR = Math.sqrt(interSensorDist * interSensorDist / 4.0 + sensorOffSet * sensorOffSet);
+        final double sensorAngle = Math.atan(2.0 * sensorOffSet / interSensorDist);
+        final float specialCoeff = (float) (sensorR * Math.sin(sensorAngle + INNER_TAPE_ANGLE_RADS) / Math.cos(INNER_TAPE_ANGLE_RADS));
+        final float CAngle = 2.0f;
+        final float CSum = speed;
+        final float CDiff = speed;
+        final float tolAngle = 2.0f * (float) Math.PI / 180f;
+        final float tolSum = .2f;
+        final float tolDiff = .2f;
+        float gyroHeadingTargetRadians = gyroHeadingTargetDegrees * (float)Math.PI / 180.0f;
+
+        ElapsedTime time = new ElapsedTime();
+        while (opModeIsActive() && time.milliseconds() < timeOut) {
+            float gyroHeading = bot.getHeadingRadians();
+            float[] hsvRight = new float[3];
+            float[] hsvLeft = new float[3];
+            Color.RGBToHSV(colorRight.red(), colorRight.green(), colorRight.blue(), hsvRight);
+            Color.RGBToHSV(colorLeft.red(), colorLeft.green(), colorLeft.blue(), hsvLeft);
+            float sumSat = hsvRight[1] + hsvLeft[1];
+            float diffSat = hsvRight[1] - hsvLeft[1];
+
+            if (Math.abs(gyroHeading) < tolAngle && Math.abs(sumSat - 1.0f) < tolSum && Math.abs(diffSat) < tolDiff) {
+                if (ADJUST_POS_LOG) BetaLog.dd(ADJUST_POS_TAG, "Adjust Pos Succeeded!!!");
+                break;
+            }
+
+            float va = -CAngle * (float)VuMarkNavigator.NormalizeAngle(gyroHeading - gyroHeadingTargetRadians);
+
+            float vxField = CDiff * diffSat + specialCoeff * va;
+            float vzField = CSum * (sumSat - 1.0f);
+
+            //Desired robot speeds in robot coordinates
+
+            float odomHeading = bot.getOdomHeadingFromGyroHeading(gyroHeading);
+
+            float vx = -vxField * (float) Math.cos(odomHeading) + vzField * (float) Math.sin(odomHeading);
+            float vy = vxField * (float) Math.sin(odomHeading) + vzField * (float) Math.cos(odomHeading);
+
+            bot.setDriveSpeed(vx, vy, va);
+        }
+        bot.setDriveSpeed(0, 0, 0);
+
+    }
+
+
+
     public void adjustPosInsideTriangle(double timeOut) {
         if (ADJUST_POS_LOG) BetaLog.dd(ADJUST_POS_TAG, "Entering Adjust Pos on Triangle.");
         final double interSensorDist = 34;
@@ -661,12 +749,61 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
 
             float va = -CAngle * gyroHeading;
 
+            //Desired robot speeds in field coordinates
 
-//            float vx = -CSum*(sumSat-1.0f)*(float)Math.cos(gyroHeading)
-//                    - (CDiff*diffSat + specialCoeff*va)*(float)Math.sin(gyroHeading);
-//
-//            float vy = +CSum*(sumSat-1.0f)*(float)Math.sin(gyroHeading)
-//                    - (CDiff*diffSat + specialCoeff*va)*(float)Math.cos(gyroHeading);
+            float vxField = CDiff * diffSat + specialCoeff * va;
+            float vzField = CSum * (sumSat - 1.0f);
+
+            //Desired robot speeds in robot coordinates
+
+            float odomHeading = bot.getOdomHeadingFromGyroHeading(gyroHeading);
+
+            float vx = -vxField * (float) Math.cos(odomHeading) + vzField * (float) Math.sin(odomHeading);
+            float vy = vxField * (float) Math.sin(odomHeading) + vzField * (float) Math.cos(odomHeading);
+
+            bot.setDriveSpeed(vx, vy, va);
+        }
+        bot.setDriveSpeed(0, 0, 0);
+
+    }
+
+
+    /**
+     * Overload of adjustPosInsideTriangle allows any adjustment speed, target gyro heading, and any sensor
+     * may be used as right and left.
+     */
+    public void adjustPosInsideTriangle(float speed, float gyroHeadingTargetDegrees, ColorSensor colorRight,
+                                        ColorSensor colorLeft, double timeOut) {
+        if (ADJUST_POS_LOG) BetaLog.dd(ADJUST_POS_TAG, "Entering Adjust Pos on Triangle.");
+        final double interSensorDist = 34;
+        final double sensorOffSet = 10;
+        final double sensorR = Math.sqrt(interSensorDist * interSensorDist / 4.0 + sensorOffSet * sensorOffSet);
+        final double sensorAngle = Math.atan(2.0 * sensorOffSet / interSensorDist);
+        final float specialCoeff = (float) (sensorR * Math.sin(sensorAngle + INNER_TAPE_ANGLE_RADS) / Math.cos(INNER_TAPE_ANGLE_RADS));
+        final float CAngle = 2.0f;
+        final float CSum = -speed;
+        final float CDiff = -speed;
+        final float tolAngle = 2.0f * (float) Math.PI / 180f;
+        final float tolSum = .2f;
+        final float tolDiff = .2f;
+        float gyroHeadingTargetRadians = gyroHeadingTargetDegrees * (float)Math.PI/180.0f;
+
+        ElapsedTime time = new ElapsedTime();
+        while (opModeIsActive() && time.milliseconds() < timeOut) {
+            float gyroHeading = bot.getHeadingRadians();
+            float[] hsvRight = new float[3];
+            float[] hsvLeft = new float[3];
+            Color.RGBToHSV(bot.colorRight.red(), bot.colorRight.green(), bot.colorRight.blue(), hsvRight);
+            Color.RGBToHSV(bot.colorLeft.red(), bot.colorLeft.green(), bot.colorLeft.blue(), hsvLeft);
+            float sumSat = hsvRight[1] + hsvLeft[1];
+            float diffSat = hsvRight[1] - hsvLeft[1];
+
+            if (Math.abs(gyroHeading) < tolAngle && Math.abs(sumSat - 1.0f) < tolSum && Math.abs(diffSat) < tolDiff) {
+                if (ADJUST_POS_LOG) BetaLog.dd(ADJUST_POS_TAG, "Adjust Pos Succeeded!!!");
+                break;
+            }
+
+            float va = -CAngle * (float)VuMarkNavigator.NormalizeAngle(gyroHeading - gyroHeadingTargetRadians);
 
             //Desired robot speeds in field coordinates
 
@@ -685,6 +822,7 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         bot.setDriveSpeed(0, 0, 0);
 
     }
+
 
 
     public void scoreGlyph() {
@@ -1190,6 +1328,113 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
             });
         }
 
+    }
+    public void handleTriangle(TriangleApproachSide approachSide, float followSpeed, float adjustSpeed,float gyroHeadingTargetDegrees,
+                               final ColorSensor colorLeft, final ColorSensor colorRight, double timeOut) {
+        final float[] hsvLeft = new float[3];
+        final float[] hsvRight = new float[3];
+
+        if(approachSide == TriangleApproachSide.LEFT){
+            Color.RGBToHSV(colorRight.red(), colorRight.green(), colorRight.blue(), hsvRight);
+            if(hsvRight[1] > HSV_SAT_CUT_OFF){ //Follow reverse
+                followLineProportionate(LineFollowSide.LEFT, INNER_TAPE_ANGLE_RADS, colorLeft, -followSpeed, gyroHeadingTargetDegrees, new Predicate() {
+                    @Override
+                    public boolean isTrue() {
+                        Color.RGBToHSV(colorRight.red(), colorRight.green(), colorRight.blue(), hsvRight);
+                        return hsvRight[1] < HSV_SAT_CUT_OFF;
+                    }
+                });
+            }else{ //Follow forward
+                followLineProportionate(LineFollowSide.LEFT, INNER_TAPE_ANGLE_RADS, colorLeft, followSpeed, gyroHeadingTargetDegrees, new Predicate() {
+                    @Override
+                    public boolean isTrue() {
+                        Color.RGBToHSV(colorRight.red(), colorRight.green(), colorRight.blue(), hsvRight);
+                        return hsvRight[1] > HSV_SAT_CUT_OFF;
+                    }
+                });
+            }
+        }else{
+            Color.RGBToHSV(colorLeft.red(), colorLeft.green(), colorLeft.blue(), hsvLeft);
+            if(hsvLeft[1] > HSV_SAT_CUT_OFF){ //Follow reverse
+                followLineProportionate(LineFollowSide.RIGHT, -INNER_TAPE_ANGLE_RADS, colorLeft, -followSpeed, gyroHeadingTargetDegrees, new Predicate() {
+                    @Override
+                    public boolean isTrue() {
+                        Color.RGBToHSV(colorLeft.red(), colorLeft.green(), colorLeft.blue(), hsvLeft);
+                        return hsvLeft[1] < HSV_SAT_CUT_OFF;
+                    }
+                });
+            }else{ //Follow forward
+                followLineProportionate(LineFollowSide.RIGHT, -INNER_TAPE_ANGLE_RADS, colorLeft, followSpeed, gyroHeadingTargetDegrees, new Predicate() {
+                    @Override
+                    public boolean isTrue() {
+                        Color.RGBToHSV(colorLeft.red(), colorLeft.green(), colorLeft.blue(), hsvLeft);
+                        return hsvLeft[1] > HSV_SAT_CUT_OFF;
+                    }
+                });
+            }
+        }
+
+        adjustPosOnTriangle(adjustSpeed,gyroHeadingTargetDegrees,colorRight,colorLeft,timeOut);
+    }
+
+
+    /**
+     * This method is intended to handle the triangle when approaching from the pile
+     * of glyphs. Bot must be positioned such that one specified sensor will be to left and one to the right of the
+     * triangle apex. Specify speeds for triangle approach, line following, and adjustment. This will handle from any orientation.
+     * Use gyroHeadingTargetDegrees = 0 to travel intake-first. Use gyroHeadingTargetDegrees = 180 to go flip plate-first.
+     */
+    public void handleTriangleFromFront(float approachSpeed, float followSpeed, float adjustSpeed, float gyroHeadingTargetDegrees,
+                               final ColorSensor colorLeft, final ColorSensor colorRight, double timeOut){
+
+        final float[] hsvLeft = new float[3];
+        final float[] hsvRight = new float[3];
+
+        //Drive toward cryptobox until one of the sensors hits the tape
+        driveDirectionGyro(approachSpeed, 180, gyroHeadingTargetDegrees, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                Color.RGBToHSV(colorLeft.red(), colorLeft.green(), colorLeft.blue(), hsvLeft);
+                Color.RGBToHSV(colorRight.red(), colorRight.green(), colorRight.blue(), hsvRight);
+                return hsvLeft[1] > HSV_SAT_CUT_OFF || hsvRight[1] > HSV_SAT_CUT_OFF;
+            }
+        });
+
+        //Figure out which side of triangle to line follow, then line follow
+        if (hsvLeft[1] > HSV_SAT_CUT_OFF) {      //Following left line
+            if (hsvRight[1] > HSV_SAT_CUT_OFF) {    //in reverse
+                followLineProportionate(LineFollowSide.LEFT, INNER_TAPE_ANGLE_RADS, colorLeft, -followSpeed, gyroHeadingTargetDegrees,
+                        new Predicate() {
+                            @Override
+                            public boolean isTrue() {
+                                Color.RGBToHSV(colorRight.red(), colorRight.green(), colorRight.blue(), hsvRight);
+                                return hsvRight[1] <= HSV_SAT_CUT_OFF;
+                            }
+                        });
+            } else {                                //in forward
+                followLineProportionate(LineFollowSide.LEFT, INNER_TAPE_ANGLE_RADS, colorLeft, followSpeed, gyroHeadingTargetDegrees,
+                        new Predicate() {
+                            @Override
+                            public boolean isTrue() {
+                                Color.RGBToHSV(colorRight.red(), colorRight.green(), colorRight.blue(), hsvRight);
+                                return hsvRight[1] > HSV_SAT_CUT_OFF;
+                            }
+                        });
+            }
+        } else {                                  //Following right line, forward
+            followLineProportionate(LineFollowSide.RIGHT, -INNER_TAPE_ANGLE_RADS, colorRight, followSpeed, gyroHeadingTargetDegrees,
+                    new Predicate() {
+                        @Override
+                        public boolean isTrue() {
+                            Color.RGBToHSV(colorLeft.red(), colorLeft.green(), colorLeft.blue(), hsvLeft);
+                            return hsvLeft[1] > HSV_SAT_CUT_OFF;
+                        }
+                    });
+        }
+
+        //Adjust Position on triangle
+
+        adjustPosOnTriangle(adjustSpeed, gyroHeadingTargetDegrees, colorRight, colorLeft, timeOut);
     }
 
     protected void setOdometry(float z, float x, float odomHeading){

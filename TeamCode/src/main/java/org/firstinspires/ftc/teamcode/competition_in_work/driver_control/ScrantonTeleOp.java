@@ -4,21 +4,44 @@ import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
+import com.vuforia.CameraDevice;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
-import org.firstinspires.ftc.teamcode.debug_programs.TestNewBot;
+import org.firstinspires.ftc.teamcode.cv_programs.CryptoNav;
 import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotScranton;
 import org.firstinspires.ftc.teamcode.mechbot.utill.MechBotDriveControls;
+import org.firstinspires.ftc.teamcode.third_party_libs.UTILToggle;
+import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
+
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Created by FTC Team 8397 on 3/14/2018.
  */
 @TeleOp(name = "TeleOp ", group = "TeleOp")
 public class ScrantonTeleOp extends LoggingLinearOpMode {
+    private int sampleRatio = 4;
+    private int rawImgWidth = 1280; //use 1280 for G4 //640
+    private int rawImgHeight = 720; //use 720 for G4 //480
+    private int rangeX0 = 40; //Consider using 40 for G4 //0
+    private int rangeY0 = 0; //Consider using 240 for G4 //0
+    private int rangeWidth = 1200; //Consider using 1200 for G4 //640
+    private int rangeHeight = 240; //Consider using 240 for G4 //480
+    private float rawFocalLength = 1082f; //Correct for g4
+    private float rawPrincipalX = 640f;  //Should be roughly 640 for G4 //320f
+    protected final float HEADING_CORECTION_FACTOR = 2.0f;
+    private final String TAG = "RED_BOTTOM_MG";
+    private byte[] imageBytes = new byte[2 * rawImgWidth * rawImgHeight];
+    float[] robotZXPhi = new float[3];
+
 
     MechBotScranton bot = new MechBotScranton();
     private MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1, gamepad2, bot);
@@ -26,9 +49,15 @@ public class ScrantonTeleOp extends LoggingLinearOpMode {
 
     public AutoBalancer autoBalancer = null;
     boolean balancing = false;
+    UTILToggle bottomToggle = new UTILToggle();
+    boolean kickerStatus = false;
 
+    boolean CVing = false;
     public void runLoggingOpmode() throws InterruptedException {
         bot.init(hardwareMap);
+        VuMarkNavigator.activate();
+        CryptoNav.initParams(CryptoNav.TeamColor.RED, rawImgWidth, rawImgHeight, rangeX0, rangeY0, rangeWidth, rangeHeight,
+                rawFocalLength, rawPrincipalX, sampleRatio);
         telemetry.addData("Ready to start TeleOp, waiting for starting button.", "");
         telemetry.update();
         waitForStart();
@@ -52,6 +81,20 @@ public class ScrantonTeleOp extends LoggingLinearOpMode {
                     balancing = true;
                     autoBalancer = new AutoBalancer(-30, -120, 0, 60, 20);
                     autoBalancer.start();
+                    continue;
+                }
+            }
+            if(CVing){
+                if(gamepad1.x){
+                    CryptoNav();
+                    //continue;
+                }else{
+                    telemetry.addData(TAG,"Leaving cryptoNav");
+                    CVing = false;
+                }
+            }else{
+                if(gamepad1.x){
+                    CVing = true;
                     continue;
                 }
             }
@@ -95,8 +138,16 @@ public class ScrantonTeleOp extends LoggingLinearOpMode {
 
             if (gamepad1.y) {
                 bot.setFlipPlateUpwards();
+                if(kickerStatus){
+                    bot.setRetractKicker();
+                    kickerStatus = false;
+                }
             } else if (gamepad1.a) {
                 bot.setFlipPlateDownwards();
+                if(kickerStatus){
+                    bot.setRetractKicker();
+                    kickerStatus = false;
+                }
             }
 
 
@@ -106,11 +157,20 @@ public class ScrantonTeleOp extends LoggingLinearOpMode {
                 bot.setGlyphPincherMidPos();
             } else if (gamepad2.b) {
                 bot.setGlyphPincherStartPos();
-            } else if (gamepad2.x) {
-                bot.tapGlyphPincher();
             }
 
-            if (gamepad2.right_trigger > .05) {
+            if (bottomToggle.status(gamepad2.x) == UTILToggle.Status.COMPLETE) {
+                if(!kickerStatus) {
+                    bot.setKickGlyph();
+                }
+                else if(kickerStatus) {
+                    bot.setRetractKicker();
+                }
+                kickerStatus = !kickerStatus;
+            }
+
+
+                if (gamepad2.right_trigger > .05) {
                 bot.setRelicLiftDown();
             } else if (gamepad2.right_bumper) {
                 bot.setRelicLiftUp();
@@ -198,6 +258,165 @@ public class ScrantonTeleOp extends LoggingLinearOpMode {
             prevRollRads = roll;
             bot.setDriveSpeed(vx, vy, 0);
         }
+    }
+
+        private void CryptoNav(){
+            boolean yMode = false;
+            boolean xMode = false;
+            robotZXPhi = new float[]{0, 0, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+            CameraDevice.getInstance().setFlashTorchMode(true);
+
+            BlockingQueue<VuforiaLocalizer.CloseableFrame> frameQueue = VuMarkNavigator.getFrameQueue();
+
+            VuMarkNavigator.clearFrameQueue(frameQueue);
+
+            BetaLog.dd(TAG, "Cleared Frame Queue");
+
+            boolean cryptoNavInitialized = false;
+            while (opModeIsActive()){
+                //Try to get an image; if image not yet available, loop and try again.
+                if (!VuMarkNavigator.getRGB565Array(frameQueue, rawImgWidth, rawImgHeight, imageBytes)) continue;
+
+                BetaLog.dd(TAG, "Got CryptoNav Initialization Image");
+
+                //Try to initialize the rails. We're assuming for this demonstration that the left-most
+                //rail is visible to the camera before initializeRails is called.
+                if(!CryptoNav.initializeRails(imageBytes, CryptoNav.Side.LEFT)) break;
+                BetaLog.dd(TAG, "CryptoNav Initialization Succeeded");
+                cryptoNavInitialized = true;
+                break;
+            }
+
+            if (cryptoNavInitialized) {
+                BetaLog.dd(TAG, "CryptoNav Initialization Succeeded");
+                telemetry.addData(TAG,"CryptoNav Initialization Succeeded.");
+                telemetry.update();
+            }
+            else {
+                BetaLog.dd(TAG, "CryptoNav Initialization Failed.");
+                telemetry.addData(TAG,"CryptoNav Initialization Failed.");
+                telemetry.update();
+                while (opModeIsActive()){
+                    if(!gamepad1.x) break;
+                    continue;
+                }
+            }
+            boolean whileControl = false;
+            while (opModeIsActive()) {
+
+                if(gamepad1.x) {
+                    whileControl = true;
+                }
+                //SEVENTH: Enter the actual navigation loop. In practice, each iteration of this loop would include adjustments
+                //of motor powers, just as we did with Vuforia navigation.
+                BetaLog.dd(TAG, "Entering CryptoNav navigation loop");
+                while (opModeIsActive() && whileControl) {
+
+                    //Get a new image; if no image is a available, keep on trying.
+                    if (!VuMarkNavigator.getRGB565Array(frameQueue, rawImgWidth, rawImgHeight, imageBytes))
+                        continue;
+
+                    BetaLog.dd(TAG, "Got CrytoNav navigation image");
+
+                    //From the image, use the CryptoNav.updateLocationZX method to obtain new z,x coordinates.
+                    //Note that this method does not GIVE us the phiPrime heading value. Instead, we need to provide the
+                    //method with the phiPrime value. In practice, we would obtain this from the GYRO. For this
+                    //demonstration, it will be assumed that phiPrime is 0 (just keep the phone pointed directly toward the
+                    //wall.
+                    float gyroHeading = bot.getHeadingRadians();
+                    float odomHeading = bot.getOdomHeadingFromGyroHeading(gyroHeading);
+                    float cameraHeading = bot.getCameraHeadingFromGyroHeading(gyroHeading);
+
+                    float[] zx = CryptoNav.updateLocationZX(imageBytes, cameraHeading);
+                    float[] robotZX = new float[3];
+                    //Note: if navigation fails, that's usually because only zero or one rails is currently visible.
+                    //The updateLocationZX method needs to "see" at least two rails. No problem; once two rails become
+                    //visible again, we should start getting valid locations again.
+                    if (zx == null) {
+                        BetaLog.dd(TAG, "Crypto Navigation Failed");
+                        telemetry.addData("Crypto Navigation Failed", "");
+                        //robotZXPhi = bot.updateOdometry(robotZXPhi,odomHeading);
+                        while (!gamepad1.b) {
+                            telemetry.addData("Crypto Navigation Failed", "");
+                            telemetry.addData("Press gamepad1 B to restart.", "");
+                            telemetry.update();
+                            continue;
+                        }
+                    } else {
+                        BetaLog.dd(TAG, "Crypto Navigation Succeeded");
+                        BetaLog.dd(TAG, "Camera Coords: z = %.1f  x = %.1f", zx[0], zx[1]);
+                        telemetry.addData("Crypto Navigation Succeeded, Camera:", " z=%.1f x=%.1f", zx[0], zx[1]);
+                        robotZX = bot.getRobotZXfromCameraZX(zx, gyroHeading);
+                        setOdometry(robotZX[0], robotZX[1], odomHeading);
+
+                    }
+
+                    BetaLog.dd("Robot coords:", " z=%.1f  x=%.1f  phi=%.1f", robotZX[0], robotZX[1],
+                            odomHeading * 180.0 / Math.PI);
+                    telemetry.addData("Robot coords:", " z=%.1f x=%.1f phi=%.1f", robotZX[0], robotZX[1],
+                            odomHeading * 180.0 / Math.PI);
+                    if (gamepad1.b) whileControl = false;
+
+                    if (gamepad1.y || yMode) {
+                        telemetry.addData(TAG, "Gamepad1:");
+                        telemetry.addData(TAG, "Y Button pressed entering secondary mode.");
+                        telemetry.addData(TAG, "Press A to exit.");
+                        yMode = true;
+                    }
+                    if (gamepad1.a || !yMode) {
+                        telemetry.addData(TAG, "Gamepad1:");
+                        telemetry.addData(TAG, "A button pressed disabling secondary mode.");
+                        telemetry.addData(TAG, "Press Y to enter secondary mode.");
+                        yMode = false;
+                    }
+
+                    if (gamepad2.y || xMode) {
+                        telemetry.addData(TAG, "Gamepad2:");
+                        telemetry.addData(TAG, "Y Button pressed entering secondary mode.");
+                        telemetry.addData(TAG, "Press A to exit.");
+                        xMode = true;
+                    }
+                    if (gamepad2.a || !xMode) {
+                        telemetry.addData(TAG, "Gamepad2:");
+                        telemetry.addData(TAG, "A button pressed disabling secondary mode.");
+                        telemetry.addData(TAG, "Press Y to enter secondary mode.");
+                        xMode = false;
+                    }
+                    BetaLog.dd(TAG,"My mode is: ", yMode + ". My mode is: " + xMode);
+                    //if(robotZXPhi[0] < 41) break;
+                    final float vNom = 5.0f;
+                    final float coeff = 1.0f;
+                    float vX = -vNom * (float) Math.cos(cameraHeading) - coeff * robotZX[1] * (float) Math.sin(cameraHeading);
+                    float vY = vNom * (float) Math.sin(cameraHeading) - coeff * robotZX[1] * (float) Math.cos(cameraHeading);
+                    float vA = -HEADING_CORECTION_FACTOR * (float) VuMarkNavigator.NormalizeAngle(gyroHeading + Math.PI / 2.0f);
+                    if (yMode) {
+                        bot.setDriveSpeed(0, vY, 0);
+                    } else if(xMode) {
+                        bot.setDriveSpeed(vX, 0, 0);
+                    }else{
+                        bot.setDriveSpeed(vX,vY,0);
+                    }
+                    BetaLog.dd("Robot speeds:", " vX=%.1f  vY=%.1f  vA=%.1f", vX, vY, vA);
+                    telemetry.update();
+                }
+
+                bot.setDriveSpeed(0, 0, 0);
+
+                telemetry.update();
+
+                CameraDevice.getInstance().setFlashTorchMode(false);
+            }
+        }
+
+
+    protected void setOdometry(float z, float x, float odomHeading){
+        robotZXPhi = new float[] {z, x, odomHeading};
+        bot.updateOdometry();
+    }
+
+    protected void setOdometry(float z, float x){
+        robotZXPhi = new float[] {z, x, bot.getOdomHeadingFromGyroHeading(bot.getHeadingRadians())};
+        bot.updateOdometry();
     }
 
 }

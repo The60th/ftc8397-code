@@ -124,17 +124,25 @@ public class PreMatchRobotAlignment extends LoggingLinearOpMode {
                 float[] poseData = robotPose.getData();
                 float heading = (float)Math.atan2( poseData[8], poseData[10]) * 180.0f/(float)Math.PI;
                 telemetry.addData("Robot Pose"," Heading = %.1f Z = %.1f X = %.1f", heading, poseData[14]/10.0, poseData[12]/10.0);
-
-                orientation = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES); //WAS ZYX
-                telemetry.addData("Gyro Heading degrees: ",orientation.firstAngle);
-                telemetry.addData("Roll degrees: ",orientation.secondAngle);
-                telemetry.addData("Pitch degrees: ", orientation.thirdAngle);
             }
+            orientation = bot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES); //WAS ZYX
+            telemetry.addData("Gyro Heading degrees: ",orientation.firstAngle);
+            telemetry.addData("Roll degrees: ",orientation.secondAngle);
+            telemetry.addData("Pitch degrees: ", orientation.thirdAngle);
+
             float[] HSV = new float[3];
             Color.RGBToHSV(bot.colorLeft.red(), bot.colorLeft.green(), bot.colorLeft.blue(),HSV);
             telemetry.addData("Color left", "H = %.2f S = %.2f V = %.2f", HSV[0],HSV[1],HSV[2]);
+
             Color.RGBToHSV(bot.colorRight.red(), bot.colorRight.green(), bot.colorRight.blue(),HSV);
             telemetry.addData("Color right", "H = %.2f S = %.2f V = %.2f", HSV[0],HSV[1],HSV[2]);
+
+            Color.RGBToHSV(bot.backColorLeft.red(), bot.backColorLeft.green(), bot.backColorLeft.blue(),HSV);
+            telemetry.addData("Color back left", "H = %.2f S = %.2f V = %.2f", HSV[0],HSV[1],HSV[2]);
+
+            Color.RGBToHSV(bot.backColorRight.red(), bot.backColorRight.green(), bot.backColorRight.blue(),HSV);
+            telemetry.addData("Color right", "H = %.2f S = %.2f V = %.2f", HSV[0],HSV[1],HSV[2]);
+
             telemetry.update();
 
         }

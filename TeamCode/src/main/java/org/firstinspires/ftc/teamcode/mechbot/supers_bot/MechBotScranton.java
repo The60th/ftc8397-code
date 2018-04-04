@@ -18,7 +18,7 @@ import org.openftc.hardware.rev.OpenRevDcMotorImplEx;
 public class MechBotScranton extends MechBotSensorScranton {
     public OpenRevDcMotorImplEx leftIntake, rightIntake;
     public DcMotor relicArm;
-    Servo leftFlipper, rightFlipper, backStop, pincher, pincher2, pincher3, pincher4;
+    Servo leftFlipper, rightFlipper, backStop, pincher, pincher2, pincher3, pincher4, kicker;
     public Servo pivot, arm, relicClaw;
     CRServo relicLift;
     public final double MAX_INTAKE_STALL_CURRENT_THRESHOLD = 6000;
@@ -58,6 +58,7 @@ public class MechBotScranton extends MechBotSensorScranton {
         pincher2 = hardwareMap.servo.get("pincher2"); // back left
         pincher3 = hardwareMap.servo.get("pincher3"); // front left
         pincher4 = hardwareMap.servo.get("pincher4"); // front right
+        kicker = hardwareMap.servo.get("kicker");
 
         pivot = hardwareMap.servo.get("pivot");
         arm = hardwareMap.servo.get("arm");
@@ -68,15 +69,17 @@ public class MechBotScranton extends MechBotSensorScranton {
     }
 
     float flipDownPos = .65f; // down
-    float flipUpPos = .1f; // up
+    float flipUpPos = .115f; // up was .10
     float pincherFullClosed = 0f;
     float pincherIntakePos = .1f;
     float pincherReleasePos = .1f;
     float pincherFullFlat = .4f;
+    float kickerKickPos = .45f;
+    float kickerStoredPos = 0f;
 
     public void setFlipPlateDownwards() {
-        leftFlipper.setPosition(flipDownPos);
         rightFlipper.setPosition(1 - flipDownPos);
+        leftFlipper.setPosition(flipDownPos);
         backStop.setPosition(0);
         pincher.setPosition(pincherIntakePos); // .15 less is less
         pincher2.setPosition(1-pincherIntakePos); // .85 more is less
@@ -85,8 +88,8 @@ public class MechBotScranton extends MechBotSensorScranton {
     }
 
     public void setFlipPlateUpwards() {
-        leftFlipper.setPosition(flipUpPos);
         rightFlipper.setPosition(1 - flipUpPos);
+        leftFlipper.setPosition(flipUpPos);
         backStop.setPosition(.45);
 
     }
@@ -110,7 +113,7 @@ public class MechBotScranton extends MechBotSensorScranton {
         pincher3.setPosition(pincherFullFlat);
         pincher4.setPosition(1-pincherFullFlat);
     } // crypto position
-    public void tapGlyphPincher(){
+   /* public void setTapGlyphPincher(){
         pincher.setPosition(pincherIntakePos); // .15 less is less
         pincher2.setPosition(1-pincherIntakePos); // .85 more is less
         pincher3.setPosition(pincherIntakePos); // .15 less is less
@@ -119,11 +122,17 @@ public class MechBotScranton extends MechBotSensorScranton {
         pincher2.setPosition(1-pincherFullClosed); // .85 more is less
         pincher3.setPosition(pincherFullClosed); // .15 less is less
         pincher4.setPosition(1-pincherFullClosed);
-
-
+    }
+    */
+    public void setKickGlyph(){
+        kicker.setPosition(kickerKickPos);
 
 
     }
+     public void setRetractKicker(){
+         kicker.setPosition(kickerStoredPos);
+
+     }
     /* public void setGlyphPincher() { // this is half flat (no longer used because of always pinching when scoring)
         pincher.setPosition(.45);
         pincher2.setPosition(.85);
