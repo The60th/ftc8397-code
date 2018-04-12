@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode.mechbot.supers_bot;
 
+import com.qualcomm.hardware.lynx.LynxUsbDevice;
+import com.qualcomm.hardware.lynx.LynxUsbDeviceDelegate;
+import com.qualcomm.hardware.lynx.LynxUsbDeviceImpl;
+import com.qualcomm.hardware.lynx.LynxUsbUtil;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
@@ -18,11 +23,11 @@ import org.openftc.hardware.rev.OpenRevDcMotorImplEx;
 public class MechBotScranton extends MechBotSensorScranton {
     public OpenRevDcMotorImplEx leftIntake, rightIntake;
     public DcMotor relicArm;
-    Servo leftFlipper, rightFlipper, backStop, pincher, pincher2, pincher3, pincher4, kicker;
+    Servo  backStop, pincher, pincher2, pincher3, pincher4, kicker; //leftFlipper, rightFlipper,
     public Servo pivot, arm, relicClaw;
     CRServo relicLift;
     public final double MAX_INTAKE_STALL_CURRENT_THRESHOLD = 6000;
-
+    ServoImplEx leftFlipper, rightFlipper;
     public void init(HardwareMap ahwMap) {
         super.init(ahwMap);
         initHw();
@@ -51,8 +56,8 @@ public class MechBotScranton extends MechBotSensorScranton {
         relicArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-        leftFlipper = hardwareMap.servo.get("leftFlipper");
-        rightFlipper = hardwareMap.servo.get("rightFlipper");
+        leftFlipper = (ServoImplEx) hardwareMap.servo.get("leftFlipper");
+        rightFlipper = (ServoImplEx) hardwareMap.servo.get("rightFlipper");
         backStop = hardwareMap.servo.get("backStop");
         pincher = hardwareMap.servo.get("pincher"); // back right
         pincher2 = hardwareMap.servo.get("pincher2"); // back left
@@ -68,8 +73,13 @@ public class MechBotScranton extends MechBotSensorScranton {
 
     }
 
-    float flipDownPos = .65f; // down
-    float flipUpPos = .115f; // up was .10
+    public void disableFlipPlate(){
+        leftFlipper.setPwmDisable();
+        rightFlipper.setPwmDisable();
+    }
+
+    float flipDownPos = .5f; // down
+    float flipUpPos = .93f; // up was .10
     float pincherFullClosed = 0f;
     float pincherIntakePos = .1f;
     float pincherReleasePos = .1f;
@@ -142,34 +152,34 @@ public class MechBotScranton extends MechBotSensorScranton {
 
 
     public void setArmCube() {
-        arm.setPosition(0.31);
+        arm.setPosition(1.0);
     }
 
     public void setArmJewel() {
-        arm.setPosition(.60);
+        arm.setPosition(.67);
     }
 
     public void setArmDrive(){
-        arm.setPosition(.20);
+        arm.setPosition(1.0);
     }
 
     public void setPivotDrive(){
-        pivot.setPosition(.69);
+        pivot.setPosition(0.0);
     }
     public void setPivotStart() {
         pivot.setPosition(0.0);
     }
 
     public void setPivotEnd() {
-        pivot.setPosition(0.61);
+        pivot.setPosition(.40);
     }
 
     public void knockPivotLeft() {
-        pivot.setPosition(0.50);
+        pivot.setPosition(.49);
     }
 
     public void knockPivotRight() {
-        pivot.setPosition(0.70);
+        pivot.setPosition(.33);
     }
 
     public void setRelicClawClosed() {

@@ -42,7 +42,7 @@ public class RedBottomMG extends MechBotAutonomousScranton {
     final float[] hsvValues = new float[3];
 
     final boolean BLUE_BOTTOM_START_LOG = true;
-    final String RED_BOTTOM_START_TAG = "Red bottom start Red Hook:";
+    final String RED_BOTTOM_START_TAG = "Red bottom start Worlds:";
     @Override
     public void runLoggingOpmode() throws InterruptedException {
         bot.init(hardwareMap, -90); //The starting value of the gyro heading comapred to the wall.
@@ -108,7 +108,7 @@ public class RedBottomMG extends MechBotAutonomousScranton {
         driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, 0, new MechBotAutonomousScranton.Predicate() {
             @Override
             public boolean isTrue() {
-                return robotZXPhi[0] > 5f;
+                return robotZXPhi[0] > 5.0f;
             }
         });
 
@@ -142,6 +142,10 @@ public class RedBottomMG extends MechBotAutonomousScranton {
         }
 
         bot.setFlipPlateDownwards(); //Lower plate
+
+        sleep(200);
+
+        bot.disableFlipPlate();
 
         turnToHeadingGyroQuick(180,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY,RotationDirection.CLOCK);
 

@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
 import org.firstinspires.ftc.teamcode.cv_programs.Blob;
+import org.firstinspires.ftc.teamcode.cv_programs.CryptoNavReverse;
 import org.firstinspires.ftc.teamcode.cv_programs.ImgProc;
 import org.firstinspires.ftc.teamcode.mechbot.MechBotAutonomous;
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
@@ -382,7 +383,7 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         int imgHeight = Math.round(size[1]);
         byte[] imageBytes = new byte[2 * imgWidth * imgHeight];
 
-        int y0 = 300;
+        int y0 = 0; //Was 300
         int croppedImgWidth = imgWidth;
         int croppedImgHeight = 420;
 
@@ -433,7 +434,7 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
 
             //Take only the right-most red blob. This is to avoid problems with the VuMark, which may match the red range.
             while (redBlobs.size() > 1) {
-                if (redBlobs.get(0).getAvgX() < redBlobs.get(1).getAvgX()) redBlobs.remove(0);
+                if (redBlobs.get(0).getAvgX() > redBlobs.get(1).getAvgX()) redBlobs.remove(0);  // > inverted.
                 else redBlobs.remove(1);
             }
 
@@ -447,7 +448,7 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
                     if (blueBlobs.get(i).getRectArea() > blueBlob.getRectArea())
                         blueBlob = blueBlobs.get(i);
 
-                if (blueBlob.getAvgX() < redBlob.getAvgX()) return JewelSide.BLUE_LEFT;
+                if (blueBlob.getAvgX() > redBlob.getAvgX()) return JewelSide.BLUE_LEFT; // > inverted.
                 else return JewelSide.RED_LEFT;
 
                 //If blueBlob.getAvgX() < redBlob.getAvgX(), the blue blob is on the left
@@ -544,6 +545,67 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         bot.setDrivePower(0, 0, 0);
     }
 
+    //Robot heading in degrees.
+    public void driveDirectionGyroCryptoNav(float speedCMs, float directionAngleDegrees, float gyroHeadingTargetDegrees,
+                                            BlockingQueue<VuforiaLocalizer.CloseableFrame> frameQueue, int rawImgWidth,
+                                            int rawImgHeight, byte []imageBytes, Predicate finish) {
+        if (DRIVE_DIRECTION_GYRO_LOG)
+            BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "Entering driveDirectionGyro");
+        // bot.updateOdometry();
+        float directionAngleRadians = directionAngleDegrees * (float) Math.PI / 180.0f;
+        float gyroHeadingTargetRadians = gyroHeadingTargetDegrees * (float) Math.PI / 180.0f;
+
+        while (opModeIsActive()) {
+            float gyroHeading = bot.getHeadingRadians();
+            float odomHeading = bot.getOdomHeadingFromGyroHeading(gyroHeading);
+            float cameraHeading = bot.getCameraHeadingFromGyroHeading(gyroHeading);
+
+            if (DRIVE_DIRECTION_GYRO_LOG)
+                BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "gHeading = %.2f  oHeading = %.2f Camera heading = %.2f",
+                        gyroHeading * 180.0 / Math.PI, odomHeading * 180.0 / Math.PI, cameraHeading*180.0f / Math.PI); //Fixed convert error
+            float[] cameraZX = null;
+            if (VuMarkNavigator.getRGB565Array(frameQueue, rawImgWidth, rawImgHeight, imageBytes)) {
+              //Have an image.
+                cameraZX = CryptoNavReverse.updateLocationZX(imageBytes, cameraHeading);
+            }
+
+            if(cameraZX == null){
+               bot.updateOdometry(robotZXPhi, odomHeading);
+            }else{
+                float[] robotZX = bot.getRobotZXfromCameraZX(cameraZX,gyroHeading);
+                robotZXPhi[0] = robotZX[0];
+                robotZXPhi[1] = robotZX[1];
+                robotZXPhi[2] = odomHeading;
+                bot.updateOdometry();
+            }
+            
+
+            if (DRIVE_DIRECTION_GYRO_LOG)
+                BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "z = %.2f  x = %.2f  Phi = %.2f",
+                        robotZXPhi[0], robotZXPhi[1], robotZXPhi[2] * 180.0 / Math.PI); //Fixed convert error
+
+            if (finish.isTrue()) break;
+
+            float vx = -speedCMs * (float) Math.sin(directionAngleRadians - odomHeading);
+            float vy = speedCMs * (float) Math.cos(directionAngleRadians - odomHeading);
+            if (DRIVE_DIRECTION_GYRO_LOG)
+                BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "gHeading = %.3f gH Target = %.3f", gyroHeading, gyroHeadingTargetRadians);
+
+
+            float headingError = (float) VuMarkNavigator.NormalizeAngle(gyroHeading - gyroHeadingTargetRadians);
+            if (DRIVE_DIRECTION_GYRO_LOG)
+                BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "HeadingError = %.3f ", headingError);
+            float va = -HEADING_CORECTION_FACTOR * headingError;
+
+            if (DRIVE_DIRECTION_GYRO_LOG)
+                BetaLog.dd(DRIVE_DIRECTION_GYRO_TAG, "vx = %.2f  vy = %.2f  va = %.2f", vx, vy, va * 180.0 / Math.PI);
+
+            bot.setDriveSpeed(vx, vy, va);
+
+        }
+        bot.setDrivePower(0, 0, 0);
+    }
+
     protected interface Predicate {
         public boolean isTrue();
     }
@@ -601,7 +663,7 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
         telemetry.addData("Found both the jewel and vuMark in: " + vuMarkFindTime + jewlFindTime + " milliseconds. ", "");
         this.setFlashOff();
 
-        knockJewel(this.targetSide); //Score the blocks and knock the jewel.
+        //knockJewel(this.targetSide); //Score the blocks and knock the jewel.
     }
 
     //NEW adjustPosOnTriangle: uses getOdomHeadingFromGyroHeading. It will work as long as we override that method
@@ -868,6 +930,8 @@ public abstract class MechBotAutonomousScranton extends LoggingLinearOpMode {
                 }
                 break;
         }
+        bot.setRelicLiftDown();
+        sleep(750);
 
         bot.setFlipPlateUpwards();
         sleep(2000);

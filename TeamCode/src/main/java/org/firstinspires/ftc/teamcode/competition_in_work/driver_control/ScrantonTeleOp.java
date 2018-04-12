@@ -3,6 +3,10 @@ package org.firstinspires.ftc.teamcode.competition_in_work.driver_control;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoControllerEx;
+import com.qualcomm.robotcore.hardware.ServoImpl;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.vuforia.CameraDevice;
@@ -84,7 +88,7 @@ public class ScrantonTeleOp extends LoggingLinearOpMode {
                     continue;
                 }
             }
-            if(CVing){
+            /*if(CVing){
                 if(gamepad1.x){
                     CryptoNav();
                     //continue;
@@ -97,7 +101,7 @@ public class ScrantonTeleOp extends LoggingLinearOpMode {
                     CVing = true;
                     continue;
                 }
-            }
+            }*/
             mechBotDriveControls.refreshGamepads(gamepad1, gamepad2);
             mechBotDriveControls.joyStickMecnumDriveCompNewBot(driveData);
             telemetry.addData("Joystick input: ", "X: %.2f Y: %.2f A: %.2f", driveData[0], driveData[1], driveData[2]);
@@ -143,11 +147,22 @@ public class ScrantonTeleOp extends LoggingLinearOpMode {
                     kickerStatus = false;
                 }
             } else if (gamepad1.a) {
-                bot.setFlipPlateDownwards();
-                if(kickerStatus){
-                    bot.setRetractKicker();
-                    kickerStatus = false;
-                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        bot.setFlipPlateDownwards();
+                        sleep(10);
+                        if(kickerStatus){
+                            bot.setRetractKicker();
+                            kickerStatus = false;
+                        }
+                        sleep(100);
+                        bot.disableFlipPlate();
+                        return;
+                    }
+                }).start();
+
+                bot.disableFlipPlate();
             }
 
 
@@ -170,7 +185,7 @@ public class ScrantonTeleOp extends LoggingLinearOpMode {
             }
 
 
-                if (gamepad2.right_trigger > .05) {
+            if (gamepad2.right_trigger > .15) {
                 bot.setRelicLiftDown();
             } else if (gamepad2.right_bumper) {
                 bot.setRelicLiftUp();
@@ -302,6 +317,7 @@ public class ScrantonTeleOp extends LoggingLinearOpMode {
                 }
             }
             boolean whileControl = false;
+            BetaLog.dd(TAG, "Entering CryptoNav navigation loop");
             while (opModeIsActive()) {
 
                 if(gamepad1.x) {
@@ -309,7 +325,34 @@ public class ScrantonTeleOp extends LoggingLinearOpMode {
                 }
                 //SEVENTH: Enter the actual navigation loop. In practice, each iteration of this loop would include adjustments
                 //of motor powers, just as we did with Vuforia navigation.
-                BetaLog.dd(TAG, "Entering CryptoNav navigation loop");
+                if (gamepad1.y && !yMode) {
+                    telemetry.addData(TAG, "Gamepad1:");
+                    telemetry.addData(TAG, "Y Button pressed entering secondary mode.");
+                    telemetry.addData(TAG, "Press A to exit.");
+                    yMode = true;
+                }
+                else if (gamepad1.a && yMode) {
+                    telemetry.addData(TAG, "Gamepad1:");
+                    telemetry.addData(TAG, "A button pressed disabling secondary mode.");
+                    telemetry.addData(TAG, "Press Y to enter secondary mode.");
+                    yMode = false;
+                }
+
+                if (gamepad2.y && !xMode) {
+                    telemetry.addData(TAG, "Gamepad2:");
+                    telemetry.addData(TAG, "Y Button pressed entering secondary mode.");
+                    telemetry.addData(TAG, "Press A to exit.");
+                    xMode = true;
+                }
+                else if (gamepad2.a && xMode) {
+                    telemetry.addData(TAG, "Gamepad2:");
+                    telemetry.addData(TAG, "A button pressed disabling secondary mode.");
+                    telemetry.addData(TAG, "Press Y to enter secondary mode.");
+                    xMode = false;
+                }
+                telemetry.update();
+
+
                 while (opModeIsActive() && whileControl) {
 
                     //Get a new image; if no image is a available, keep on trying.
@@ -357,31 +400,7 @@ public class ScrantonTeleOp extends LoggingLinearOpMode {
                             odomHeading * 180.0 / Math.PI);
                     if (gamepad1.b) whileControl = false;
 
-                    if (gamepad1.y || yMode) {
-                        telemetry.addData(TAG, "Gamepad1:");
-                        telemetry.addData(TAG, "Y Button pressed entering secondary mode.");
-                        telemetry.addData(TAG, "Press A to exit.");
-                        yMode = true;
-                    }
-                    if (gamepad1.a || !yMode) {
-                        telemetry.addData(TAG, "Gamepad1:");
-                        telemetry.addData(TAG, "A button pressed disabling secondary mode.");
-                        telemetry.addData(TAG, "Press Y to enter secondary mode.");
-                        yMode = false;
-                    }
 
-                    if (gamepad2.y || xMode) {
-                        telemetry.addData(TAG, "Gamepad2:");
-                        telemetry.addData(TAG, "Y Button pressed entering secondary mode.");
-                        telemetry.addData(TAG, "Press A to exit.");
-                        xMode = true;
-                    }
-                    if (gamepad2.a || !xMode) {
-                        telemetry.addData(TAG, "Gamepad2:");
-                        telemetry.addData(TAG, "A button pressed disabling secondary mode.");
-                        telemetry.addData(TAG, "Press Y to enter secondary mode.");
-                        xMode = false;
-                    }
                     BetaLog.dd(TAG,"My mode is: ", yMode + ". My mode is: " + xMode);
                     //if(robotZXPhi[0] < 41) break;
                     final float vNom = 5.0f;
@@ -391,19 +410,19 @@ public class ScrantonTeleOp extends LoggingLinearOpMode {
                     float vA = -HEADING_CORECTION_FACTOR * (float) VuMarkNavigator.NormalizeAngle(gyroHeading + Math.PI / 2.0f);
                     if (yMode) {
                         bot.setDriveSpeed(0, vY, 0);
+                        BetaLog.dd("Robot speed values:", " vX=%.1f  vY=%.1f  vA=%.1f", 0.0f, vY, 0.0f);
                     } else if(xMode) {
                         bot.setDriveSpeed(vX, 0, 0);
+                        BetaLog.dd("Robot speed values:", " vX=%.1f  vY=%.1f  vA=%.1f", vX, 0.0f, 0.0f);
                     }else{
                         bot.setDriveSpeed(vX,vY,0);
+                        BetaLog.dd("Robot speed set:", " vX=%.1f  vY=%.1f  vA=%.1f", vX, vY, 0.0f);
                     }
-                    BetaLog.dd("Robot speeds:", " vX=%.1f  vY=%.1f  vA=%.1f", vX, vY, vA);
+                    BetaLog.dd("Robot speed calculated:", " vX=%.1f  vY=%.1f  vA=%.1f", vX, vY, vA);
                     telemetry.update();
                 }
 
                 bot.setDriveSpeed(0, 0, 0);
-
-                telemetry.update();
-
                 CameraDevice.getInstance().setFlashTorchMode(false);
             }
         }
