@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.mechbot.supers_bot;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -9,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
 import org.firstinspires.ftc.teamcode.i2c.BNO055Enhanced;
@@ -16,15 +20,21 @@ import org.firstinspires.ftc.teamcode.i2c.BNO055EnhancedImpl;
 import org.firstinspires.ftc.teamcode.mechbot.MechBot;
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
+import java.util.zip.DeflaterOutputStream;
+
 /**
  * Created by FTC Team 8397 on 3/1/2018.
  */
 
 public class MechBotSensorScranton extends MechBot {
+    public enum GlyphColor{GREY,BROWN,UNKNOWN, NO_GLYPH}
 
     public ColorSensor colorLeft, colorRight, backColorRight, backColorLeft;
     //Change to our custom BNO055 class.
     public BNO055EnhancedImpl imu;
+
+    ColorSensor sensorColor;
+    DistanceSensor sensorDistance;
 
     public float initGyroHeading = 0;
 
@@ -59,6 +69,10 @@ public class MechBotSensorScranton extends MechBot {
         //colorRight = hardwareMap.get(ColorSensor.class, "sensor_color2");
 
         //colorRight.setI2cAddress(I2cAddr.create8bit(0x70));
+        sensorColor = hardwareMap.get(ColorSensor.class, "sensor_color_distance");
+
+        sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
+
 
         colorRight = hardwareMap.get(ColorSensor.class, "colorRight");
         colorLeft = hardwareMap.get(ColorSensor.class, "colorLeft");
@@ -84,6 +98,30 @@ public class MechBotSensorScranton extends MechBot {
         this.init(ahwMap);
         this.initGyroHeading = initGyroHeadingDegrees * (float) Math.PI / 180.0f;
 
+    }
+
+
+    public double getIntakeDistance(){
+        return sensorDistance.getDistance(DistanceUnit.CM);
+    }
+
+    public GlyphColor getIntakeColor(){
+        //5 == grey
+        //7 == brown
+        double distance = sensorDistance.getDistance(DistanceUnit.CM);
+        if(distance > 7){
+            return GlyphColor.BROWN;
+        }else if(distance > 4.5){
+            return  GlyphColor.GREY;
+        }else if(distance < 1.0 || distance == Double.NaN){
+            return GlyphColor.NO_GLYPH;
+        }else{
+            return GlyphColor.UNKNOWN;
+        }
+    }
+
+    public boolean glyphIntake(){
+        return false;
     }
 
     public float getHeadingRadians() {

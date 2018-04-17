@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.competition_in_work.auto.scranton;
+package org.firstinspires.ftc.teamcode.competition_in_work.auto.worlds;
 
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
 import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotAutonomousScranton;
@@ -11,9 +10,8 @@ import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotAutonomousScrant
 /**
  * Created by FTC Team 8397 on 3/1/2018.
  */
-@Autonomous(name = "Blue Bottom", group = "Auto")
-@Disabled
-public class BlueBottomScranton extends MechBotAutonomousScranton {
+@Autonomous(name = "Blue Bottom Worlds", group = "Auto")
+public class BlueBottomWorlds extends MechBotAutonomousScranton {
     final float[] hsvValues = new float[3];
 
     final boolean BLUE_BOTTOM_START_LOG = true;
@@ -27,6 +25,7 @@ public class BlueBottomScranton extends MechBotAutonomousScranton {
         robotZXPhi = new float[3];
 
         if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "INITIALIZE AUTO");
+
         //Contains wait for start.
         initAuto(TeamColor.BLUE, VUMARK_KEY_SCAN_TIME, JEWEL_SCAN_TIME); //Knocks the jewel off the stone and finds crypto key.
         telemetry.update();

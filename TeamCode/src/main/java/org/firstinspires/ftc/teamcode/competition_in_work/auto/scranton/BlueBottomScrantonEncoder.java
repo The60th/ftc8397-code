@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.competition_in_work.auto.scranton;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
 import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotAutonomousScranton;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotAutonomousScrant
  * Created by FTC Team 8397 on 3/6/2018.
  */
 @Autonomous(name = "Blue Bottom Encoder", group = "Auto")
+@Disabled
 public class BlueBottomScrantonEncoder extends MechBotAutonomousScranton{
     final float[] hsvValues = new float[3];
 

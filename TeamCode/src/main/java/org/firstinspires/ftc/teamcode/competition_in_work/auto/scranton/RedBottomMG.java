@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.competition_in_work.auto.scranton;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.vuforia.CameraDevice;
@@ -23,6 +24,7 @@ import java.util.concurrent.BlockingQueue;
 
 
 @Autonomous(name = "Red Bottom MG", group = "Auto")
+@Disabled
 public class RedBottomMG extends MechBotAutonomousScranton {
 
     private final String TAG = "RED_BOTTOM_MG";
@@ -131,7 +133,7 @@ public class RedBottomMG extends MechBotAutonomousScranton {
 
         handleTriangle(TriangleApproachSide.RIGHT,15,10,0,bot.colorLeft,bot.colorRight,2000);
 
-        scoreGlyph();
+        scoreGlyph(this.cryptoKey);
 
 
         setOdometry(53, CRYPTO_BOX_CENTER_SHIFT_VALUE);
@@ -141,11 +143,11 @@ public class RedBottomMG extends MechBotAutonomousScranton {
             robotZXPhi[1] += CRYPTO_BOX_SIDE_SHIFT_VALUE;
         }
 
-        bot.setFlipPlateDownwards(); //Lower plate
+        bot.setFlipPosition(0); //Lower plate
 
         sleep(200);
 
-        bot.disableFlipPlate();
+        //bot.disableFlipPlate();
 
         turnToHeadingGyroQuick(180,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY,RotationDirection.CLOCK);
 

@@ -96,9 +96,9 @@ public class TestNewBot extends LoggingLinearOpMode {
             }
 
             if (gamepad1.y) {
-                bot.setFlipPlateUpwards();
+                bot.setFlipPosition(0);
             } else if (gamepad1.a) {
-                bot.setFlipPlateDownwards();
+                bot.setFlipPosition(0);
             }
 
 

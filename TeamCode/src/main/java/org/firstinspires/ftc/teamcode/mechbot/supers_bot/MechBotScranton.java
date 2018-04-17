@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.teamcode.mechbot.supers_bot;
 
-import com.qualcomm.hardware.lynx.LynxUsbDevice;
-import com.qualcomm.hardware.lynx.LynxUsbDeviceDelegate;
-import com.qualcomm.hardware.lynx.LynxUsbDeviceImpl;
-import com.qualcomm.hardware.lynx.LynxUsbUtil;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
@@ -23,11 +20,14 @@ import org.openftc.hardware.rev.OpenRevDcMotorImplEx;
 public class MechBotScranton extends MechBotSensorScranton {
     public OpenRevDcMotorImplEx leftIntake, rightIntake;
     public DcMotor relicArm;
-    Servo  backStop, pincher, pincher2, pincher3, pincher4, kicker; //leftFlipper, rightFlipper,
-    public Servo pivot, arm, relicClaw;
+    public DcMotor flipMotor;
+    Servo   pincher, pincher2, pincher3, pincher4, kicker; //leftFlipper, rightFlipper,
+    public Servo touchServo;
+    public DigitalChannel touchSensor;
+    public Servo pivot, arm, relicClaw,backStop;
     CRServo relicLift;
     public final double MAX_INTAKE_STALL_CURRENT_THRESHOLD = 6000;
-    ServoImplEx leftFlipper, rightFlipper;
+    //public ServoImplEx leftFlipper, rightFlipper;
     public void init(HardwareMap ahwMap) {
         super.init(ahwMap);
         initHw();
@@ -47,17 +47,21 @@ public class MechBotScranton extends MechBotSensorScranton {
         rightIntake = new OpenRevDcMotorImplEx((DcMotorImplEx) hardwareMap.dcMotor.get("rightIntake"));
 
         relicArm = hardwareMap.dcMotor.get("relicArm");
+        flipMotor = hardwareMap.dcMotor.get("flipMotor");
 
+        flipMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         rightIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+        flipMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         relicArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        flipMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
 
-        leftFlipper = (ServoImplEx) hardwareMap.servo.get("leftFlipper");
-        rightFlipper = (ServoImplEx) hardwareMap.servo.get("rightFlipper");
+//        leftFlipper = (ServoImplEx) hardwareMap.servo.get("leftFlipper");
+//        rightFlipper = (ServoImplEx) hardwareMap.servo.get("rightFlipper");
         backStop = hardwareMap.servo.get("backStop");
         pincher = hardwareMap.servo.get("pincher"); // back right
         pincher2 = hardwareMap.servo.get("pincher2"); // back left
@@ -71,38 +75,80 @@ public class MechBotScranton extends MechBotSensorScranton {
         relicClaw = hardwareMap.servo.get("relicClaw");
         relicLift = hardwareMap.crservo.get("relicLift");
 
+        touchServo = hardwareMap.servo.get("touchServo");
+        touchSensor = hardwareMap.get(DigitalChannel.class, "touchSensor");
+
+
     }
 
-    public void disableFlipPlate(){
-        leftFlipper.setPwmDisable();
-        rightFlipper.setPwmDisable();
+//    public void disableFlipPlate(){
+//        leftFlipper.setPwmDisable();
+//        rightFlipper.setPwmDisable();
+//    }
+
+    private float flipDownPos = .5f; // down
+    private float flipUpPos = .93f; // up was .10
+    private float pincherFullClosed = 0f;
+    private float pincherIntakePos = .1f;
+    private float pincherReleasePos = .1f;
+    private float pincherFullFlat = .4f;
+    private float kickerKickPos = .45f;
+    private float kickerStoredPos = 0f;
+
+    private final int FLIP_PLATE_UPTICKS_AUTO = 0;
+    private final int FLIP_PLATE_DOWNTICKS_AUTO = 0;
+
+    private boolean flipPlateActive = false;
+    private float flipPlateTarget;
+
+    private float touchServoOutPos = .44f;
+    private float touchServoStorePos = .15f;
+
+    protected void setTouchServoOut(){
+        touchServo.setPosition(touchServoOutPos);
+    }
+    public void setTouchServoStore(){
+        touchServo.setPosition(touchServoStorePos);
     }
 
-    float flipDownPos = .5f; // down
-    float flipUpPos = .93f; // up was .10
-    float pincherFullClosed = 0f;
-    float pincherIntakePos = .1f;
-    float pincherReleasePos = .1f;
-    float pincherFullFlat = .4f;
-    float kickerKickPos = .45f;
-    float kickerStoredPos = 0f;
+  /*  public  void setFlipPlateDownwards(){
+        ticks = flipMotor.getCurrentPosition();
+        float  tickError = ticks - upticks;
+        power = -tickError * COEFF;
+        power = Math.min(power,1.0f);
+        power = Math.max(power,-1.0f);
+        flipMotor.setPower(power);
 
-    public void setFlipPlateDownwards() {
-        rightFlipper.setPosition(1 - flipDownPos);
-        leftFlipper.setPosition(flipDownPos);
-        backStop.setPosition(0);
-        pincher.setPosition(pincherIntakePos); // .15 less is less
-        pincher2.setPosition(1-pincherIntakePos); // .85 more is less
-        pincher3.setPosition(pincherIntakePos); // .15 less is less
-        pincher4.setPosition(1-pincherIntakePos); // .85 more is less
+
+    }
+
+    public  void setFlipPlateUpwards(){
+        ticks = flipMotor.getCurrentPosition();
+        float tickError = ticks - downticks;
+        power = -tickError * COEFF;
+        power = Math.min(power,1.0f);
+        power = Math.max(power,-1.0f);
+        flipMotor.setPower(power);
+
+    }*/
+
+  public void setFlipPosition (int flipPlatePos) {
+      flipMotor.setTargetPosition(flipPlatePos);
+      flipMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+      flipMotor.setPower(.3);
+  }
+   /* public void setFlipPlateDownwards() {
+        flipMotor.setTargetPosition(FLIP_PLATE_DOWNTICKS);
+        flipMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        flipMotor.setPower(.3);
     }
 
     public void setFlipPlateUpwards() {
-        rightFlipper.setPosition(1 - flipUpPos);
-        leftFlipper.setPosition(flipUpPos);
-        backStop.setPosition(.45);
+        flipMotor.setTargetPosition(FLIP_PLATE_UPTICKS);
+        flipMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        flipMotor.setPower(.3);
 
-    }
+    } */
 
     public void setGlyphPincherClosed() {
         pincher.setPosition(pincherFullClosed); // .15 less is less
@@ -156,7 +202,7 @@ public class MechBotScranton extends MechBotSensorScranton {
     }
 
     public void setArmJewel() {
-        arm.setPosition(.67);
+        arm.setPosition(.57);
     }
 
     public void setArmDrive(){
@@ -171,7 +217,7 @@ public class MechBotScranton extends MechBotSensorScranton {
     }
 
     public void setPivotEnd() {
-        pivot.setPosition(.40);
+        pivot.setPosition(.4);
     }
 
     public void knockPivotLeft() {
@@ -179,7 +225,7 @@ public class MechBotScranton extends MechBotSensorScranton {
     }
 
     public void knockPivotRight() {
-        pivot.setPosition(.33);
+        pivot.setPosition(.27);
     }
 
     public void setRelicClawClosed() {
@@ -213,7 +259,6 @@ public class MechBotScranton extends MechBotSensorScranton {
     public void setRelicLiftDown() {
         relicLift.setPower(1);
     }
-
     public void setRelicLiftStop() {
         relicLift.setPower(0);
     }

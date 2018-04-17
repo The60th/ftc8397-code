@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
 import org.firstinspires.ftc.teamcode.cv_programs.Blob;
 import org.firstinspires.ftc.teamcode.cv_programs.ImgProc;
 import org.firstinspires.ftc.teamcode.mechbot.presupers_bot.MechBotSensor;
+import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotScranton;
 import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotSensorScranton;
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
@@ -32,7 +33,7 @@ public class PreMatchRobotAlignment extends LoggingLinearOpMode {
     Orientation orientation;
     @Override
     public void runLoggingOpmode() throws InterruptedException {
-        MechBotSensorScranton bot = new MechBotSensorScranton();
+        MechBotScranton bot = new MechBotScranton();
         bot.init(hardwareMap);
         telemetry.addData("Starting Vuforia: ", "Wait for flash light to start program.");
         telemetry.update();
@@ -83,6 +84,7 @@ public class PreMatchRobotAlignment extends LoggingLinearOpMode {
             if (!gotBytes){
                 continue;
             }
+
 
             //First, reduce the imgWidthximgHeight image to reducedImgWidth x reducedImgHeight by skipping rows and columns per sampleRatio
             //From the reduced RGB565 image, obtain the binary images for red and blue blob detection
@@ -142,6 +144,12 @@ public class PreMatchRobotAlignment extends LoggingLinearOpMode {
 
             Color.RGBToHSV(bot.backColorRight.red(), bot.backColorRight.green(), bot.backColorRight.blue(),HSV);
             telemetry.addData("Color right", "H = %.2f S = %.2f V = %.2f", HSV[0],HSV[1],HSV[2]);
+
+            boolean touch = bot.touchSensor.getState();
+
+            telemetry.addData("touch State", touch);
+
+            telemetry.addData("flip plate ticks", bot.flipMotor.getCurrentPosition());
 
             telemetry.update();
 

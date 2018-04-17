@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.competition_in_work.auto.scranton;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
 import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotAutonomousScranton;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotAutonomousScrant
  * Created by FTC Team 8397 on 3/6/2018.
  */
 @Autonomous(name = "Blue Top", group = "Auto")
+@Disabled
 public class BlueTopScranton extends MechBotAutonomousScranton {
     final float[] hsvValues = new float[3];
 
@@ -117,7 +119,7 @@ public class BlueTopScranton extends MechBotAutonomousScranton {
 //
 //        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "adjust on triangle");
 
-        scoreGlyph();
+        scoreGlyph(this.cryptoKey);
 
     }
 }

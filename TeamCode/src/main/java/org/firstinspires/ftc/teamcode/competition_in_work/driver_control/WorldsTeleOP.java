@@ -31,7 +31,7 @@ import java.util.concurrent.BlockingQueue;
  * Created by FTC Team 8397 on 3/14/2018.
  */
 @TeleOp(name = "TeleOp ", group = "TeleOp")
-public class ScrantonTeleOp extends LoggingLinearOpMode {
+public class WorldsTeleOP extends LoggingLinearOpMode {
     private int sampleRatio = 4;
     private int rawImgWidth = 1280; //use 1280 for G4 //640
     private int rawImgHeight = 720; //use 720 for G4 //480
@@ -45,8 +45,11 @@ public class ScrantonTeleOp extends LoggingLinearOpMode {
     private final String TAG = "RED_BOTTOM_MG";
     private byte[] imageBytes = new byte[2 * rawImgWidth * rawImgHeight];
     float[] robotZXPhi = new float[3];
+    public final int FLIP_PLATE_UPTICKS = 610;
+    public final int FLIP_PLATE_DOWNTICKS = 0;
+    int tickOffSet = 0;
 
-
+    ElapsedTime et = new ElapsedTime();
     MechBotScranton bot = new MechBotScranton();
     private MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1, gamepad2, bot);
     private float[] driveData = new float[6];
@@ -108,26 +111,11 @@ public class ScrantonTeleOp extends LoggingLinearOpMode {
             telemetry.addData("Drive speeds input: ", "X: %.2f Y: %.2f A: %.2f", driveData[3], driveData[4], driveData[5]);
             telemetry.addData("+Left Draw: ", String.format("%.2f", bot.getLeftIntakeCurrentDraw()));
             telemetry.addData("+Right Draw: ", String.format("%.2f", bot.getRightIntakeCurrentDraw()));
+            telemetry.addData("Tick Off Set",tickOffSet);
+            telemetry.addData("Glyph color: ", bot.getIntakeColor());
+            telemetry.addData("ODS Distance (CM):", bot.getIntakeDistance());
             bot.gyroTelemetry(telemetry);
             telemetry.update();
-            /*if (gamepad2.right_stick_y > .05){
-                bot.rightIntake.setPower(-1);
-            }
-            else if (gamepad2.right_stick_y < -.05){
-                bot.rightIntake.setPower(1);
-            }
-            else{
-                bot.rightIntake.setPower(0);
-            }
-            if (gamepad2.left_stick_y > .05){
-                bot.leftIntake.setPower(-1);
-            }
-            else if (gamepad2.left_stick_y < -.05){
-                bot.leftIntake.setPower(1);
-            }
-            else{
-                bot.leftIntake.setPower(0);
-            }*/
 
             if (gamepad1.right_bumper) {
                 bot.rightIntake.setPower(1);
@@ -140,31 +128,40 @@ public class ScrantonTeleOp extends LoggingLinearOpMode {
                 bot.leftIntake.setPower(0);
             }
 
-            if (gamepad1.y) {
-                bot.setFlipPlateUpwards();
-                if(kickerStatus){
+            if(gamepad1.dpad_up){
+                tickOffSet+=10;
+                bot.setFlipPosition(FLIP_PLATE_UPTICKS+tickOffSet);
+                if(kickerStatus) {
                     bot.setRetractKicker();
                     kickerStatus = false;
                 }
-            } else if (gamepad1.a) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        bot.setFlipPlateDownwards();
-                        sleep(10);
-                        if(kickerStatus){
-                            bot.setRetractKicker();
-                            kickerStatus = false;
-                        }
-                        sleep(100);
-                        bot.disableFlipPlate();
-                        return;
-                    }
-                }).start();
-
-                bot.disableFlipPlate();
+                bot.backStop.setPosition(.0);
+            }else if(gamepad1.dpad_down){
+                tickOffSet-=10;
+                bot.setFlipPosition(FLIP_PLATE_DOWNTICKS+tickOffSet);
+                if(kickerStatus) {
+                    bot.setRetractKicker();
+                    kickerStatus = false;
+                }
+                bot.backStop.setPosition(.28);
             }
 
+            if(gamepad1.y) {
+                if(kickerStatus) {
+                    bot.setRetractKicker();
+                    kickerStatus = false;
+                }
+                bot.backStop.setPosition(0.00);
+                bot.setFlipPosition(FLIP_PLATE_UPTICKS+tickOffSet);
+            }
+            else if(gamepad1.a){
+                if(kickerStatus) {
+                    bot.setRetractKicker();
+                    kickerStatus = false;
+                }
+                bot.backStop.setPosition(0.280);
+                bot.setFlipPosition(FLIP_PLATE_DOWNTICKS+tickOffSet);
+            }
 
             if (gamepad2.a) {
                 bot.setGlyphPincherClosed();
