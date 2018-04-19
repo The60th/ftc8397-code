@@ -37,7 +37,7 @@ public class PreMatchRobotAlignment extends LoggingLinearOpMode {
         bot.init(hardwareMap);
         telemetry.addData("Starting Vuforia: ", "Wait for flash light to start program.");
         telemetry.update();
-        VuMarkNavigator.activate();
+        VuMarkNavigator.activate(true);
 
         //Turn flashlight on. Found I needed this in my office after dark to get adequate read on blue.
         //May not be necessary under normal competition conditions, especially if value and saturation
@@ -157,6 +157,6 @@ public class PreMatchRobotAlignment extends LoggingLinearOpMode {
 
         //Turn flashlight back off before exiting.
         CameraDevice.getInstance().setFlashTorchMode(false);
-
+        VuMarkNavigator.deactivate();
     }
 }

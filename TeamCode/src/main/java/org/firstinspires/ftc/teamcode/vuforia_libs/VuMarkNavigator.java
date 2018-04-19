@@ -47,11 +47,12 @@ public class VuMarkNavigator {
     private static final VuforiaLocalizer.CameraDirection CAMERA_DIRECTION = VuforiaLocalizer.CameraDirection.BACK;
 
 
-    public static void activate(){
+    public static void activate(boolean viewOn){
 
-
+        VuforiaLocalizer.Parameters parameters;
         //Create the VuforiaLocalizer
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
+        if(viewOn){parameters = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);}
+        else{parameters = new VuforiaLocalizer.Parameters();}
         parameters.cameraDirection = CAMERA_DIRECTION;
         parameters.vuforiaLicenseKey = "Ae1jMu//////AAAAGeOTvbI/jknrpPvd1Jvqdk4+f9Csy0CC9PVlGo1o3pXA9ZN/v5SYrMDAzxObLuZ5pRWhZ9F6XZH5tkZcgPBMnb5pe9r1MgIPvxEC7IQ9mGWsnzGdGl5ABrOCR/wrog7l5YKJeMuRrlVRib9So+hurF1WchB8nlnuwQe3E7fiC+0M/wtz2qYRBxcH6dM7XKhPHNKpiyH5s82YXwIVMEwFtSQHQI68ghVvj3vnVVf5B0o4aUS8gn2/ygAa4uhEwUf3kmAiZO/kwGpdQGy3moOOdzBDyJ8KmGZIckcsRFGQdtQtgDVCoKxItGMCeH0vWyRmSp4dqLsUVnDQLWZfEP8axZ7UIWO+A8ppclFj7A1qehC6";
         vuforia = ClassFactory.createVuforiaLocalizer(parameters);
@@ -67,6 +68,12 @@ public class VuMarkNavigator {
         ((VuforiaTrackableDefaultListener)target.getListener()).setPhoneInformation(PHONE_LOCATION_ON_ROBOT, CAMERA_DIRECTION);
         targets.activate();
         isActive = true;
+
+    }
+
+    public static void deactivate(){
+        targets.deactivate();
+        isActive = false;
     }
 
     //Return the RelicRecoveryVuMark code of the visualized target (RIGHT, CENTER, LEFT); UNKNOWN if no target found.

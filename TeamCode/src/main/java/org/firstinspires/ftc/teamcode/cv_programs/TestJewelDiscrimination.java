@@ -22,7 +22,7 @@ public class TestJewelDiscrimination extends LinearOpMode {
     @Override
     public void runOpMode()  {
 
-        VuMarkNavigator.activate();
+        VuMarkNavigator.activate(true);
 
         //Turn flashlight on. Found I needed this in my office after dark to get adequate read on blue.
         //May not be necessary under normal competition conditions, especially if value and saturation

@@ -35,7 +35,7 @@ public class GetCameraParameters extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        VuMarkNavigator.activate();
+        VuMarkNavigator.activate(true);
         float[] fovRad = CameraDevice.getInstance().getCameraCalibration().getFieldOfViewRads().getData();
         float[] size = CameraDevice.getInstance().getCameraCalibration().getSize().getData();
         float[] pp = CameraDevice.getInstance().getCameraCalibration().getPrincipalPoint().getData();

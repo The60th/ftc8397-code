@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
 import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotAutonomousScranton;
+import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
 /**
  * Created by FTC Team 8397 on 3/1/2018.
@@ -53,6 +54,8 @@ public class BlueBottomWorlds extends MechBotAutonomousScranton {
         freeFlipPlate();
 
         scoreGlyph(this.cryptoKey);
+
+        VuMarkNavigator.deactivate();
 
     }
 }

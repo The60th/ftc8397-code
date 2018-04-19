@@ -26,7 +26,7 @@ public class TestImageFileOutput extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        VuMarkNavigator.activate();
+        VuMarkNavigator.activate(true);
 
         //Automatically determine the resolution of the camera
         float size[] = CameraDevice.getInstance().getCameraCalibration().getSize().getData();

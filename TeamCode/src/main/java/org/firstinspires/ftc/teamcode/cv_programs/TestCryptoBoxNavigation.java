@@ -94,7 +94,7 @@ public class TestCryptoBoxNavigation extends LinearOpMode {
         ElapsedTime etv = new ElapsedTime();
 
         //FIRST:  Activate VuMarkNavigator
-        VuMarkNavigator.activate();
+        VuMarkNavigator.activate(true);
         telemetry.addData("Vuforia Activation Time", "%.3f", etv.seconds());
         telemetry.update();
 

@@ -523,7 +523,7 @@ public abstract class MechBotAutonomous extends LoggingLinearOpMode {
         telemetry.addData("Starting Vuforia","");
         telemetry.addData("Wait for flashlight to be on before starting.","");
         telemetry.update();
-        VuMarkNavigator.activate();
+        VuMarkNavigator.activate(false);
         while (opModeIsActive() && !VuMarkNavigator.isActive){
             sleep(1);
         }

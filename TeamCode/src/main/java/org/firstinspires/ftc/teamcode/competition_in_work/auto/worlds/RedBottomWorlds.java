@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
 import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotAutonomousScranton;
+import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
 /**
  * Created by FTC Team 8397 on 4/15/2018.
@@ -15,9 +16,9 @@ import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotAutonomousScrant
 public class RedBottomWorlds extends MechBotAutonomousScranton{
     final float[] hsvValues = new float[3];
 
-    final boolean BLUE_BOTTOM_START_LOG = true;
-    final String BLUE_BOTTOM_START_TAG = "Red bottom start:";
-    final float OFF_STONE_DISTANCE = -68.5f;
+    final boolean RED_BOTTOM_START_LOG = true;
+    final String RED_BOTTOM_START_TAG = "Red bottom start:";
+    final float OFF_STONE_DISTANCE = -75f;
     @Override
     public void runLoggingOpmode() throws InterruptedException {
         bot.init(hardwareMap, 180); //The starting value of the gyro heading comapred to the wall.
@@ -25,7 +26,7 @@ public class RedBottomWorlds extends MechBotAutonomousScranton{
         //The starting angle is the gyro heading relative to the crypto box.
         robotZXPhi = new float[3];
 
-        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "INITIALIZE AUTO");
+        if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "INITIALIZE AUTO");
 
         //Contains wait for start.
         initAuto(TeamColor.RED, VUMARK_KEY_SCAN_TIME, JEWEL_SCAN_TIME); //Knocks the jewel off the stone and finds crypto key.
@@ -34,13 +35,13 @@ public class RedBottomWorlds extends MechBotAutonomousScranton{
         setOdometry(0,0);
         driveDirectionGyro(OFF_STONE_SPEED, -90, 180, new Predicate() {
             @Override
-            public boolean isTrue() {
+            public boolean isTrue() { //Off stone
                 return robotZXPhi[1] < OFF_STONE_DISTANCE;
             }
         });
 
         setOdometry(0,0);
-        driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, 0,180, new Predicate() {
+        driveDirectionGyro(50, 0,180, new Predicate() { //Back up
             @Override
             public boolean isTrue() {
                 return robotZXPhi[0] > 5f;
@@ -57,13 +58,33 @@ public class RedBottomWorlds extends MechBotAutonomousScranton{
         });
 
 
-        handleTriangle(TriangleApproachSide.RIGHT,LINE_FOLLOW_SPEED,20,180,bot.backColorLeft,bot.backColorRight,2000);
+        handleTriangle(TriangleApproachSide.RIGHT,LINE_FOLLOW_SPEED,20,180,bot.backColorLeft,bot.backColorRight,0);
 
         freeFlipPlate();
 
         scoreGlyph(this.cryptoKey);
 
         multiGlyph(RelicRecoveryVuMark.CENTER);
+
+        setOdometry(0,0);
+
+        driveDirectionGyro(50, 180, 180, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                return robotZXPhi[0] < -4;
+            }
+        });
+
+        setOdometry(0,0);
+
+        driveDirectionGyro(50, 0, 180, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                return robotZXPhi[0] > 6;
+            }
+        });
+
+        VuMarkNavigator.deactivate();
     }
 
 }
