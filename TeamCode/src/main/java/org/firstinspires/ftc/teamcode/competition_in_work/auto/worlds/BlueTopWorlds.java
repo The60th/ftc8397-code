@@ -40,7 +40,6 @@ public class BlueTopWorlds extends MechBotAutonomousScranton {
                 return robotZXPhi[0] < OFF_STONE_DISTANCE;
             }
         });
-        setOdometry(0,0);
 
         turnToHeadingGyroQuick(180,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY);
 
@@ -58,6 +57,8 @@ public class BlueTopWorlds extends MechBotAutonomousScranton {
         freeFlipPlate();
 
         scoreGlyph(this.cryptoKey);
+
+        topMultiGlyph(TeamColor.BLUE, this.cryptoKey);
 
         VuMarkNavigator.deactivate();
     }

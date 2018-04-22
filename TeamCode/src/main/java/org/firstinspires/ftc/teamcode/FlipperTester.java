@@ -31,10 +31,10 @@ public class FlipperTester extends LinearOpMode {
            et.reset();
 
             /*if (gamepad1.y){
-                bot.setFlipPosition(bot.FLIP_PLATE_UPTICKS);
+                bot.setFlipPosition(bot.flipPlateUpticks);
             }
             else if (gamepad1.a){
-                bot.setFlipPosition(bot.FLIP_PLATE_DOWNTICKS);
+                bot.setFlipPosition(bot.flipPlateDownticks);
             }*/
         }
     }

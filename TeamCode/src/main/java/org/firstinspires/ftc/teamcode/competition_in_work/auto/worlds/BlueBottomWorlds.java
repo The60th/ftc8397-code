@@ -4,6 +4,7 @@ import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
 import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotAutonomousScranton;
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
@@ -17,7 +18,7 @@ public class BlueBottomWorlds extends MechBotAutonomousScranton {
 
     final boolean BLUE_BOTTOM_START_LOG = true;
     final String BLUE_BOTTOM_START_TAG = "Blue bottom start Red Hook:";
-    final float OFF_STONE_DISTANCE = 68.5f;
+    final float OFF_STONE_DISTANCE = 75f;
     @Override
     public void runLoggingOpmode() throws InterruptedException {
         bot.init(hardwareMap, 180); //The starting value of the gyro heading comapred to the wall.
@@ -38,8 +39,8 @@ public class BlueBottomWorlds extends MechBotAutonomousScranton {
                 return robotZXPhi[1] > OFF_STONE_DISTANCE;
             }
         });
-        setOdometry(0,0);
 
+        setOdometry(0,0);
         driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, 90,180, new Predicate() {
             @Override
             public boolean isTrue() {
@@ -49,11 +50,20 @@ public class BlueBottomWorlds extends MechBotAutonomousScranton {
         });
 
 
-        handleTriangle(TriangleApproachSide.LEFT,LINE_FOLLOW_SPEED,20,180,bot.backColorLeft,bot.backColorRight,2000);
+        handleTriangle(TriangleApproachSide.LEFT,LINE_FOLLOW_SPEED,20,180,bot.backColorLeft,bot.backColorRight,0);
 
         freeFlipPlate();
 
         scoreGlyph(this.cryptoKey);
+
+        RelicRecoveryVuMark MGTarget;
+        if(this.cryptoKey == RelicRecoveryVuMark.RIGHT){
+            MGTarget = RelicRecoveryVuMark.LEFT;
+        }else {
+            MGTarget = RelicRecoveryVuMark.CENTER;
+        }
+
+        multiGlyph(MGTarget);
 
         VuMarkNavigator.deactivate();
 

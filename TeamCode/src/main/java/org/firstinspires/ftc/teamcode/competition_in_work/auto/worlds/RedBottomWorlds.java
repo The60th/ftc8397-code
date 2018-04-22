@@ -5,6 +5,7 @@ import android.graphics.Color;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.internal.network.RecvLoopRunnable;
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
 import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotAutonomousScranton;
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
@@ -64,25 +65,14 @@ public class RedBottomWorlds extends MechBotAutonomousScranton{
 
         scoreGlyph(this.cryptoKey);
 
-        multiGlyph(RelicRecoveryVuMark.CENTER);
+        RelicRecoveryVuMark MGTarget;
+        if(this.cryptoKey == RelicRecoveryVuMark.RIGHT){
+            MGTarget = RelicRecoveryVuMark.LEFT;
+        }else {
+            MGTarget = RelicRecoveryVuMark.CENTER;
+        }
 
-        setOdometry(0,0);
-
-        driveDirectionGyro(50, 180, 180, new Predicate() {
-            @Override
-            public boolean isTrue() {
-                return robotZXPhi[0] < -4;
-            }
-        });
-
-        setOdometry(0,0);
-
-        driveDirectionGyro(50, 0, 180, new Predicate() {
-            @Override
-            public boolean isTrue() {
-                return robotZXPhi[0] > 6;
-            }
-        });
+        multiGlyph(MGTarget);
 
         VuMarkNavigator.deactivate();
     }

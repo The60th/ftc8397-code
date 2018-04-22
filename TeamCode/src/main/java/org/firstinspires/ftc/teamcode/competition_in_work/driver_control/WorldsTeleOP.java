@@ -3,37 +3,25 @@ package org.firstinspires.ftc.teamcode.competition_in_work.driver_control;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoControllerEx;
-import com.qualcomm.robotcore.hardware.ServoImpl;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.RobotLog;
-import com.vuforia.CameraDevice;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
 import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
-import org.firstinspires.ftc.teamcode.cv_programs.CryptoNav;
 import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotScranton;
 import org.firstinspires.ftc.teamcode.mechbot.utill.MechBotDriveControls;
 import org.firstinspires.ftc.teamcode.third_party_libs.UTILToggle;
-import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
-
-import java.util.concurrent.BlockingQueue;
 
 /**
  * Created by FTC Team 8397 on 3/14/2018.
  */
 @TeleOp(name = "TeleOp ", group = "TeleOp")
 public class WorldsTeleOP extends LoggingLinearOpMode {
-    public final int FLIP_PLATE_UPTICKS = 540;
-    public final int FLIP_PLATE_DOWNTICKS = 0;
+    public int flipPlateUpticks = 580;
+    public int flipPlateDownticks = 0;
     int tickOffSet = 0;
 
     ElapsedTime et = new ElapsedTime();
@@ -70,7 +58,7 @@ public class WorldsTeleOP extends LoggingLinearOpMode {
                 if (gamepad1.b) {
                     balancing = true;
                     //autoBalancer = new AutoBalancer(-30, -120, 0, 60, 20);
-                    autoBalancer = new AutoBalancer(-30,-60,0,+60,+0);
+                    autoBalancer = new AutoBalancer(30,-120,0,+120,+0);
                     autoBalancer.start();
                     continue;
                 }
@@ -100,8 +88,8 @@ public class WorldsTeleOP extends LoggingLinearOpMode {
 
             if(gamepad1.right_stick_y < -.05 && flipUp && et.milliseconds() > 10){
                 tickOffSet-=4;
-                if(tickOffSet < -100) tickOffSet = -100;
-                bot.setFlipPosition(FLIP_PLATE_UPTICKS+tickOffSet);
+                if(tickOffSet < -125) tickOffSet = -100;
+                bot.setFlipPosition(flipPlateUpticks +tickOffSet);
                 if(kickerStatus) {
                     bot.setRetractKicker();
                     kickerStatus = false;
@@ -111,8 +99,8 @@ public class WorldsTeleOP extends LoggingLinearOpMode {
             }
             else if(gamepad1.right_stick_y >.05 && flipUp && et.milliseconds() > 10){
                 tickOffSet+=4;
-                if(tickOffSet > 100) tickOffSet = 100;
-                bot.setFlipPosition(FLIP_PLATE_UPTICKS+tickOffSet);
+                if(tickOffSet > 125) tickOffSet = 100;
+                bot.setFlipPosition(flipPlateUpticks +tickOffSet);
                 if(kickerStatus) {
                     bot.setRetractKicker();
                     kickerStatus = false;
@@ -121,9 +109,42 @@ public class WorldsTeleOP extends LoggingLinearOpMode {
                 et.reset();
             }
 
+            if (gamepad1.dpad_up){
+                flipUp = false;
+                if(kickerStatus) {
+                    bot.setRetractKicker();
+                    kickerStatus = false;
+                }
+                bot.backStop.setPosition(0.00);
+               // bot.setFlipPosition(bot.flipMotor.getCurrentPosition() + 4);
+                bot.flipMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                bot.flipMotor.setPower(.1);
+                tickOffSet = 0;
+            }
+            else if (gamepad1.dpad_down){
+                flipUp = false;
+                if(kickerStatus) {
+                    bot.setRetractKicker();
+                    kickerStatus = false;
+                }
+                bot.backStop.setPosition(0.00);
+                //bot.setFlipPosition(bot.flipMotor.getCurrentPosition() - 4);
+                bot.flipMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                bot.flipMotor.setPower(-.1);
+                tickOffSet = 0;
+            }
+            else if (gamepad1.dpad_right){
+                bot.flipMotor.setPower(0);
+                int upDownDifference = flipPlateUpticks - flipPlateDownticks;
+                flipPlateDownticks = bot.flipMotor.getCurrentPosition();
+                flipPlateUpticks = flipPlateDownticks + upDownDifference;
+                tickOffSet = 0;
+                flipUp = false;
+            }
+
            /* if(gamepad1.dpad_up){
                 tickOffSet+=10;
-                bot.setFlipPosition(FLIP_PLATE_UPTICKS+tickOffSet);
+                bot.setFlipPosition(flipPlateUpticks+tickOffSet);
                 if(kickerStatus) {
                     bot.setRetractKicker();
                     kickerStatus = false;
@@ -131,7 +152,7 @@ public class WorldsTeleOP extends LoggingLinearOpMode {
                 bot.backStop.setPosition(.0);
             }else if(gamepad1.dpad_down){
                 tickOffSet-=10;
-                bot.setFlipPosition(FLIP_PLATE_UPTICKS+tickOffSet);
+                bot.setFlipPosition(flipPlateUpticks+tickOffSet);
                 if(kickerStatus) {
                     bot.setRetractKicker();
                     kickerStatus = false;
@@ -146,7 +167,7 @@ public class WorldsTeleOP extends LoggingLinearOpMode {
                     kickerStatus = false;
                 }
                 bot.backStop.setPosition(0.00);
-                bot.setFlipPosition(FLIP_PLATE_UPTICKS);
+                bot.setFlipPosition(flipPlateUpticks);
                 tickOffSet = 0;
             }
             else if(gamepad1.a){
@@ -156,7 +177,7 @@ public class WorldsTeleOP extends LoggingLinearOpMode {
                     kickerStatus = false;
                 }
                 bot.backStop.setPosition(0.280);
-                bot.setFlipPosition(FLIP_PLATE_DOWNTICKS);
+                bot.setFlipPosition(flipPlateDownticks);
                 tickOffSet = 0;
             }
 
@@ -235,9 +256,9 @@ public class WorldsTeleOP extends LoggingLinearOpMode {
 
         public void update() {
             if (!mounted) {
-                int red = bot.colorRight.blue();
-                int green = bot.colorRight.green();
-                int blue = bot.colorRight.blue();
+                int red = bot.backColorRight.blue();
+                int green = bot.backColorRight.green();
+                int blue = bot.backColorRight.blue();
                 float[] hsv = new float[3];
                 Color.RGBToHSV(red, green, blue, hsv);
                 if (hsv[1] > 0.5) {

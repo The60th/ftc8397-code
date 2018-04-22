@@ -101,7 +101,7 @@ public class MechBotScranton extends MechBotSensorScranton {
     private boolean flipPlateActive = false;
     private float flipPlateTarget;
 
-    private float touchServoOutPos = .44f;
+    private float touchServoOutPos = .40f;
     private float touchServoStorePos = .15f;
 
     protected void setTouchServoOut(){
@@ -138,13 +138,13 @@ public class MechBotScranton extends MechBotSensorScranton {
       flipMotor.setPower(.3);
   }
    /* public void setFlipPlateDownwards() {
-        flipMotor.setTargetPosition(FLIP_PLATE_DOWNTICKS);
+        flipMotor.setTargetPosition(flipPlateDownticks);
         flipMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         flipMotor.setPower(.3);
     }
 
     public void setFlipPlateUpwards() {
-        flipMotor.setTargetPosition(FLIP_PLATE_UPTICKS);
+        flipMotor.setTargetPosition(flipPlateUpticks);
         flipMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         flipMotor.setPower(.3);
 

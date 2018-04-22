@@ -18,6 +18,10 @@ public class RedTopWorlds extends MechBotAutonomousScranton {
     final boolean BLUE_BOTTOM_START_LOG = true;
     final String BLUE_BOTTOM_START_TAG = "Blue bottom start Red Hook:";
     final float OFF_STONE_DISTANCE = -58.5f;
+    final float MULTI_GLYPH_X_SHIFT = -14f * 2.54f;
+    final float MULTI_GLYPH_Z_SHIFT = 31f * 2.54f;
+    final float MULTI_GLYPH_DIR = (float)Math.atan(MULTI_GLYPH_X_SHIFT/MULTI_GLYPH_Z_SHIFT);
+
 
     @Override
     public void runLoggingOpmode() throws InterruptedException {
@@ -39,24 +43,35 @@ public class RedTopWorlds extends MechBotAutonomousScranton {
                 return robotZXPhi[0] < OFF_STONE_DISTANCE;
             }
         });
+
         setOdometry(0,0);
 
-        turnToHeadingGyroQuick(180,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY);
+        turnToHeadingGyroQuick(180,GLOBAL_STANDERD_TOLERANCE * 2.0f,GLOBAL_STANDERD_LATENCY * 0.5f);
 
-        driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, 90,180, new Predicate() {
+        setOdometry(0,0);
+        driveDirectionGyro(50, 0, 180, new Predicate() {
             @Override
             public boolean isTrue() {
-                Color.RGBToHSV(bot.backColorLeft.red() * 8, bot.backColorLeft.green() * 8, bot.backColorLeft.blue() * 8, hsvValues);
+                return robotZXPhi[0] > 5;
+            }
+        });
+
+        driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, -90,180, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                Color.RGBToHSV(bot.backColorRight.red() * 8, bot.backColorRight.green() * 8, bot.backColorRight.blue() * 8, hsvValues);
                 return hsvValues[1] > HSV_SAT_CUT_OFF;
             }
         });
 
 
-        handleTriangle(TriangleApproachSide.RIGHT,LINE_FOLLOW_SPEED,20,180,bot.backColorLeft,bot.backColorRight,2000);
+        handleTriangle(TriangleApproachSide.RIGHT,LINE_FOLLOW_SPEED,20,180,bot.backColorLeft,bot.backColorRight,0);
 
         freeFlipPlate();
 
         scoreGlyph(this.cryptoKey);
+
+        topMultiGlyph(TeamColor.RED,this.cryptoKey);
 
         VuMarkNavigator.deactivate();
 
