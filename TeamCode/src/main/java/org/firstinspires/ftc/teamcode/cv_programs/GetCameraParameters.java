@@ -31,6 +31,7 @@ import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
 @Autonomous(name = "GetCameraParameters", group = "Test")
 //@Disabled
+@Disabled
 public class GetCameraParameters extends LinearOpMode {
     @Override
     public void runOpMode() {

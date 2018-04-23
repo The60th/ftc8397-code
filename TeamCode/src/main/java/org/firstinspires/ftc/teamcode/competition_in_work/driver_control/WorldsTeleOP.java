@@ -29,6 +29,9 @@ public class WorldsTeleOP extends LoggingLinearOpMode {
     private MechBotDriveControls mechBotDriveControls = new MechBotDriveControls(gamepad1, gamepad2, bot);
     private float[] driveData = new float[6];
 
+    double pos = 0.0;
+    double UPpos = .98;
+
     public AutoBalancer autoBalancer = null;
     boolean balancing = false;
     UTILToggle bottomToggle = new UTILToggle();
@@ -222,6 +225,28 @@ public class WorldsTeleOP extends LoggingLinearOpMode {
                 bot.setRelicArmStop();
             }
 
+            if(gamepad1.dpad_left){
+                pos = pos-.002;
+                if(pos <= 0) pos = 0;
+                bot.pivot.setPosition(pos);
+            }else if(gamepad1.dpad_right){
+                pos = pos+.002;
+                if(pos >= 1.0) pos = 1.0;
+                bot.pivot.setPosition(pos);
+            }
+
+            if(gamepad1.dpad_down) {
+                UPpos = UPpos - .002;
+                if (UPpos <= 0) UPpos = 0;
+                bot.arm.setPosition(UPpos);
+            }
+            else  if(gamepad1.dpad_up){
+                UPpos = UPpos+.002;
+                if(UPpos >= 1.0) UPpos = 1.0;
+                bot.arm.setPosition(UPpos);
+            }
+            bot.pivot.setPosition(pos);
+            bot.arm.setPosition(UPpos);
         }
 
 

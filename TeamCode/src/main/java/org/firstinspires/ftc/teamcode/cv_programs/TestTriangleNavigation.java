@@ -20,6 +20,7 @@ import java.util.concurrent.BlockingQueue;
 
 @Autonomous(name = "TestTriangleNavigation", group = "Test")
 //@Disabled
+@Disabled
 public class TestTriangleNavigation extends LinearOpMode {
 
     final String TAG = "TST_TRIANGLE_NAV";

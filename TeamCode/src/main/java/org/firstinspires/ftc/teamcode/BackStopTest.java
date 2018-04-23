@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -12,6 +13,8 @@ import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotScranton;
  * Created by FTC Team 8397 on 4/15/2018.
  */
 @TeleOp(name = "Back stopped tester servo",group = "Test")
+@Disabled
+
 public class BackStopTest extends LoggingLinearOpMode {
     private MechBotScranton bot = new MechBotScranton();
     double pos = .50;

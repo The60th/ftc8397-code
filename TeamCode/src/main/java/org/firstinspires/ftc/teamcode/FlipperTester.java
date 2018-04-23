@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.third_party_libs.UTILToggle;
  */
 @TeleOp(name = "Flipper Tester", group = "Tester")
 //@Disabled
+@Disabled
 public class FlipperTester extends LinearOpMode {
     private MechBotScranton bot = new MechBotScranton();
     @Override

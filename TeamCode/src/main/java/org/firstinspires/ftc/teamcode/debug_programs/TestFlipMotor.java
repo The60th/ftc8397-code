@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.debug_programs;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotScranton;
  * Created by FTC Team 8397 on 4/13/2018.
  */
 @TeleOp (name = "TestFLipMotor", group = "Test")
+@Disabled
 public class TestFlipMotor extends LoggingLinearOpMode {
 
     MechBotScranton bot = new MechBotScranton();

@@ -21,6 +21,7 @@ import java.util.concurrent.BlockingQueue;
 
 @Autonomous(name = "TestCryptoBoxNavigation", group = "Test")
 //@Disabled
+@Disabled
 public class TestCryptoBoxNavigation extends LinearOpMode {
 
     final String TAG = "TST_CRYPT";

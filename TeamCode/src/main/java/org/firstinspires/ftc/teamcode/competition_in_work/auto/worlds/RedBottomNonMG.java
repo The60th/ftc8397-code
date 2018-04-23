@@ -10,15 +10,15 @@ import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotAutonomousScrant
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
 /**
- * Created by FTC Team 8397 on 3/1/2018.
+ * Created by FTC Team 8397 on 4/22/2018.
  */
-@Autonomous(name = "Blue Bottom MG", group = "MG")
-public class BlueBottomWorlds extends MechBotAutonomousScranton {
+@Autonomous(name = "Red Bottom Non MG",group = "No MG")
+public class RedBottomNonMG extends MechBotAutonomousScranton {
     final float[] hsvValues = new float[3];
 
-    final boolean BLUE_BOTTOM_START_LOG = true;
-    final String BLUE_BOTTOM_START_TAG = "Blue bottom start Red Hook:";
-    final float OFF_STONE_DISTANCE = 75f;
+    final boolean RED_BOTTOM_START_LOG = true;
+    final String RED_BOTTOM_START_TAG = "Red bottom start:";
+    final float OFF_STONE_DISTANCE = -75f;
     @Override
     public void runLoggingOpmode() throws InterruptedException {
         bot.init(hardwareMap, 180); //The starting value of the gyro heading comapred to the wall.
@@ -26,49 +26,46 @@ public class BlueBottomWorlds extends MechBotAutonomousScranton {
         //The starting angle is the gyro heading relative to the crypto box.
         robotZXPhi = new float[3];
 
-        if (BLUE_BOTTOM_START_LOG) BetaLog.dd(BLUE_BOTTOM_START_TAG, "INITIALIZE AUTO");
+        if (RED_BOTTOM_START_LOG) BetaLog.dd(RED_BOTTOM_START_TAG, "INITIALIZE AUTO");
 
         //Contains wait for start.
-        initAuto(TeamColor.BLUE, VUMARK_KEY_SCAN_TIME, JEWEL_SCAN_TIME); //Knocks the jewel off the stone and finds crypto key.
+        initAuto(TeamColor.RED, VUMARK_KEY_SCAN_TIME, JEWEL_SCAN_TIME); //Knocks the jewel off the stone and finds crypto key.
         telemetry.update();
 
         setOdometry(0,0);
-        driveDirectionGyro(OFF_STONE_SPEED, 90, 180, new Predicate() {
+        driveDirectionGyro(OFF_STONE_SPEED, -90, 180, new Predicate() {
             @Override
-            public boolean isTrue() {
-                return robotZXPhi[1] > OFF_STONE_DISTANCE;
+            public boolean isTrue() { //Off stone
+                return robotZXPhi[1] < OFF_STONE_DISTANCE;
             }
         });
 
         setOdometry(0,0);
-        driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, 90,180, new Predicate() {
+        driveDirectionGyro(50, 0,180, new Predicate() { //Back up
             @Override
             public boolean isTrue() {
-                Color.RGBToHSV(bot.backColorLeft.red() * 8, bot.backColorLeft.green() * 8, bot.backColorLeft.blue() * 8, hsvValues);
+                return robotZXPhi[0] > 5f;
+            }
+        });
+
+        setOdometry(0,0);
+        driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, -90,180, new Predicate() {
+            @Override
+            public boolean isTrue() {
+                Color.RGBToHSV(bot.backColorRight.red() * 8, bot.backColorRight.green() * 8, bot.backColorRight.blue() * 8, hsvValues);
                 return hsvValues[1] > HSV_SAT_CUT_OFF;
             }
         });
 
 
-        handleTriangle(TriangleApproachSide.LEFT,LINE_FOLLOW_SPEED,20,180,bot.backColorLeft,bot.backColorRight,0);
+        handleTriangle(TriangleApproachSide.RIGHT,LINE_FOLLOW_SPEED,20,180,bot.backColorLeft,bot.backColorRight,0);
 
         freeFlipPlate();
 
         scoreGlyph(this.cryptoKey);
 
-        RelicRecoveryVuMark MGTarget;
-        if(this.cryptoKey == RelicRecoveryVuMark.RIGHT){
-            MGTarget = RelicRecoveryVuMark.LEFT;
-        }else {
-            MGTarget = RelicRecoveryVuMark.CENTER;
-        }
-
-        multiGlyph(MGTarget);
-
         VuMarkNavigator.deactivate();
-
     }
+
 }
-
-
 

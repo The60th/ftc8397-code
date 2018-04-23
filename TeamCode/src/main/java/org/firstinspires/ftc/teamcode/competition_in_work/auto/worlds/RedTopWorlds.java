@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 /**
  * Created by FTC Team 8397 on 4/15/2018.
  */
-@Autonomous(name = "Red Top Worlds",group = "Auto")
+@Autonomous(name = "Red Top MG",group = "MG")
 public class RedTopWorlds extends MechBotAutonomousScranton {
     final float[] hsvValues = new float[3];
 

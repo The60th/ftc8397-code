@@ -20,7 +20,7 @@ import java.util.concurrent.BlockingQueue;
 
 @Autonomous(name = "TestImageFileOutput", group = "Test")
 //@Disabled
-
+@Disabled
 public class TestImageFileOutput extends LinearOpMode {
 
     @Override

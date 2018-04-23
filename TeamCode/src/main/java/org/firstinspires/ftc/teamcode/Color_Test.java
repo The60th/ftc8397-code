@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
  * Created by FTC Team 8397 on 3/1/2018.
  */
 @TeleOp(name = "Color reader", group = "color")
+@Disabled
 public class Color_Test extends LinearOpMode {
     ColorSensor cc;
     float[] hsvValues = new float[3];

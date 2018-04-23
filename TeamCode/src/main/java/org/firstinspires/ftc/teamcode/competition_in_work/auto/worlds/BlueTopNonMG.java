@@ -1,20 +1,18 @@
 package org.firstinspires.ftc.teamcode.competition_in_work.auto.worlds;
 
 import android.graphics.Color;
-import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
-import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
 import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotAutonomousScranton;
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
 /**
- * Created by FTC Team 8397 on 4/15/2018.
+ * Created by FTC Team 8397 on 4/22/2018.
  */
-@Autonomous(name = "Blue Top MG",group = "MG")
-public class BlueTopWorlds extends MechBotAutonomousScranton {
+@Autonomous(name = "Blue Top Non MG", group = "No MG")
+public class BlueTopNonMG extends MechBotAutonomousScranton {
     final float[] hsvValues = new float[3];
 
     final boolean BLUE_BOTTOM_START_LOG = true;
@@ -58,8 +56,7 @@ public class BlueTopWorlds extends MechBotAutonomousScranton {
 
         scoreGlyph(this.cryptoKey);
 
-        topMultiGlyph(TeamColor.BLUE, this.cryptoKey);
-
         VuMarkNavigator.deactivate();
     }
 }
+

@@ -1,28 +1,27 @@
 package org.firstinspires.ftc.teamcode.competition_in_work.auto.worlds;
 
 import android.graphics.Color;
-import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.beta_log.BetaLog;
-import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
 import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotAutonomousScranton;
 import org.firstinspires.ftc.teamcode.vuforia_libs.VuMarkNavigator;
 
 /**
- * Created by FTC Team 8397 on 4/15/2018.
+ * Created by FTC Team 8397 on 4/22/2018.
  */
-@Autonomous(name = "Blue Top MG",group = "MG")
-public class BlueTopWorlds extends MechBotAutonomousScranton {
+@Autonomous(name = "Blue Bottom Non MG", group = "No MG")
+public class BlueBottomNonMG extends MechBotAutonomousScranton {
     final float[] hsvValues = new float[3];
 
     final boolean BLUE_BOTTOM_START_LOG = true;
     final String BLUE_BOTTOM_START_TAG = "Blue bottom start Red Hook:";
-    final float OFF_STONE_DISTANCE = -58.5f;
+    final float OFF_STONE_DISTANCE = 75f;
+
     @Override
     public void runLoggingOpmode() throws InterruptedException {
-        bot.init(hardwareMap, -90); //The starting value of the gyro heading comapred to the wall.
+        bot.init(hardwareMap, 180); //The starting value of the gyro heading comapred to the wall.
 
         //The starting angle is the gyro heading relative to the crypto box.
         robotZXPhi = new float[3];
@@ -33,17 +32,16 @@ public class BlueTopWorlds extends MechBotAutonomousScranton {
         initAuto(TeamColor.BLUE, VUMARK_KEY_SCAN_TIME, JEWEL_SCAN_TIME); //Knocks the jewel off the stone and finds crypto key.
         telemetry.update();
 
-        setOdometry(0,0);
-        driveDirectionGyro(OFF_STONE_SPEED, 180, -90, new Predicate() {
+        setOdometry(0, 0);
+        driveDirectionGyro(OFF_STONE_SPEED, 90, 180, new Predicate() {
             @Override
             public boolean isTrue() {
-                return robotZXPhi[0] < OFF_STONE_DISTANCE;
+                return robotZXPhi[1] > OFF_STONE_DISTANCE;
             }
         });
 
-        turnToHeadingGyroQuick(180,GLOBAL_STANDERD_TOLERANCE,GLOBAL_STANDERD_LATENCY);
-
-        driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, 90,180, new Predicate() {
+        setOdometry(0, 0);
+        driveDirectionGyro(DRIVE_TOWARDS_TRIANGLE_SPEED, 90, 180, new Predicate() {
             @Override
             public boolean isTrue() {
                 Color.RGBToHSV(bot.backColorLeft.red() * 8, bot.backColorLeft.green() * 8, bot.backColorLeft.blue() * 8, hsvValues);
@@ -52,14 +50,13 @@ public class BlueTopWorlds extends MechBotAutonomousScranton {
         });
 
 
-        handleTriangle(TriangleApproachSide.LEFT,LINE_FOLLOW_SPEED,20,180,bot.backColorLeft,bot.backColorRight,2000);
+        handleTriangle(TriangleApproachSide.LEFT, LINE_FOLLOW_SPEED, 20, 180, bot.backColorLeft, bot.backColorRight, 0);
 
         freeFlipPlate();
 
         scoreGlyph(this.cryptoKey);
 
-        topMultiGlyph(TeamColor.BLUE, this.cryptoKey);
-
         VuMarkNavigator.deactivate();
     }
 }
+

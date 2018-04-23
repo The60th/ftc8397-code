@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.mechbot.supers_bot.MechBotScranton;
  * Created by FTC Team 8397 on 4/15/2018.
  */
 @TeleOp(name = "Touch servo tester.",group = "Tester")
+@Disabled
 public class TouchButtonSensorTester extends LinearOpMode {
     private MechBotScranton bot = new MechBotScranton();
     double pos = .50;

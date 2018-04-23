@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.third_party_libs.UTILToggle;
  */
 @TeleOp(name = "Jewel arm Tester", group = "Tester")
 //@Disabled
+@Disabled
 public class JewelArmTester extends LinearOpMode {
     private MechBotScranton bot = new MechBotScranton();
     double pos = .50;

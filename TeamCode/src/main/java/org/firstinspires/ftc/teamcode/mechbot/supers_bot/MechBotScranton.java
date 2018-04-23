@@ -198,11 +198,11 @@ public class MechBotScranton extends MechBotSensorScranton {
 
 
     public void setArmCube() {
-        arm.setPosition(1.0);
+        arm.setPosition(.98);
     }
 
     public void setArmJewel() {
-        arm.setPosition(.57);
+        arm.setPosition(.52);
     }
 
     public void setArmDrive(){

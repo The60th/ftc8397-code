@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.beta_log.LoggingLinearOpMode;
  * Created by FTC Team 8397 on 4/13/2018.
  */
 @TeleOp(name = "touch tester", group = "tester")
+@Disabled
 public class TouchTester extends LoggingLinearOpMode {
     DigitalChannel digitalTouch;  // Hardware Device Object
     @Override
